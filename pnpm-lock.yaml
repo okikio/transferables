@@ -8,7 +8,6 @@ specifiers:
   '@stdlib/stats-base': ^0.0.7
   '@types/offscreencanvas': ^2019.7.0
   '@types/web': ^0.0.79
-  '@typescript/lib-dom': npm:@types/web@^0.0.79
   cli-table3: ^0.6.3
   happy-dom: ^7.6.7
   husky: ^8.0.2
@@ -29,7 +28,6 @@ devDependencies:
   '@stdlib/stats-base': 0.0.7
   '@types/offscreencanvas': 2019.7.0
   '@types/web': 0.0.79
-  '@typescript/lib-dom': /@types/web/0.0.79
   cli-table3: 0.6.3
   happy-dom: 7.6.7
   husky: 8.0.2

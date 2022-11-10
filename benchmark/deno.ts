@@ -1,12 +1,11 @@
-import type { TypeTypedArray } from "../src";
+import type { TypeTypedArray } from "../src/index.ts";
 
-import { it } from 'vitest';
-import { getTransferables, hasTransferables } from "../src";
+import { getTransferables, hasTransferables } from "../src/index.ts";
 
-import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
+import dmeanstdev from 'https://cdn.esm.sh/v97/@stdlib/stats-base-dmeanstdev@0.0.9/deno/stats-base-dmeanstdev.js';
 
-import Table from "cli-table3";
+import Table from "https://cdn.esm.sh/v96/cli-table3@0.6.3/es2022/cli-table3.js";
 
 export const timeFormatter = new Intl.RelativeTimeFormat("en", {
   style: "narrow",
@@ -127,34 +126,32 @@ export function generateObj(size = 16) {
     arr: range(size),
     prototype: fn2.prototype,
 
-    arr2: [
-      int8,
+    arr2: [int8,
       uint8c,
       int16,
       uint16,
       int32,
       uint32,
       float32,
-      float64,
-    ],
+      float64,]
 
-    complexTypedArrObj,
-    streams,
-    channel,
-    ports,
-    instanciatedClass: new class {
-      #x = {
-        internal: {
-          value: 25,
-          ports
-        }
-      };
-      streams = streams;
-      x: number | object = 5;
-      constructor() {
-        this.x = { complexTypedArrObj };
-      }
-    }()
+    // complexTypedArrObj,
+    // streams,
+    // channel,
+    // ports,
+    // instanciatedClass: new class {
+    //   #x = {
+    //     internal: {
+    //       value: 25,
+    //       // ports
+    //     }
+    //   };
+    //   // streams = streams;
+    //   x: number | object = 5;
+    //   constructor() {
+    //     // this.x = { complexTypedArrObj };
+    //   }
+    // }()
   }
 
   const dynamic_size_object = {};
@@ -172,30 +169,30 @@ export function generateObj(size = 16) {
     const float32_ = new Float32Array(arr_);
     const float64_ = new Float64Array(arr_);
 
-    const channel_ = new MessageChannel();
-    const ports_ = [channel.port1, channel.port2];
+    // const channel_ = new MessageChannel();
+    // const ports_ = [channel.port1, channel.port2];
 
-    const streams_ = {
-      readonly: new ReadableStream(),
-      writeonly: new WritableStream(),
-      tranformonly: new TransformStream()
-    }
+    // const streams_ = {
+    //   readonly: new ReadableStream(),
+    //   writeonly: new WritableStream(),
+    //   tranformonly: new TransformStream()
+    // }
 
     dynamic_size_object[i] = {
-      uint8_all: [
-        uint8_,
-        int8_,
-        uint8c_,
-        int16_,
-        uint16_,
-        int32_,
-        uint32_,
-        float32_,
-        float64_,
-        channel_,
-        ports_,
-        streams_,
-      ],
+      // uint8_all: [
+      //   uint8_,
+      //   int8_,
+      //   uint8c_,
+      //   int16_,
+      //   uint16_,
+      //   int32_,
+      //   uint32_,
+      //   float32_,
+      //   float64_,
+      //   // channel_,
+      //   // ports_,
+      //   // streams_,
+      // ],
       arr_,
       uint8_,
       int8_,
@@ -206,70 +203,69 @@ export function generateObj(size = 16) {
       uint32_,
       float32_,
       float64_,
-      channel_,
-      ports_,
-      streams_,
+      // channel_,
+      // ports_,
+      // streams_,
     };
   }
 
   return {
     other_objects,
-    dynamic_size_object,
-    complexTypedArrObj
+    random_noise_object: dynamic_size_object,
+    // complexTypedArrObj
   };
 }
 
-it("structuredClone", () => { 
-  let head = [`hasTransferables`, `getTransferables`, `structuredClone`, `structuredClone (Transferable)`];
-  for (let i = 0; i < 4; i++) {
-    for (let i = 0; i < Math.log2(16 * MB); i++) {
-      const num = Math.pow(2, i);
-      const sizeStr = bytes(num, { maximumFractionDigits: 3 });
-      const obj = generateObj(num / MB);
+let head = [`hasTransferables`, `getTransferables`, `structuredClone`, `structuredClone (Transferable)`];
+for (let i = 0; i < 1; i++) {
+  const cycle = `Cycle ${i}`;
+  for (let i = 0; i < Math.log2(16 * MB); i++) {
+    const num = Math.pow(2, i);
+    const sizeStr = bytes(num, { maximumFractionDigits: 3 });
+    const obj = generateObj(num / MB);
 
-      let transferableExists = false;
-      add(sizeStr, `hasTransferables`, () => {
-        transferableExists = hasTransferables(obj, 100, true);
-      })
+    let transferableExists = false;
+    add(sizeStr, `hasTransferables`, () => {
+      transferableExists = hasTransferables(obj, 100, true);
+    })
 
-      let transfer: any[] | null = null;
-      add(sizeStr, `getTransferables`, () => {
-        transfer = getTransferables(obj, 100, true);
-      })
+    let transfer: any[] | null = null;
+    add(sizeStr, `getTransferables`, () => {
+      transfer = getTransferables(obj, 100, true);
+    })
 
-      add(sizeStr, `structuredClone`, () => {
-        try {
-          // structuredClone(obj);
-        } catch (e) { console.warn(e); }
-      })
+    add(sizeStr, `structuredClone`, () => {
+      try {
+        structuredClone(obj);
+      } catch (e) { console.warn(e); }
+    })
 
-      add(sizeStr, `structuredClone (Transferable)`, () => {
-        try {
-          structuredClone(obj, {
-            transfer: transfer && transfer.length > 0 ? transfer : []
-          });
-        } catch (e) { console.warn(e); }
-      })
+    add(sizeStr, `structuredClone (Transferable)`, () => {
+      try {
+        structuredClone(obj, {
+          transfer: transfer && transfer.length > 0 ? transfer : []
+        });
+      } catch (e) { console.warn(e); }
+    })
 
-    }
-    console.log("\n")
   }
+  console.log("\n")
+}
 
-  const table = new Table({
-    head: ["", ...head]
+const table = new Table({
+  head: ["", ...head]
+});
+
+perfs.forEach((variants, name) => {
+  let obj = {};
+  variants.forEach((durations, variant) => {
+    const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
+    obj[name] ??= [];
+    obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
+
   });
-
-  perfs.forEach((variants, name) => {
-    let obj = {};
-    variants.forEach((durations, variant) => {
-      const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
-      obj[name] ??= [];
-      obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
-
-    });
-    table.push(obj);
-  })
-
-  console.log(table.toString())
+  table.push(obj);
 })
+
+console.log(table.toString())
 
