@@ -1,5 +1,4 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.187.0/containers/typescript-node/.devcontainer/base.Dockerfile
-
 # [Choice] Node.js version: 16, 14, 12
 FROM mcr.microsoft.com/devcontainers/typescript-node:18
 
