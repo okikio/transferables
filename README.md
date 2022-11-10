@@ -1,46 +1,32 @@
-# spring-easing
+# transferables
 
-[![Open Bundle](https://bundlejs.com/badge-light.svg)](https://bundlejs.com/?q=spring-easing&bundle "Check the total bundle size of spring-easing with whichever animation library you choose.")
+[![Open Bundle](https://bundlejs.com/badge-light.svg)](https://bundlejs.com/?q=transferables&bundle "Check the total bundle size of transferables")
 
-[NPM](https://www.npmjs.com/package/spring-easing) <span style="padding-inline: 1rem">|</span> [GitHub](https://github.com/okikio/spring-easing#readme) <span style="padding-inline: 1rem">|</span> [Docs](https://spring-easing.okikio.dev) <span style="padding-inline: 1rem">|</span> [Licence](./LICENSE)
+[NPM](https://www.npmjs.com/package/transferables) <span style="padding-inline: 1rem">|</span> [GitHub](https://github.com/okikio/transferables#readme) <span style="padding-inline: 1rem">|</span> [Licence](./LICENSE)
 
-Quick and easy spring animations. Works with other animation libraries ([gsap](https://greensock.com/), [animejs](https://animejs.com/), [@okikio/animate](http://npmjs.com/@okikio/animate), [motion one](https://motion.dev/), [framer motion](https://www.framer.com/docs/animation/), etc...) or the [Web Animation API (WAAPI)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API), you can learn more in the [Usage](#use-with-animation-libraries) section.
+A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be transfered between Workers and the main thread\*.
 
-`spring-easing` works by generating arrays of `frame`'s which when placed in linear order creates a smooth spring like animation.
+> _`*` There are many [asterisks](#asterisks) involved in transferable objects, I've listed out some of them to be aware of, but as always, do your own research before using._
 
-> A `frame` represent a single frame of an animation
-
-> _**Note**: the `spring-easing` package also supports 4 extra variants of [`spring`](https://spring-easing.okikio.dev/modules.html#SpringFrame), namely [`spring-in`](https://spring-easing.okikio.dev/modules.html#SpringInFrame), [`spring-out`](https://spring-easing.okikio.dev/modules.html#SpringOutFrame), [`spring-out-in`](https://spring-easing.okikio.dev/modules.html#SpringOutInFrame), and [`spring-in-out`](https://spring-easing.okikio.dev/modules.html#SpringInOutFrame), you can use these easing to create some really unique spring like animations._
-
-<!-- > You can also read the [blog post](https://blog.okikio.dev/spring-easing), created for it's launch. -->
-
-You can create animation's like this with `spring-easing`,
-
-<img src="media/assets/spring-easing-demo-video.gif" width="1920" loading="lazy" alt="A demo of the various spring-easings available" align="center" style="border-radius: 1rem; 
-    aspect-ratio: auto 1920 / 899;" />
-
-> _Check out the spring easing variants on [Codepen](https://codepen.io/okikio/pen/MWEMEgJ)._
-
-> _**Attention**: This entire library is a lightweight version of the [`CustomEasing`](https://native.okikio.dev/animate/api/custom-easing/) implemented in [`@okikio/animate`](https://native.okikio.dev/animate), which supports only string and number interpolation. If you'd like the complete `CustomEasing` with color interpolation, complex value interpolation, and more, go through the source code as a [Github Gist](https://gist.github.com/okikio/bed53ed621cb7f60e9a8b1ef92897471#file-custom-easing-ts), which is licensed under the MIT license._
-> <br>
+<!-- > You can also read the [blog post](https://blog.okikio.dev/transferables), created for it's launch. -->
 
 ## Installation
 
 ```bash
-npm install spring-easing
+npm install transferables
 ```
 
 <details>
     <summary>Others</summary>
 
 ```bash
-yarn add spring-easing
+yarn add transferables
 ```
 
 or
 
 ```bash
-pnpm install spring-easing
+pnpm install transferables
 ```
 
 </details>
@@ -49,301 +35,226 @@ pnpm install spring-easing
 ## Usage
 
 ```ts
-import { SpringEasing } from "spring-easing";
-// or
-import SpringEasing from "spring-easing";
+import { hasTransferables, getTransferables } from "transferables";
 ```
 
 You can also use it directly through a script tag:
 
 ```html
-<script src="https://unpkg.com/spring-easing" type="module"></script>
+<script src="https://unpkg.com/transferables" type="module"></script>
 <script type="module">
   // You can then use it like this
-  const { SpringEasing } = window.SpringEasing;
+  const { hasTransferables, getTransferables } = window.Transferables;
 </script>
 ```
 
 You can also use it via a CDN, e.g.
 
 ```ts
-import SpringEasing from "https://cdn.skypack.dev/spring-easing";
+import { hasTransferables, getTransferables } from "https://cdn.skypack.dev/transferables";
 // or
-import SpringEasing from "https://cdn.jsdelivr.net/npm/spring-easing";
+import { hasTransferables, getTransferables } from "https://cdn.jsdelivr.net/npm/transferables";
 // or any number of other CDN's
 ```
 
 <br>
 
-### Use with Animation Libraries
-
-> _**Note:** I cannot guarantee that every animation library works with `spring-easing`, for example, if an animation library doesn't support array values as keyframes, it won't work well with `spring-easing`._
-
-The libraries that have been tested are:
-
-| Animation Library                                                                                | Support                                                                                                                                                       | Demo                                             |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [GSAP](https://greensock.com/)                                                                   | ✅ Yes - [Wrap Method](<https://greensock.com/docs/v3/GSAP/UtilityMethods/wrap()>)                                                                            | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-| [animejs](https://animejs.com)                                                                   | ✅ Yes - [Array Keyframes](https://animejs.com/documentation/#animationKeyframes)                                                                             | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-| [Framer Motion](https://www.framer.com/motion/)                                                  | ✅ Yes - [Array Keyframes](https://www.framer.com/docs/animation/##keyframes)                                                                                 | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-| [Motion One](https://motion.dev)                                                                 | ✅ Yes - [Array Keyframes](https://motion.dev/dom/animate#keyframes)                                                                                          | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-| [@okikio/animate](https://okikio.github.io/native/packages/animate)                              | ✅ Yes - [Array Keyframes](https://okikio.github.io/native/packages/animate/#animations)                                                                      | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-| [Web Animation API (WAAPI)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) | ✅ Yes - [Array Keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats#:~:text=An-,object,-containing%20key%2Dvalue) | [Codepen](https://codepen.io/okikio/pen/MWEMEgJ) |
-
-e.g.
-
-```ts
-import anime from "animejs";
-import { SpringEasing, SpringOutFrame } from "spring-easing";
-
-// Note: this is the return value of `SpringEasing` and `GenerateSpringFrames`
-let [translateX, duration] = SpringEasing([0, 250], {
-  easing: "spring-out-in(1, 100, 10, 0)",
-  // You can change the size of Array for the SpringEasing function to generate
-  numPoints: 200,
-  // The number of decimal places to round, final values in the generated Array
-  // This option doesn't exist on `GenerateSpringFrames`
-  decimal: 5,
-});
-
-anime({
-  targets: "div",
-
-  // Using spring easing animate from [0 to 250] using `spring-out-in`
-  translateX,
-
-  // You can interpolate between strings
-  // You can set the easing without an easing options object
-  // You can interpolate between more than 2 values
-  // Remember the `0` index of `SpringEasing` is an array of spring animation keyframes
-  rotate: SpringEasing(
-    ["0turn", 1, 0, 0.5],
-    [SpringOutFrame, 1, 100, 10, 0]
-  )[0],
-
-  // TIP... Use linear easing for the proper springy effect
-  easing: "linear",
-
-  // The optimal duration for this specific spring configuration, e.g. mass, velocity, damping, etc...
-  duration,
-});
-```
-
-> _**Note**: make sure to read the comments above, as they are valuable resources for understanding what is happening._
-
-> Check out this demo on [Codepen](https://codepen.io/okikio/pen/MWEdzNg)
-
-<br>
 
 ## Showcase
 
-A couple sites/projects that use `spring-easing`:
+A couple sites/projects that use `transferables`:
 
 - Your site/project here...
   
 <br>
 
+
+
+## FAQ & Glossary
+
+### What are transferable objects?
+
+Transferable objects are objects that can be transferred between Workers and the main thread. It works sort of like ploping out the piece of memory attached to the Worker for the transferable object (e.g. an ArrayBuffer) and then moving that piece of memory to the main-thread for use by a newly created transferable object and vice-versa. You can read more about them in the [MDN docs](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+
+> Notable exceptions to the transferable objects list are `Blob` and `File` objects, which are not transferable, but can be cloned.
+
+<br />
+
+
+### Why should I use this?
+
+It's main use case is for determining when there is a transferable object and then listing said transferable objects out. A good example of when to use this is when working with [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone). `structuredClone` errors out when using transferables objects as they are not cloneable, e.g. 
+
+![Error shown when trying to use structuredClone with an object which contains a transferable object](assets/structuredclone-transfer-error.png)
+
+
+You should only really use this when Worker or main thread no longer needs the transferable object for use. e.g. returning the result of a complex from a Worker in ArrayBuffer form (assuming that the result is no longer nesscary in the Worker). 
+> Warning: There is a performance threshold for transferable objects, before which using transferable objects becomes genuinly slower, it's probably not worth it to use this library if you reach that threshold [#benchmark](#benchmark). You can read more about that in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage#performance_considerations). 
+
+<br />
+
+### What is the difference between transferable objects and cloneable objects?
+
+Transferable objects are objects that can be transferred between Workers and the main thread. They can be transferred from the main thread to a Worker, and vice versa. Cloneable objects are objects that can be cloned between Workers and the main thread. They can
+be cloned from the main thread to a Worker, and vice versa. You can read more about them in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+
+
+<br />
+
 ## API
 
-<details open>
-<summary><strong><em>What's New...</em></strong></summary>
+The API of `transferables` is pretty straight forward, 
+* `hasTransferables` function check if an object contains [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+* `getTransferables` function generates an array of values from the input object that are [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+* `isObject`, `isTypedArray`, `isTransferable`, `isStream`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferables`.
 
-> **`REVERT`** _The new interpolation syntax has been reverted and removed; `instantNumber`, etc... functions have been renamed to `interpolateNumber`, etc..._
+You use them like this:
+
+```ts
+import { hasTransferables, getTransferables } from "transferables";
+
+// data is an object that contains transferable objects
+
+
+// Send postMessage with transferables
+const transferables = getTransferables(data);
+postMessage(data, transferables);
+
+// isObject
+isObject(data); // true
+
+// isTypedArray
+isTypedArray(data); // false
+
+// isStream
+isStream(data); // false
+
+// isTransferable
+isTransferable(data); // true
+
+// filterOutDuplicates
+filterOutDuplicates([1, 2, 3, 3, 4, 5, 5]); // [1, 2, 3, 4, 5]
+
+```
+
+
+<br>
+
+## Asterisks
+
+There are a lot of asterisks involved with transferable objects. 
+* First, not all transferable objects are supported in all browsers.
+* Second, not all transferable objects can be transfered between Workers and the main thread.
+* Third, not all transferable objects are transfered between Workers and the main thread.
+* Fourth, not all transferable objects are transfered between Workers and the main thread in the same way.
+* Fifth, not all transferable objects are transfered between Workers and the main thread in the same way in all browsers.
+
+So, as always, do your own research before using.
+
+
+There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
+
+### Transferable objects
+
+The following are [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects):
+
+- `ArrayBuffer`
+- `MessagePort`
+- `ImageBitmap`
+- `ReadableStream`
+- `WritableStream`
+- `TransformStream`
+- `DataView`
+- `AudioData`
+- `ImageBitmap`
+- `VideoFrame`
+- `OffscreenCanvas`
+- `RTCDataChannel`
+
+
+
+There are many asterisks involved in transferable objects...there's a lot. I've sorted out some of the things to be aware of, but as always, do your own research before using.
+
+- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's the only type of array that can be transferred. It's also the only type of array that can be used in SharedArrayBuffers.
+- **`ArrayBufferView`**: An array view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They can be transferred between Workers and the main thread. They're also the only type of array that can be used in SharedArrayBuffers.
+- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread.
+- **`ImageBitmap`**: An image that can be transferred between Workers and the main thread. They can also be used as textures in WebGL.
+- **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
+- **`ReadableStream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects.
+
+
+> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of the things to be  aware of, but as always, do your own research before using._
+
+### Typed Arrays
+
+Typed arrays are not transferable objects, but they can be transfered between Workers and the main thread\*.
+
+> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of the things to be  aware of, but as always, do your own research before using._
+
+### Streams
+
+Streams are not transferable objects, but they can be transfered between Workers and the main thread\*.
+
+> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of
 > 
 
-> **`NEW`** _Re-introduced instantaneous interpolation functions._
-> e.g.
->
-> ```ts
-> import { interpolateNumber, interpolateString, interpolateSequence, interpolateComplex } from "spring-easing";
-> ```
-> These functions represent the interpolated value at a specific instance in time, where time is represented by `t` with a range of `0` to `1`.
-> You can use these functions as building blocks to create your own custom interpolation functions.
+<br>
 
-> **`NEW`** _(deprecated) `interpolateUsingIndex` is now an alias of `interpolateSequence`, it still keeps the same functionality._
-> The recommendation is to use `interpolateSequence` instead of `interpolateUsingIndex`, but you can still keep using `interpolateUsingIndex`, but beware it can be removed in future versions.
 
-> <strike> **`NEW`** _Re-introduced instantaneous interpolation functions._
-> e.g.
->
-> ```ts
-> import { instantNumber, instantString, instantSequence, instanceComplex } from "spring-easing";
-> ```
-> These functions represent the interpolated value at a specific instance in time, where time is represented by `t` with a range of `0` to `1`.
-> You can use these functions as building blocks to create your own custom interpolation functions.
-> 
-> </strike> 
 
-> <strike> **`BREAKING CHANGE`** _Interpolation functions use a new syntax._
-> 
-> _In older versions of `spring-easing` interpolation functions used to follow a syntax called the instantaneous interpolation function `(t, values, decimal) => string | number | any`, the new syntax is called interpolation function `(frames, values, decimal) => string[] | number[] | any[]`._
-> 
-> _The key difference between both syntaxes are the parameters each function takes and the return value of each function._
-> 
-> _The older syntax returned instantaneous frame values at a specific t-value, but the new syntax returns all the frames that make the entire animation, allowing for performance optimizations that couldn't be done before._
-> 
-> _For the most part this shouldn't leave too much of an effect as all the built-in interpolation functions have been updated to use the new synatax._
-> e.g.
->
-> ```ts
-> function interpolateNumber(frames: number[], values: number[], decimal = 3) {
->   // nth index
->   const n = values.length - 1;
-> 
->   return frames.map(t => {
->     // The current index given t
->     const i = limit(Math.floor(t * n), 0, n - 1);
-> 
->     const start = values[i];
->     const end = values[i + 1];
->     const progress = (t - i / n) * n;
-> 
->     return toFixed(scale(progress, start, end), decimal);
->   });
-> }
-> 
-> SpringEasing([0, 250], `spring`, interpolateNumber)
-> ```
->
-> </strike> 
+There are a few asterisks that you should be aware of, before using `transferables`:
 
-> <strike> **`NEW`** _There is a new `toAnimationFrames` function that be used on instantaneous interpolation functions, to transform them into complete animation interpolation functions._ 
-> e.g.
->
-> ```ts
-> import { SpringEasing, toAnimationFrames, toFixed, scale, limit } from "spring-easing";
-> 
-> function interpolateNumber(t: number, values: number[], decimal = 3) {
->   // nth index
->   const n = values.length - 1;
-> 
->   // The current index given t
->   const i = limit(Math.floor(t * n), 0, n - 1);
-> 
->   const start = values[i];
->   const end = values[i + 1];
->   const progress = (t - i / n) * n;
-> 
->   return toFixed(scale(progress, start, end), decimal);
-> }
-> 
-> function interpolatePixels(t: number, values: number[], decimal = 3) { 
->   const result = interpolateNumber(t, values, decimal);
->   return `${result}px`;
-> }
-> 
-> SpringEasing(
->   [0, 250], 
->   'spring', 
->   toAnimationFrames(interpolatePixels)
-> );
-> ```
-> 
->
-> </strike>
+- `transferables` doesn't check for `SharedArrayBuffer` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `MessagePort` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `ReadableStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `WritableStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `TransformStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `File` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `FileList` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `Blob` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
+- `transferables` doesn't check for `ImageData` objects
 
-> **`NEW`** _Easily register new easing functions._
-> e.g.
->
-> ```ts
-> import { SpringEasing, registerEasingFunction } from "spring-easing";
-> 
-> registerEasingFunction("linear", (t) => t);
-> registerEasingFunctions({
->   quad: (t) => Math.pow(t, 2),
->   cubic: (t) => Math.pow(t, 3),
-> });
-> 
-> SpringEasing(
->   [0, 250], 
->   'linear'
-> );
-> 
-> SpringEasing(
->   [0, 250], 
->   'quad'
-> );
-> ```
+## Benchmarks
 
-> **`NEW`** _SpringEasing now support interpolating between strings. It treats the units of the first value as the units for the rest of the values to interpolate between._
-> e.g.
->
-> ```ts
-> SpringEasing(["0turn", "1px", "18rem", "125deg", 25], ...)
-> ```
->
-> _**Important** All the values above get transformed to `["0turn", "1turn", "18turn", "125turn", "25turn"]`, before being interpolated._
 
-> **`NEW`** _`interpolateStrings`, `interpolateUsingIndex`, and `interpolateComplex`, are now built-in, they allow for supporting string keyframes._
+## Limitations
 
-> **`NEW`** _Custom interpolation functions are now supported._
-> e.g.
->
-> ```ts
-> import { interpolateNumber, toFixed, scale, limit } from "spring-easing";
-> // ...
-> export function interpolateColor(t: number, values: string[], decimal = 3) {
->   const color = transpose(...values.map((v) => rgba(v)))
->     .map((colors: number[], i) => {
->       const result = interpolateNumber(t, colors);
->       return i < 3 ? Math.round(result) : toFixed(result, decimal);
->     });
-> 
->   return `rgba(${color.join()})`;
-> }
->
-> SpringEasing(["red", "green", "#4f4"], "spring", interpolateColor);
-> ```
->
-> _**Important** The logic for color interpolation is defined in this [tests/utils/interpolate-color.ts](https://github.com/okikio/spring-easing/blob/main/tests/utils/interpolate-color.ts)._
+There are a couple limitations to using transferable objects with Workers and the main thread:
 
-</details>
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
 
-The API of `spring-easing` is pretty straight forward, the `SpringEasing` function generates an array of values using a frame functions, which in turn creates the effect of spring easing.
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
 
-To use this properly make sure to set the easing animation option to "linear".
-Check out a demo of `SpringEasing` at <https://codepen.io/okikio/pen/MWEdzNg>
 
-`SpringEasing` has 3 properties they are `easing` (all the easings from [EasingFunctions](https://spring-easing.okikio.dev/modules.html#EasingOptions) are supported on top of frame functions like `SpringFrame`, `SpringFrameOut`, etc..), `numPoints` (the size of the Array the frame function should create), and `decimal` (the number of decimal places of the values within said Array).
 
-| Properties  | Default Value           |
-| ----------- | ----------------------- |
-| `easing`    | `spring(1, 100, 10, 0)` |
-| `numPoints` | `50`                    |
-| `decimal`   | `3`                     |
+There are a couple limitations to using transferable objects with Workers and the main thread:
 
-By default, Spring Easing support easings in the form,
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
 
-| constant | accelerate         | decelerate | accelerate-decelerate | decelerate-accelerate |
-| :------- | :----------------- | :--------- | :-------------------- | :-------------------- |
-|          | spring / spring-in | spring-out | spring-in-out         | spring-out-in         |
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
 
-All **Spring** easing's can be configured using theses parameters,
 
-`spring-*(mass, stiffness, damping, velocity)`
 
-Each parameter comes with these defaults
+## Asterisks\*
 
-| Parameter | Default Value |
-| --------- | ------------- |
-| mass      | `1`           |
-| stiffness | `100`         |
-| damping   | `10`          |
-| velocity  | `0`           |
 
-To understand what each of the parameters of `SpringEasing` mean and how they work I suggest looking through the [SpringEasing API Documentation](https://spring-easing.okikio.dev/modules.html#SpringEasing)
+There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to just not wanting to add the feature. 
 
-> _**Note:** the return value of the `SpringEasing` function is actually `[Array of keyframes , duration]`, in that order._
+This is a list of the issues that I have found so far.
+* Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
+* [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
+* `OffscreenCanvas` is not supported on Safari
+* In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
 
-For a full understanding of what is happening in the library out the [API site](https://spring-easing.okikio.dev/modules.html) for detailed API documentation.
 
 ## Browser Support
 
-| Chrome | Edge | Firefox | Safari | IE  |
-| ------ | ---- | ------- | ------ | --- |
-| 4+     | 12+  | 4+      | 4+     | 10+ |
+| Chrome | Edge | Firefox | Safari |
+| ------ | ---- | ------- | ------ |
+| 7+     | 12+  | 41+     | 5+     |
 
-Native support for `spring-easing` is great as it doesn't use any browser specific or nodejs specific API's, you should be good to use `spring-easing` in any environment.
+Native support for `transferables` is dependent on which [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) great as it doesn't use any browser specific or nodejs specific API's, you should be good to use `transferables` in any environment.
+
 
 ## Contributing
 
@@ -365,12 +276,6 @@ Build project
 
 ```bash
 npm run build
-```
-
-Preview API Docs
-
-```bash
-npm run typedoc && npm run preview
 ```
 
 > _**Note**: this project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for commits, so, please format your commits using the rules it sets out._

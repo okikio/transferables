@@ -1,10 +1,10 @@
 {
-  "name": "spring-easing",
-  "version": "2.1.0",
+  "name": "transferables",
+  "version": "0.0.0",
   "type": "module",
   "sideEffects": false,
-  "description": "Quick and easy spring animations. Works with other animation libraries (animejs, framer motion, motion one, @okikio/animate, etc...) or the Web Animation API (WAAPI).",
-  "umd": "SpringEasing",
+  "description": "Utility library that lists out all transferable objects that can be transfered between Workers and the main thread.",
+  "umd": "Transferables",
   "access": "public",
   "legacy": "lib/index.js",
   "main": "lib/index.cjs",
@@ -31,16 +31,18 @@
     "@types"
   ],
   "scripts": {
-    "typedoc": "node ./.typedoc/build.js && typedoc && node ./rehype.js",
-    "preview": "vite docs",
-    "start": "vite docs",
-    "commit": "git cz",
+    "start": "vite",
     "test": "vitest",
-    "test:run": "vitest run",
-    "repl": "esno repl.ts",
+    "test:run": "vitest run tests",
     "build": "vite build",
-    "pre-release": "pnpm test:run && pnpm build && pnpm typedoc",
+    "benchmark": "vitest run benchmark",
+    "pre-release": "pnpm test:run && pnpm benchmark && pnpm build",
     "semantic-release": "semantic-release"
+  },
+  "ultra": {
+    "concurrent": [
+      "pre-release"
+    ]
   },
   "release": {
     "branches": [
@@ -63,7 +65,7 @@
     ]
   },
   "changelog": {
-    "repo": "spring-easing",
+    "repo": "transferables",
     "labels": {
       "breaking": ":boom: Breaking Change",
       "enhancement": ":rocket: Enhancement",
@@ -81,20 +83,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/okikio/spring-easing.git"
+    "url": "https://github.com/okikio/transferables.git"
   },
   "keywords": [
-    "spring-easing",
+    "transferable",
     "typescript",
-    "animation",
-    "easing",
-    "spring",
-    "framer-motion",
-    "motion-one",
-    "@okikio/animate",
-    "Web-Animation-API",
-    "WAAPI",
-    "es2021"
+    "web worker",
+    "shared worker",
+    "worker",
+    "structured clone",
+    "arraybuffer",
+    "messageport",
+    "messagechannel",
+    "readablestream",
+    "writablestream",
+    "transformstream",
+    "streams"
   ],
   "author": {
     "name": "Okiki Ojo",
@@ -103,36 +107,28 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/okikio/spring-easing/issues"
+    "url": "https://github.com/okikio/transferables/issues"
   },
-  "homepage": "https://spring-easing.okikio.dev",
+  "homepage": "https://github.com/okikio/transferables",
   "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@types/web": "^0.0.73",
-    "esbuild": "^0.15.8",
-    "esno": "^0.16.3",
-    "fast-glob": "^3.2.12",
-    "hastscript": "^7.0.2",
-    "husky": "^8.0.1",
-    "pnpm": "^7.12.0",
-    "rehype-accessible-emojis": "^0.3.2",
-    "rehype-external-links": "^2.0.1",
-    "rehype-parse": "^8.0.4",
-    "rehype-slug": "^5.0.1",
-    "rehype-stringify": "^9.0.3",
-    "rehype-urls": "^1.1.1",
+    "@stdlib/stats-base": "^0.0.7",
+    "@types/offscreencanvas": "^2019.7.0",
+    "@types/web": "^0.0.79",
+    "@typescript/lib-dom": "npm:@types/web@^0.0.79",
+    "cli-table3": "^0.6.3",
+    "happy-dom": "^7.6.7",
+    "husky": "^8.0.2",
+    "pnpm": "^7.15.0",
+    "pretty-bytes": "^6.0.0",
     "semantic-release": "^19.0.5",
-    "typedoc": "^0.23.15",
-    "typedoc-plugin-extras": "^2.3.0",
-    "typedoc-plugin-inline-sources": "^1.0.1",
-    "typedoc-plugin-mdn-links": "^2.0.0",
-    "typescript": "^4.8.3",
-    "unified": "^10.1.2",
-    "vite": "^3.1.3",
-    "vite-plugin-dts": "^1.5.0",
-    "vitest": "^0.23.4"
+    "typescript": "^4.8.4",
+    "ultra-runner": "^3.10.5",
+    "vite": "^3.2.3",
+    "vite-plugin-dts": "^1.7.0",
+    "vitest": "^0.25.1"
   }
 }
