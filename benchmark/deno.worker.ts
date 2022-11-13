@@ -9,13 +9,13 @@ self.onmessage = ({ data }) => {
    * Deno doesn't support transferable streams
    */
   const obj = generateObj(num / MB, { streams: false, channel: false });
-  const transferables = getTransferables(obj, 100, true);
 
   try {
     let msg = { name, variant, cycle, i, obj };
     if (variant == 'postMessage') {
       self.postMessage(msg);
     } else {
+      const transferables = getTransferables(obj, 100, true); // ) hasTransferables(obj, 100, true) ? : []
       self.postMessage(msg, transferables);
     }
     // console.log(data)

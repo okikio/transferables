@@ -62,6 +62,52 @@ export function filterOutDuplicates<T>(array: T[]): T[] {
  * @param streams Includes streams as transferable
  * @returns An array of transferable objects
  */
+export function* getTransferable(obj: unknown, depth = 25, streams = false): Generator<TypeTransferable> {
+  if (depth <= 0) return [];
+
+  if (isTypedArray(obj)) {
+    const buffer = (obj as TypeTypedArray).buffer;
+    yield buffer;
+  } else if (isTransferable(obj) || (streams && isStream(obj))) {
+    yield obj as TypeTransferable;
+  }
+
+  /* 
+    Streams are circular objects, to avoid an infinite loop 
+    we need to ensure that the object is not a stream 
+  */
+  else if (isObject(obj) && !isStream(obj)) {
+    const values = Array.isArray(obj) ? obj : Object.values(obj);
+    for (let x of values) {
+      yield* getTransferable(x, depth - 1, streams);
+    }
+    // const transferables = values.flatMap(x => getTransferables(x, depth - 1, streams));
+    // return filterOutDuplicates(transferables);
+  }
+
+  yield [];
+}
+
+/**
+ * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * 
+ * @param obj Input object
+ * @param depth Maximum depth
+ * @param streams Includes streams as transferable
+ * @returns An array of transferable objects
+ */
+// export function getTransferables(obj: unknown, depth = 25, streams = false): TypeTransferable[] {
+//   return [...filterOutDuplicates(Array.from(getTransferable(obj, depth, streams)).flat())];
+// }
+
+/**
+ * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * 
+ * @param obj Input object
+ * @param depth Maximum depth
+ * @param streams Includes streams as transferable
+ * @returns An array of transferable objects
+ */
 export function getTransferables(obj: unknown, depth = 25, streams = false): TypeTransferable[] {
   if (depth <= 0) return [];
 
@@ -70,17 +116,15 @@ export function getTransferables(obj: unknown, depth = 25, streams = false): Typ
     return [buffer];
   } else if (isTransferable(obj) || (streams && isStream(obj))) {
     return [obj as TypeTransferable];
-  } else if (Array.isArray(obj)) {
-    const transferables = obj.flatMap(x => getTransferables(x, depth - 1, streams));
-    return filterOutDuplicates(transferables);
-  }
-  
+  } 
+
   /* 
     Streams are circular objects, to avoid an infinite loop 
     we need to ensure that the object is not a stream 
   */
   else if (isObject(obj) && !isStream(obj)) {
-    const transferables = Object.values(obj).flatMap(x => getTransferables(x, depth - 1, streams));
+    const values = Array.isArray(obj) ? obj : Object.values(obj);
+    const transferables = values.flatMap(x => getTransferables(x, depth - 1, streams));
     return filterOutDuplicates(transferables);
   }
 
@@ -98,20 +142,31 @@ export function getTransferables(obj: unknown, depth = 25, streams = false): Typ
 export function hasTransferables(obj: unknown, depth = 25, streams = false): boolean {
   if (depth <= 0) return false;
 
+  // console.log({ depth, ...obj })
   if (streams && isStream(obj)) {
     return true;
   } else if (isTypedArray(obj) || isTransferable(obj)) {
     return true;
-  } else if (Array.isArray(obj)) {
-    return obj.flatMap(x => hasTransferables(x, depth - 1, streams)).includes(true);
   }
-    
+
   /* 
     Streams are circular objects, to avoid an infinite loop 
     we need to ensure that the object is not a stream 
   */
   else if (isObject(obj) && !isStream(obj)) {
-    return Object.values(obj).flatMap(x => hasTransferables(x, depth - 1, streams)).includes(true);
+    const deepValues = [];
+    const values = Array.isArray(obj) ? obj : Object.values(obj);
+    const inBreadth = values.some(x => {
+      if ((streams && isStream(x)) || isTypedArray(x) || isTransferable(x)) return true;
+      if (isObject(x)) {
+        const asValues = Array.isArray(obj) ? obj : Object.values(obj);
+        deepValues.push(...asValues);
+      }
+      return false;
+    });
+
+    if (inBreadth) return true;
+    return deepValues.some(x => hasTransferables(x, depth - 1, streams));
   }
 
   return false;

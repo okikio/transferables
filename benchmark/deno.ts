@@ -185,8 +185,8 @@ async function createWorkerPromise({ index, cycle = 0, variant }: ICreateWorkerI
 // stop();
 
 const variants = ["postMessage", "postMessage (Transferable)"];
-const maxSize = 1.6;
-for (let cycle = 0; cycle < 5; cycle++) {
+const maxSize = 1;
+for (let cycle = 0; cycle < 1; cycle++) {
 
   const loadingId = loading(`Cycle ${cycle + 1}`);
   for (let variant of variants) {
