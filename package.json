@@ -35,13 +35,18 @@
     "test": "vitest",
     "test:run": "vitest run tests",
     "build": "vite build",
-    "benchmark": "vitest run benchmark",
-    "pre-release": "pnpm test:run && pnpm benchmark && pnpm build",
+    "benchmark:node": "vitest run ./benchmark/node.test.ts",
+    "benchmark:browser": "vite build --mode benchmark && vite preview --port 3001",
+    "benchmark:deno": "deno run --allow-run --allow-env --allow-read ./benchmark/deno.ts",
+    "benchmark:bun": "bun run vitest run --passWithNoTests ./benchmark/bun.test.ts",
+    "benchmark": "pnpm benchmark:node && pnpm benchmark:deno && pnpm benchmark:browser && pnpm benchmark:bun",
+    "pre-release": "pnpm test:run && ultra benchmark && pnpm build",
     "semantic-release": "semantic-release"
   },
   "ultra": {
     "concurrent": [
-      "pre-release"
+      "pre-release",
+      "benchmark"
     ]
   },
   "release": {
@@ -118,8 +123,10 @@
     "@stdlib/stats-base": "^0.0.7",
     "@types/offscreencanvas": "^2019.7.0",
     "@types/web": "^0.0.79",
+    "cli-loading-animation": "^1.0.6",
     "cli-table3": "^0.6.3",
-    "happy-dom": "^7.6.7",
+    "comlink": "^4.3.1",
+    "happy-dom": "^7.7.0",
     "husky": "^8.0.2",
     "pnpm": "^7.15.0",
     "pretty-bytes": "^6.0.0",

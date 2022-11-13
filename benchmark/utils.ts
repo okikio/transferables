@@ -1,36 +1,8 @@
-import type { TypeTypedArray } from "../src";
-
-import { it } from 'vitest';
-import { getTransferables, hasTransferables } from "../src";
-
-import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
-
-import Table from "cli-table3";
-
-export const timeFormatter = new Intl.RelativeTimeFormat("en", {
-  style: "narrow",
-  numeric: "auto",
-});
-
-const perfs = new Map<string, Map<string, number[]>>();
-function add(name: string, variant: string, fn?: Function) {
-  const start = performance.now();
-  fn?.();
-  const end = performance.now();
-  const duration = end - start;
-
-  if (!perfs.has(name)) perfs.set(name, new Map<string, number[]>());
-  if (!perfs.get(name)?.has(variant)) perfs.get(name)?.set(variant, []);
-  perfs.get(name)?.get(variant)?.push(duration);
-}
-
 // 16MB = 1024 * 1024 * 16
-const MB = 1024 * 1024;
-
+export const MB = 1024 * 1024;
 
 /**
- * Generates an Array of a certain MB size
+ * Generates an Array of a certain MB size (by default 16 MB)
  * 
  * @param size Array size in MB
  */
@@ -45,7 +17,10 @@ export function range(size = 16) {
  * 
  * @param size Array size in MB
  */
-export function generateObj(size = 16) {
+export function generateObj(size = 16, enable: { streams?: boolean, channel?: boolean } = {}) {
+  const isStream = enable.streams ?? true;
+  const isChannel = enable.channel ?? true;
+
   const arr = range(size);
   const uint8 = new Uint8Array(arr);
   const { buffer: arrbuf } = uint8;
@@ -94,10 +69,10 @@ export function generateObj(size = 16) {
     arrbuf_float32: [arrbuf, float32]
   }
 
-  const channel = new MessageChannel();
-  const ports = [channel.port1, channel.port2];
+  const channel = isChannel && new MessageChannel();
+  const ports = channel && [channel?.port1, channel?.port2];
 
-  const streams = {
+  const streams = isStream && {
     readonly: new ReadableStream(),
     writeonly: new WritableStream(),
     tranformonly: new TransformStream()
@@ -118,10 +93,10 @@ export function generateObj(size = 16) {
   // }
 
   const fn1 = function () { }
-  // fn1.ports = ports;
+  fn1.ports = ports;
 
   function fn2() { }
-  // fn2.channel = channel;
+  fn2.channel = channel;
 
   const other_objects = {
     arr: range(size),
@@ -172,10 +147,10 @@ export function generateObj(size = 16) {
     const float32_ = new Float32Array(arr_);
     const float64_ = new Float64Array(arr_);
 
-    const channel_ = new MessageChannel();
-    const ports_ = [channel.port1, channel.port2];
+    const channel_ = isChannel && new MessageChannel();
+    const ports_ = channel_ && [channel_.port1, channel_.port2];
 
-    const streams_ = {
+    const streams_ = isStream && {
       readonly: new ReadableStream(),
       writeonly: new WritableStream(),
       tranformonly: new TransformStream()
@@ -219,57 +194,35 @@ export function generateObj(size = 16) {
   };
 }
 
-it("structuredClone", () => { 
-  let head = [`hasTransferables`, `getTransferables`, `structuredClone`, `structuredClone (Transferable)`];
-  for (let i = 0; i < 4; i++) {
-    for (let i = 0; i < Math.log2(16 * MB); i++) {
-      const num = Math.pow(2, i);
-      const sizeStr = bytes(num, { maximumFractionDigits: 3 });
-      const obj = generateObj(num / MB);
+/**
+ * Maps the name of the benchmark to the name of the metric it is
+ * measuring. Each benchmark will have a map of metrics to an array of
+ * numbers (the numbers per cycle) that are the measured performance of the metric.
+*/
+export const perfs = new Map<string, Map<string, number[]>>();
 
-      let transferableExists = false;
-      add(sizeStr, `hasTransferables`, () => {
-        transferableExists = hasTransferables(obj, 100, true);
-      })
+/**
+ * Add a performance measure for a specific variant of a specific benchmark
+ * 
+ * @param name The name of the benchmarkx
+ * @param variant The name of the variant
+ * @param fn The function to call to run the benchmark
+ */
+export async function add(name: string, variant: string, fn?: Function) {
+  const start = performance.now();
+  await fn?.();
+  const end = performance.now();
+  const duration = end - start;
 
-      let transfer: any[] | null = null;
-      add(sizeStr, `getTransferables`, () => {
-        transfer = getTransferables(obj, 100, true);
-      })
+  if (!perfs.has(name)) perfs.set(name, new Map<string, number[]>());
+  if (!perfs.get(name)?.has(variant)) perfs.get(name)?.set(variant, []);
+  perfs.get(name)?.get(variant)?.push(duration);
+}
 
-      add(sizeStr, `structuredClone`, () => {
-        try {
-          // structuredClone(obj);
-        } catch (e) { console.warn(e); }
-      })
-
-      add(sizeStr, `structuredClone (Transferable)`, () => {
-        try {
-          structuredClone(obj, {
-            transfer: transfer && transfer.length > 0 ? transfer : []
-          });
-        } catch (e) { console.warn(e); }
-      })
-
-    }
-    console.log("\n")
-  }
-
-  const table = new Table({
-    head: ["", ...head]
-  });
-
-  perfs.forEach((variants, name) => {
-    let obj = {};
-    variants.forEach((durations, variant) => {
-      const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
-      obj[name] ??= [];
-      obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
-
-    });
-    table.push(obj);
-  })
-
-  console.log(table.toString())
-})
-
+/**
+ * This is a time formatter that enables us to format elapsed time into human readable measurements of time 
+ */
+export const timeFormatter = new Intl.RelativeTimeFormat("en", {
+  style: "narrow",
+  numeric: "auto",
+});
