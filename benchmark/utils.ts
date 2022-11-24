@@ -34,6 +34,17 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
   const float32 = new Float32Array(arr);
   const float64 = new Float64Array(arr);
 
+  let transferable: any[] = [];
+  transferable.push(arrbuf);
+  transferable.push(int8.buffer);
+  transferable.push(uint8c.buffer);
+  transferable.push(int16.buffer);
+  transferable.push(uint16.buffer);
+  transferable.push(int32.buffer);
+  transferable.push(uint32.buffer);
+  transferable.push(float32.buffer);
+  transferable.push(float64.buffer);
+
   const complexTypedArrObj = {
     int8: int8,
     uint8_uint8c: [uint8, uint8c],
@@ -71,12 +82,17 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
 
   const channel = isChannel && new MessageChannel();
   const ports = channel && [channel?.port1, channel?.port2];
+  Array.isArray(ports) && transferable.push(...ports) 
 
   const streams = isStream && {
     readonly: new ReadableStream(),
     writeonly: new WritableStream(),
     tranformonly: new TransformStream()
   }
+
+  streams && streams.readonly && transferable.push(streams.readonly)
+  streams && streams.writeonly && transferable.push(streams.writeonly)
+  streams && streams.tranformonly && transferable.push(streams.tranformonly) 
 
   // No polyfill for OffscreenCanvas, RTCPeerConnection, and RTCDataChannel
   // const offscreencanvas = new OffscreenCanvas(200, 200);
@@ -147,14 +163,30 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     const float32_ = new Float32Array(arr_);
     const float64_ = new Float64Array(arr_);
 
+    transferable.push(uint8_.buffer);
+    transferable.push(int8_.buffer);
+    transferable.push(uint8c_.buffer);
+    transferable.push(int16_.buffer);
+    transferable.push(uint16_.buffer);
+    transferable.push(int32_.buffer);
+    transferable.push(uint32_.buffer);
+    transferable.push(float32_.buffer);
+    transferable.push(float64_.buffer);
+
     const channel_ = isChannel && new MessageChannel();
     const ports_ = channel_ && [channel_.port1, channel_.port2];
+
+    Array.isArray(ports_) && transferable.push(...ports_) 
 
     const streams_ = isStream && {
       readonly: new ReadableStream(),
       writeonly: new WritableStream(),
       tranformonly: new TransformStream()
     }
+
+    streams_ && streams_.readonly && transferable.push(streams_.readonly)
+    streams_ && streams_.writeonly && transferable.push(streams_.writeonly)
+    streams_ && streams_.tranformonly && transferable.push(streams_.tranformonly) 
 
     dynamic_size_object[i] = {
       uint8_all: [
@@ -190,7 +222,8 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
   return {
     other_objects,
     dynamic_size_object,
-    complexTypedArrObj
+    complexTypedArrObj,
+    transferable
   };
 }
 

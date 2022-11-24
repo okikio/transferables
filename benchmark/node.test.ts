@@ -9,7 +9,7 @@ import { dmeanstdev } from '@stdlib/stats-base';
 import Table from "cli-table3";
 
 it("structuredClone", async () => {
-  let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (Transferable)`];
+  let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (predefined)`, `structuredClone (getTransferable)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
@@ -31,13 +31,14 @@ it("structuredClone", async () => {
         transferGen = has ? getTransferables(obj, true) : [];
       })
 
-      // add(sizeStr, `structuredClone`, () => {
-      //   try {
-      //     structuredClone(obj);
-      //   } catch (e) { console.warn(e); }
-      // })
+      add(sizeStr, `structuredClone (predefined)`, () => {
+        try {
+          // @ts-ignore
+          structuredClone(obj, { transfer: obj.transferable });
+        } catch (e) { console.warn(e); }
+      })
 
-      await add(sizeStr, `structuredClone (Transferable)`, () => {
+      await add(sizeStr, `structuredClone (getTransferables)`, () => {
         try {
           structuredClone(obj, transferGen && transferGen.length > 0 ? { transfer: transferGen } : undefined);
         } catch (e) { console.warn(e); }

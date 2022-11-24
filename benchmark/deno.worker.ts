@@ -17,6 +17,10 @@ self.onmessage = ({ data }) => {
         self.postMessage(msg);
         break;
       }
+      case "postMessage (predefined)": {
+        self.postMessage(msg, obj.transferable);
+        break;
+      }
       case "hasTransferables": {
         hasTransferables(obj, true);
         self.postMessage(msg);

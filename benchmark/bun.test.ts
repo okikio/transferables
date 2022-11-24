@@ -32,11 +32,12 @@ it("structuredClone", async () => {
         transferGen = has ? getTransferables(obj, true) : [];
       })
 
-      // add(sizeStr, `structuredClone`, () => {
-      //   try {
-      //     structuredClone(obj);
-      //   } catch (e) { console.warn(e); }
-      // })
+      await add(sizeStr, `structuredClone (predefined)`, () => {
+        try {
+          // @ts-ignore
+          structuredClone(obj, { transfer: obj.transferable });
+        } catch (e) { console.warn(e); }
+      })
 
       await add(sizeStr, `structuredClone (Transferable)`, () => {
         try {

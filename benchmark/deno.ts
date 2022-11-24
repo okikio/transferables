@@ -15,7 +15,7 @@ import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.
 import Table from "http://esm.sh/cli-table3@0.6.3";
 
 // `structuredClone`, 
-// let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (Transferable)`];
+// let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (predefined)`, `structuredClone (getTransferable)`];
 // for (let cycle = 0; cycle < 5; cycle++) {
 //   for (let i = 0; i < Math.log2(1.6 * MB); i++) {
 //     const num = Math.pow(2, i);
@@ -41,11 +41,12 @@ import Table from "http://esm.sh/cli-table3@0.6.3";
 //       transferGen = has ? getTransferables(obj, true) : [];
 //     })
 
-//     // add(sizeStr, `structuredClone`, () => {
-//     //   try {
-//     //     structuredClone(obj);
-//     //   } catch (e) { console.warn(e); }
-//     // })
+//     await add(sizeStr, `structuredClone (predefined)`, () => {
+//       try {
+//         // @ts-ignore
+//         structuredClone(obj, { transfer: obj.transferable });
+//       } catch (e) { console.warn(e); }
+//     })
 
 //     await add(sizeStr, `structuredClone (Transferable)`, () => {
 //       try {
@@ -54,7 +55,6 @@ import Table from "http://esm.sh/cli-table3@0.6.3";
 //     })
 
 //     await Promise.resolve();
-
 //   }
 //   console.log("\n")
 // }
@@ -192,7 +192,7 @@ async function createWorkerPromise({ index, cycle = 0, variant }: ICreateWorkerI
 // }
 // stop();
 
-const variants = [`postMessage`, `hasTransferables`, `getTransferable`, `getTransferable(s)`];
+const variants = [`postMessage`, `postMessage (predefined)`, `hasTransferables`, `getTransferable`, `getTransferable(s)`];
 const maxSize = 1;
 for (let cycle = 0; cycle < 5; cycle++) {
 
