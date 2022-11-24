@@ -1,5 +1,5 @@
 import { MB, generateObj, add, perfs, timeFormatter } from "./utils.ts";
-import { getTransferables, hasTransferables } from "../src/index.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
 
 // import { loading } from 'cli-loading-animation';
 // const { start, stop } = loading('Loading..');
@@ -15,9 +15,9 @@ import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.
 import Table from "http://esm.sh/cli-table3@0.6.3";
 
 // `structuredClone`, 
-// let head = [`hasTransferables`, `getTransferables`, `structuredClone (Transferable)`];
+// let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (Transferable)`];
 // for (let cycle = 0; cycle < 5; cycle++) {
-//   for (let i = 0; i < Math.log2(0.16 * MB); i++) {
+//   for (let i = 0; i < Math.log2(1.6 * MB); i++) {
 //     const num = Math.pow(2, i);
 //     const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
@@ -26,13 +26,19 @@ import Table from "http://esm.sh/cli-table3@0.6.3";
 //      */
 //     const obj = generateObj(num / MB, { streams: false, channel: false });
 
-//     add(sizeStr, `hasTransferables`, () => {
-//       hasTransferables(obj, 100, true);
+//     let has: boolean | null = null;
+//     await add(sizeStr, `hasTransferables`, () => {
+//       has = hasTransferables(obj, true);
 //     })
 
-//     let transfer: any[] | null = null;
-//     add(sizeStr, `getTransferables`, () => {
-//       transfer = getTransferables(obj, 100, true);
+//     let transferItt: any[] | null = null;
+//     await add(sizeStr, `getTransferable`, () => {
+//       transferItt = has ? Array.from(getTransferable(obj, true)) : [];
+//     })
+
+//     let transferGen: any[] | null = null;
+//     await add(sizeStr, `getTransferable(s)`, () => {
+//       transferGen = has ? getTransferables(obj, true) : [];
 //     })
 
 //     // add(sizeStr, `structuredClone`, () => {
@@ -41,11 +47,13 @@ import Table from "http://esm.sh/cli-table3@0.6.3";
 //     //   } catch (e) { console.warn(e); }
 //     // })
 
-//     add(sizeStr, `structuredClone (Transferable)`, () => {
+//     await add(sizeStr, `structuredClone (Transferable)`, () => {
 //       try {
-//         structuredClone(obj, transfer && transfer.length > 0 ? { transfer } : undefined);
+//         structuredClone(obj, transferGen && transferGen.length > 0 ? { transfer: transferGen } : undefined);
 //       } catch (e) { console.warn(e); }
 //     })
+
+//     await Promise.resolve();
 
 //   }
 //   console.log("\n")
@@ -184,9 +192,9 @@ async function createWorkerPromise({ index, cycle = 0, variant }: ICreateWorkerI
 // }
 // stop();
 
-const variants = ["postMessage", "postMessage (Transferable)"];
+const variants = [`postMessage`, `hasTransferables`, `getTransferable`, `getTransferable(s)`];
 const maxSize = 1;
-for (let cycle = 0; cycle < 1; cycle++) {
+for (let cycle = 0; cycle < 5; cycle++) {
 
   const loadingId = loading(`Cycle ${cycle + 1}`);
   for (let variant of variants) {
@@ -203,7 +211,7 @@ for (let cycle = 0; cycle < 1; cycle++) {
 }
 
 
-let head = [`postMessage`, `postMessage (Transferable)`];
+let head = variants;
 const table = new Table({ head: ["", ...head] });
 
 let strVal = 'Map {\n'

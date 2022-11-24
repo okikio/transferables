@@ -198,7 +198,7 @@ describe("Transferables", () => {
   it('Readable/Wriatable/Tranform Streams', () => {
     expect(hasTransferables(streams, Infinity, true)).toBe(true);
 
-    const transferables = getTransferables(streams, Infinity, true);
+    const transferables = getTransferables(streams, true);
     expect(transferables).toHaveLength(3);
 
     expect(transferables).toContainEqual(streams.readonly);
@@ -223,7 +223,7 @@ describe("Transferables", () => {
   it('Functions, Classes and Other objects', () => {
     expect(hasTransferables(other_objects, Infinity, true)).toBe(true);
 
-    const transferables = getTransferables(other_objects, Infinity, true);
+    const transferables = getTransferables(other_objects, true);
     expect(transferables).toHaveLength(3 + 9 + 2);
 
     expect(transferables).toContainEqual(streams.readonly);

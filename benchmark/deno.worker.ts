@@ -1,5 +1,5 @@
 import { MB, generateObj } from "./utils.ts";
-import { getTransferables, hasTransferables } from "../src/index.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
 
 self.onmessage = ({ data }) => {
   const { name, variant, cycle, i } = data;
@@ -12,12 +12,26 @@ self.onmessage = ({ data }) => {
 
   try {
     let msg = { name, variant, cycle, i, obj };
-    if (variant == 'postMessage') {
-      self.postMessage(msg);
-    } else {
-      const transferables = getTransferables(obj, 100, true); // ) hasTransferables(obj, 100, true) ? : []
-      self.postMessage(msg, transferables);
+    switch (variant) {
+      case "postMessage": {
+        self.postMessage(msg);
+        break;
+      }
+      case "hasTransferables": {
+        hasTransferables(obj, true);
+        self.postMessage(msg);
+        break;
+      }
+      case "getTransferable": {
+        const transferItt: any[] | null = Array.from(getTransferable(obj, true));
+        self.postMessage(msg, transferItt);
+        break;
+      }
+      case "getTransferable(s)": {
+        const transferGen: any[] | null = getTransferables(obj, true);
+        self.postMessage(msg, transferGen);
+        break;
+      }
     }
-    // console.log(data)
   } catch (e) { console.warn(e); }
 }

@@ -7,6 +7,8 @@ FROM gitpod/workspace-full:latest
 #
 # More information: https://www.gitpod.io/docs/config-docker/
 
+RUN nvm install
+
 RUN curl -fsSL https://deno.land/x/install/install.sh | sh
 RUN /home/gitpod/.deno/bin/deno completions bash > /home/gitpod/.bashrc.d/90-deno && \
     echo 'export DENO_INSTALL="/home/gitpod/.deno"' >> /home/gitpod/.bashrc.d/90-deno && \
