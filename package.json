@@ -36,7 +36,7 @@
     "test:run": "vitest run tests",
     "build": "vite build",
     "benchmark:node": "vitest run ./benchmark/node.test.ts",
-    "benchmark:browser": "vite build --mode benchmark && vite preview --port 3001",
+    "benchmark:browser": "echo \"Empty Benchmak\"",
     "benchmark:deno": "deno run --allow-run --allow-env --allow-read ./benchmark/deno.ts",
     "benchmark:bun": "bun run vitest run --passWithNoTests ./benchmark/bun.test.ts",
     "benchmark": "pnpm benchmark:node && pnpm benchmark:deno && pnpm benchmark:browser && pnpm benchmark:bun",
