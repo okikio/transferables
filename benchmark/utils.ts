@@ -223,7 +223,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     other_objects,
     dynamic_size_object,
     complexTypedArrObj,
-    transferable
+    transferable: Array.from(new Set(transferable))
   };
 }
 

@@ -8,9 +8,8 @@ import { dmeanstdev } from '@stdlib/stats-base';
 
 import Table from "cli-table3";
 
-
 it("structuredClone", async () => {
-  let head = [`hasTransferables`, `getTransferable`, `getTransferable(s)`, `structuredClone (Transferable)`];
+  let head = [`hasTransferables`, `structuredClone (predefined)`, `getTransferable`, `getTransferable(s)`, `structuredClone (getTransferable)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
@@ -22,26 +21,26 @@ it("structuredClone", async () => {
         has = hasTransferables(obj, true);
       })
 
+      let clonedObj: any = {};
+      await add(sizeStr, `structuredClone (predefined)`, () => {
+        try {
+          clonedObj = structuredClone(obj, has ? { transfer: obj.transferable } : undefined);
+        } catch (e) { console.warn(e); }
+      })
+
       let transferItt: any[] | null = null;
       await add(sizeStr, `getTransferable`, () => {
-        transferItt = has ? Array.from(getTransferable(obj, true)) : [];
+        transferItt = has ? Array.from(getTransferable(clonedObj, true)) : [];
       })
 
       let transferGen: any[] | null = null;
       await add(sizeStr, `getTransferable(s)`, () => {
-        transferGen = has ? getTransferables(obj, true) : [];
+        transferGen = has ? getTransferables(clonedObj, true) : [];
       })
 
-      await add(sizeStr, `structuredClone (predefined)`, () => {
+      await add(sizeStr, `structuredClone (getTransferables)`, () => {
         try {
-          // @ts-ignore
-          structuredClone(obj, { transfer: obj.transferable });
-        } catch (e) { console.warn(e); }
-      })
-
-      await add(sizeStr, `structuredClone (Transferable)`, () => {
-        try {
-          structuredClone(obj, transferGen && transferGen.length > 0 ? { transfer: transferGen } : undefined);
+          structuredClone(clonedObj, transferGen && transferGen.length > 0 ? { transfer: transferGen } : undefined);
         } catch (e) { console.warn(e); }
       })
 
@@ -54,16 +53,27 @@ it("structuredClone", async () => {
     head: ["", ...head]
   });
 
+  let strVal = 'Map {\n'
   perfs.forEach((variants, name) => {
+    strVal += `  "${name}" => Map { `;
+
     let obj = {};
-    variants.forEach((durations = [0], variant) => {
+    variants.forEach((durations, variant) => {
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
+
       obj[name] ??= [];
       obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
 
+      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x, "seconds")).join(", ")}], `
+
     });
+
     table.push(obj);
+    strVal += `},\n`;
   })
 
-  console.log(table.toString())
+  strVal += `}`;
+
+  console.log(table.toString());
+  console.log(strVal);
 })
