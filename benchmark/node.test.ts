@@ -64,7 +64,7 @@ it("structuredClone", async () => {
       obj[name] ??= [];
       obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
 
-      strVal += `"${variant}" => [${durations.join(", ")}], `
+      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x, "seconds")).join(", ")}], `
 
     });
 
