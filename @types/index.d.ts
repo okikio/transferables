@@ -28,6 +28,10 @@ export declare function isTypedArray(obj: unknown): obj is TypeTypedArray | Data
  */
 export declare function isStream(obj: unknown): obj is ReadableStream | WritableStream | TransformStream;
 /**
+ * Check's if an object is `MessageChannel`
+ */
+export declare function isMessageChannel(obj: unknown): obj is MessageChannel;
+/**
  * Check if an object is a supported transferable
  */
 export declare function isTransferable(obj: unknown): obj is TypeTransferable;
@@ -37,27 +41,11 @@ export declare function isTransferable(obj: unknown): obj is TypeTransferable;
 export declare function filterOutDuplicates<T>(array: T[]): T[];
 /**
  * Create an array of transferable objects which exist in a given object, to a maximum set depth given
- *
- * @param obj Input object
- * @param depth Maximum depth
- * @param streams Includes streams as transferable
- * @returns An array of transferable objects
- */
-/**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
- *
- * @param obj Input object
- * @param depth Maximum depth
- * @param streams Includes streams as transferable
- * @returns An array of transferable objects
- */
-/**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
  * Thanks @aaorris
  *
  * @param obj Input object
- * @param maxCount Maximum depth
  * @param streams Includes streams as transferable
+ * @param maxCount Maximum iteration
  * @returns An array of transferable objects
  */
 export declare function getTransferables(obj: unknown, streams?: boolean, maxCount?: number): TypeTransferable[];
@@ -66,17 +54,27 @@ export declare function getTransferables(obj: unknown, streams?: boolean, maxCou
  * Thanks @aaorris
  *
  * @param obj Input object
- * @param maxCount Maximum depth
  * @param streams Includes streams as transferable
+ * @param maxCount Maximum iteration
  * @returns An array of transferable objects
  */
-export declare function getTransferable(obj: unknown, streams?: boolean, maxCount?: number): Generator<TypeTransferable | TypeTypedArray | DataView>;
+export declare function getTransferable(obj: unknown, streams?: boolean, maxCount?: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>;
 /**
  * Check if object contains transferable objects
+ * Thanks @aaorris
  *
  * @param obj Input object
  * @param depth Maximum depth to look
  * @param streams Includes streams as transferable
+ * @returns Whether object contains transferable objects
+ */
+/**
+ * Check if object contains transferable objects
+ * Thanks @aaorris
+ *
+ * @param obj Input object
+ * @param streams Includes streams as transferable
+ * @param maxCount Maximum iteration
  * @returns Whether object contains transferable objects
  */
 export declare function hasTransferables(obj: unknown, streams?: boolean, maxCount?: number): boolean;
