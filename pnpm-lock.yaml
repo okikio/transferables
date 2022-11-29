@@ -9,10 +9,10 @@ specifiers:
   '@types/offscreencanvas': ^2019.7.0
   '@types/web': ^0.0.81
   cli-loading-animation: ^1.0.6
-  cli-table3: ^0.6.3
   comlink: ^4.3.1
   happy-dom: ^7.7.0
   husky: ^8.0.2
+  markdown-table: ^3.0.2
   pnpm: ^7.17.1
   pretty-bytes: ^6.0.0
   semantic-release: ^19.0.5
@@ -31,10 +31,10 @@ devDependencies:
   '@types/offscreencanvas': 2019.7.0
   '@types/web': 0.0.81
   cli-loading-animation: 1.0.6
-  cli-table3: 0.6.3
   comlink: 4.3.1
   happy-dom: 7.7.0
   husky: 8.0.2
+  markdown-table: 3.0.2
   pnpm: 7.17.1
   pretty-bytes: 6.0.0
   semantic-release: 19.0.5
@@ -15537,6 +15537,10 @@ packages:
   /map-obj/4.3.0:
     resolution: {integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==}
     engines: {node: '>=8'}
+    dev: true
+
+  /markdown-table/3.0.2:
+    resolution: {integrity: sha512-y8j3a5/DkJCmS5x4dMCQL+OR0+2EAq3DOtio1COSHsmW2BGXnNCK3v12hJt1LrUz5iZH5g0LmuYOjDdI+czghA==}
     dev: true
 
   /marked-terminal/5.1.1_marked@4.2.3:

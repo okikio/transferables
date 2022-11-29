@@ -12,7 +12,7 @@ import {
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
 
-import Table from "http://esm.sh/cli-table3@0.6.3";
+import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
 // `structuredClone`, 
 // let head = [`hasTransferables`, `structuredClone (predefined)`, `getTransferable`, `getTransferable(s)`, `structuredClone (getTransferable)`];
@@ -57,22 +57,37 @@ import Table from "http://esm.sh/cli-table3@0.6.3";
 //   console.log("\n")
 // }
 
-// const table = new Table({
-//   head: ["", ...head]
-// });
+// let Head = ["", ...variants];
+// let table: object[] = [];
 
+// let strVal = 'Map {\n'
 // perfs.forEach((variants, name) => {
+//   strVal += `  "${name}" => Map { `;
+
 //   let obj = {};
 //   variants.forEach((durations, variant) => {
 //     const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
+
 //     obj[name] ??= [];
 //     obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
 
+//     strVal += `"${variant}" => [${durations.join(", ")}], `
+
 //   });
+
 //   table.push(obj);
+//   strVal += `},\n`;
 // })
 
-// console.log(table.toString())
+// let str = table.map((x) => {
+//   let [key] = Object.keys(x);
+//   return [key, ...x[key]]
+// })
+
+// strVal += `}`;
+
+// console.log(markdownTable([Head, ...str]))
+// console.log(strVal);
 
 interface IIterationType {
   name: string;
@@ -207,8 +222,8 @@ for (let cycle = 0; cycle < 5; cycle++) {
   clearLoading(loadingId, "Done!");
 }
 
-let head = variants;
-const table = new Table({ head: ["", ...head] });
+let Head = ["", ...variants];
+let table: object[] = [];
 
 let strVal = 'Map {\n'
 perfs.forEach((variants, name) => {
@@ -229,9 +244,14 @@ perfs.forEach((variants, name) => {
   strVal += `},\n`;
 })
 
+let str = table.map((x) => {
+  let [key] = Object.keys(x);
+  return [key, ...x[key]]
+})
+
 strVal += `}`;
 
-console.log(table.toString());
+console.log(markdownTable([Head, ...str]))
 console.log(strVal);
 
 

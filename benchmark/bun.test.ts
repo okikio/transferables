@@ -6,7 +6,7 @@ import { getTransferable, getTransferables, hasTransferables } from "../src";
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
 
-import Table from "cli-table3";
+import { markdownTable } from 'markdown-table';
 
 it("structuredClone", async () => {
   let head = [`hasTransferables`, `structuredClone (predefined)`, `getTransferable`, `getTransferable(s)`, `structuredClone (getTransferable)`];
@@ -49,9 +49,8 @@ it("structuredClone", async () => {
     console.log("\n")
   }
 
-  const table = new Table({
-    head: ["", ...head]
-  });
+  let Head = ["", ...head];
+  let table: object[] = [];
 
   let strVal = 'Map {\n'
   perfs.forEach((variants, name) => {
@@ -72,8 +71,13 @@ it("structuredClone", async () => {
     strVal += `},\n`;
   })
 
+  let str = table.map((x) => {
+    let [key] = Object.keys(x);
+    return [key, ...x[key]]
+  })
+
   strVal += `}`;
 
-  console.log(table.toString());
+  console.log(markdownTable([Head, ...str]))
   console.log(strVal);
 })
