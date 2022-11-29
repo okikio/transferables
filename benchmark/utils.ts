@@ -80,7 +80,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     arrbuf_float32: [arrbuf, float32]
   }
 
-  const channel = isChannel && new MessageChannel();
+  const channel = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
   const ports = channel && [channel?.port1, channel?.port2];
   Array.isArray(ports) && transferable.push(...ports) 
 
@@ -173,7 +173,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     transferable.push(float32_.buffer);
     transferable.push(float64_.buffer);
 
-    const channel_ = isChannel && new MessageChannel();
+    const channel_ = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
     const ports_ = channel_ && [channel_.port1, channel_.port2];
 
     Array.isArray(ports_) && transferable.push(...ports_) 
