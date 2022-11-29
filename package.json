@@ -119,7 +119,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
-    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/changelog": "^6.0.2",
     "@semantic-release/git": "^10.0.1",
     "@stdlib/stats-base": "^0.0.7",
     "@types/offscreencanvas": "^2019.7.0",
