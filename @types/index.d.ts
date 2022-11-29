@@ -40,41 +40,32 @@ export declare function isTransferable(obj: unknown): obj is TypeTransferable;
  */
 export declare function filterOutDuplicates<T>(array: T[]): T[];
 /**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * Creates an array of transferable objects which exist in a given input, up to a max number of iterations
  * Thanks @aaorris
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
+ * @param maxCount Maximum number of iterations
  * @returns An array of transferable objects
  */
 export declare function getTransferables(obj: unknown, streams?: boolean, maxCount?: number): TypeTransferable[];
 /**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * An iterator that contains the transferable objects from the input, up to a max number of iterations
  * Thanks @aaorris
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
- * @returns An array of transferable objects
+ * @param maxCount Maximum number of iterations
+ * @returns Iterator that contains the transferable objects from the input
  */
 export declare function getTransferable(obj: unknown, streams?: boolean, maxCount?: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>;
 /**
- * Check if object contains transferable objects
- * Thanks @aaorris
- *
- * @param obj Input object
- * @param depth Maximum depth to look
- * @param streams Includes streams as transferable
- * @returns Whether object contains transferable objects
- */
-/**
- * Check if object contains transferable objects
+ * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
  * Thanks @aaorris
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
- * @returns Whether object contains transferable objects
+ * @param maxCount Maximum number of iterations
+ * @returns Whether input object contains transferable objects
  */
 export declare function hasTransferables(obj: unknown, streams?: boolean, maxCount?: number): boolean;
