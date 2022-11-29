@@ -149,7 +149,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
   }
 
   const dynamic_size_object = {};
-  const len = Math.min(Math.max(size, 1), 1000);
+  const len = Math.min(Math.max(size + 10, 1), 1000);
 
   for (let i = 0; i < len; i++) {
     const arr_ = range(size);
