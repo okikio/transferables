@@ -68,12 +68,12 @@ export function filterOutDuplicates<T>(array: T[]): T[] {
 }
 
 /**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * Creates an array of transferable objects which exist in a given input, up to a max number of iterations
  * Thanks @aaorris
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
+ * @param maxCount Maximum number of iterations
  * @returns An array of transferable objects
  */
 export function getTransferables(obj: unknown, streams = false, maxCount = 10_000): TypeTransferable[] {
@@ -119,13 +119,13 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
 }
 
 /**
- * Create an array of transferable objects which exist in a given object, to a maximum set depth given
+ * An iterator that contains the transferable objects from the input, up to a max number of iterations
  * Thanks @aaorris
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
- * @returns An array of transferable objects
+ * @param maxCount Maximum number of iterations
+ * @returns Iterator that contains the transferable objects from the input
  */
 export function* getTransferable(obj: unknown, streams = false, maxCount = 10_000): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView> {
   const seen = new Set([]);
@@ -189,59 +189,13 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
 }
 
 /**
- * Check if object contains transferable objects
- * Thanks @aaorris
- * 
- * @param obj Input object
- * @param depth Maximum depth to look
- * @param streams Includes streams as transferable
- * @returns Whether object contains transferable objects
- */
-// export function hasTransferables(obj: unknown, depth = 25, streams = false): boolean {
-//   if (depth <= 0) return false;
-
-//   if (streams && isStream(obj)) {
-//     return true;
-//   } else if (isTypedArray(obj) || isTransferable(obj)) {
-//     return true;
-//   }
-
-//   /* 
-//     Streams are circular objects, to avoid an infinite loop 
-//     we need to ensure that the object is not a stream 
-//   */
-//   else if (isObject(obj) && !isStream(obj)) {
-//     const deepValues = [];
-//     const values = Array.isArray(obj) ? obj : Object.values(obj);
-//     const inBreadth = values.some(x => {
-//       if ((streams && isStream(x)) || isTypedArray(x) || isTransferable(x)) return true;
-//       if (isObject(x)) {
-//         const asValues = Array.isArray(obj) ? obj : Object.values(obj); 
-//         const len = asValues.length;
-//         // deepValues.push(...asValues);
-//         for (let j = 0; j < len; j++) {
-//           deepValues.push(asValues[j])
-//         }
-//       }
-//       return false;
-//     });
-
-//     if (inBreadth) return true;
-//     return deepValues.some(x => hasTransferables(x, depth - 1, streams));
-//   }
-
-//   return false;
-// }
-
-
-/**
- * Check if object contains transferable objects
+ * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
  * Thanks @aaorris
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
- * @param maxCount Maximum iteration
- * @returns Whether object contains transferable objects
+ * @param maxCount Maximum number of iterations
+ * @returns Whether input object contains transferable objects
  */
 export function hasTransferables(obj: unknown, streams = false, maxCount = 10_000): boolean {
   let queue = [obj];

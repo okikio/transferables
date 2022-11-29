@@ -4,7 +4,7 @@
 
 [NPM](https://www.npmjs.com/package/transferables) <span style="padding-inline: 1rem">|</span> [GitHub](https://github.com/okikio/transferables#readme) <span style="padding-inline: 1rem">|</span> [Licence](./LICENSE)
 
-A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be transfered between Workers and the main thread\*.
+A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be moved between Workers and the main thread\*.
 
 > _`*` There are many [asterisks](#asterisks) involved in transferable objects, I've listed out some of them to be aware of, but as always, do your own research before using._
 
@@ -64,9 +64,172 @@ import { hasTransferables, getTransferables } from "https://cdn.jsdelivr.net/npm
 
 A couple sites/projects that use `transferables`:
 
+<!-- - [bundlejs](https://bundlejs.com) -->
 - Your site/project here...
   
 <br>
+
+
+## API
+
+The API of `transferables` is pretty straight forward, 
+* `hasTransferables` quickly checks if the input contains at least one [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+* `getTransferable` returns an iterator that contains the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
+* `getTransferables` generates an [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
+* `isObject`, `isTypedArray`, `isStream`, `isMessageChannel`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferable`.
+
+You use them like this:
+
+```ts
+import { hasTransferables, getTransferables, getTransferable } from "transferables";
+
+// data is an object that contains transferable objects
+const data = { /* ... */ }
+
+// Quick check for transferable object
+const containsTransferables = hasTransferables(data);
+
+// Send postMessage with transferables, if they exist
+const transferables = containsTransferables ? getTransferables(data) : undefined;
+postMessage(data, transferables);
+
+// Clone data with transferables, if they exist
+const transferablesIterator = containsTransferables ? Array.from(getTransferable(data)) : undefined;
+structuredClone(data, transferablesIterator);
+
+// isObject
+isObject(data); // true
+
+// isTypedArray
+isTypedArray(data); // false
+
+// isStream
+isStream(data); // false
+
+// isMessageChannel
+isMessageChannel(data); // false
+
+// isTransferable
+isTransferable(data); // false
+
+// filterOutDuplicates
+filterOutDuplicates([1, 2, 3, 3, 4, 5, 5]); // [1, 2, 3, 4, 5]
+```
+
+
+### Advanced Usage
+
+> Note: `(Readable/Writeable/Transform)streams` aren't transferables in all js runtimes; devs can decide based off the runtime whether to support streams or not
+ 
+> Note: depending on how large your object is you may blow through the `maxCount` (max iteration count), if you need to change the max number of iterations remember that--that might cause the thread to be blocked while it's computing.
+
+```ts
+/**
+ * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
+ * Thanks @aaorris
+ * 
+ * @param obj Input object
+ * @param streams Includes streams as transferable
+ * @param maxCount Maximum number of iterations
+ * @returns Whether input object contains transferable objects
+ */
+hasTransferables(data: unknown, streams: boolean, maxCount: number): boolean
+
+
+/**
+ * Creates an array of transferable objects which exist in a given input, up to a max number of iterations
+ * ...
+ * @returns An array of transferable objects
+ */
+getTransferables(data: unknown, streams: boolean, maxCount: number): TypeTransferable[]
+
+
+/**
+ * An iterator that contains the transferable objects from the input, up to a max number of iterations
+ * ...
+ * @returns Iterator that contains the transferable objects from the input
+ */
+getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>
+```
+
+<br>
+
+## Benchmarks
+
+To gurantee performance
+
+### Node 
+
+The benchmark was run u
+
+<br>
+
+## Asterisks\*
+
+There are a lot of asterisks involved with transferable objects. 
+* First, not all transferable objects are supported in all browsers.
+* Second, not all transferable objects can be transfered between Workers and the main thread.
+* Third, `structuredClone` when not using transferable objects crashes if the object to be cloned contains transferable objects.
+* Fourth, and most important only use this library when you don't know the shape of the object to be transfered, as traversing the input object adds a delay.
+
+There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to either a lack of usage or just not wanting to add the feature. 
+
+This is a list of the issues that I have found so far.
+
+* Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
+* [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
+* `OffscreenCanvas` is not supported on Safari
+* In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
+
+So, as always, do your own research before using.
+
+There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
+
+### Transferable objects
+
+The following are [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects):
+
+- `ArrayBuffer`
+- `MessagePort`
+- `ImageBitmap`
+- `ReadableStream`
+- `WritableStream`
+- `TransformStream`
+- `DataView`
+- `AudioData`
+- `ImageBitmap`
+- `VideoFrame`
+- `OffscreenCanvas`
+- `RTCDataChannel`
+
+From the brief research I've done on the topic, I've found that 
+
+- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's the only type of data buffer that can be transferred. 
+- **`TypedArray`**: A data view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They ***can't*** directly be transferred between Workers and the main thread, but the `ArrayBuffer` they contain can. Due to this fact, it's possible if you can have multiple `TypedArray`'s that all share the same `ArrayBuffer` only that `ArrayBuffer` is transfered. 
+- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread. With little to now problems and good support across the board except for node which doesn't support `MessagePort` 
+- **`ImageBitmap`** (`^`): An image that can be transferred between Workers and the main thread. It represents a bitmap image which can be drawn to a `<canvas>` without undue latency. It can also be used as textures in WebGL.
+- **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
+- **`(Readable/Writable/Transform)Stream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects. Support across js runtimes is very spotty
+
+
+> _`^` unverified/untested - Make sure to do your own research for this specific use case._
+> _`~` spotty support - Check below for js runtimes where it's ok to use_
+
+> 
+
+<br>
+
+
+
+
+## Limitations
+
+There are a couple limitations to using transferable objects with Workers and the main thread:
+
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
+
+- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
+
 
 
 
@@ -101,150 +264,6 @@ be cloned from the main thread to a Worker, and vice versa. You can read more ab
 
 <br />
 
-## API
-
-The API of `transferables` is pretty straight forward, 
-* `hasTransferables` function check if an object contains [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
-* `getTransferables` function generates an array of values from the input object that are [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
-* `isObject`, `isTypedArray`, `isTransferable`, `isStream`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferables`.
-
-You use them like this:
-
-```ts
-import { hasTransferables, getTransferables } from "transferables";
-
-// data is an object that contains transferable objects
-
-
-// Send postMessage with transferables
-const transferables = getTransferables(data);
-postMessage(data, transferables);
-
-// isObject
-isObject(data); // true
-
-// isTypedArray
-isTypedArray(data); // false
-
-// isStream
-isStream(data); // false
-
-// isTransferable
-isTransferable(data); // true
-
-// filterOutDuplicates
-filterOutDuplicates([1, 2, 3, 3, 4, 5, 5]); // [1, 2, 3, 4, 5]
-
-```
-
-
-<br>
-
-## Asterisks
-
-There are a lot of asterisks involved with transferable objects. 
-* First, not all transferable objects are supported in all browsers.
-* Second, not all transferable objects can be transfered between Workers and the main thread.
-* Third, not all transferable objects are transfered between Workers and the main thread.
-* Fourth, not all transferable objects are transfered between Workers and the main thread in the same way.
-* Fifth, not all transferable objects are transfered between Workers and the main thread in the same way in all browsers.
-
-So, as always, do your own research before using.
-
-
-There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
-
-### Transferable objects
-
-The following are [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects):
-
-- `ArrayBuffer`
-- `MessagePort`
-- `ImageBitmap`
-- `ReadableStream`
-- `WritableStream`
-- `TransformStream`
-- `DataView`
-- `AudioData`
-- `ImageBitmap`
-- `VideoFrame`
-- `OffscreenCanvas`
-- `RTCDataChannel`
-
-
-
-There are many asterisks involved in transferable objects...there's a lot. I've sorted out some of the things to be aware of, but as always, do your own research before using.
-
-- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's the only type of array that can be transferred. It's also the only type of array that can be used in SharedArrayBuffers.
-- **`ArrayBufferView`**: An array view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They can be transferred between Workers and the main thread. They're also the only type of array that can be used in SharedArrayBuffers.
-- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread.
-- **`ImageBitmap`**: An image that can be transferred between Workers and the main thread. They can also be used as textures in WebGL.
-- **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
-- **`ReadableStream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects.
-
-
-> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of the things to be  aware of, but as always, do your own research before using._
-
-### Typed Arrays
-
-Typed arrays are not transferable objects, but they can be transfered between Workers and the main thread\*.
-
-> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of the things to be  aware of, but as always, do your own research before using._
-
-### Streams
-
-Streams are not transferable objects, but they can be transfered between Workers and the main thread\*.
-
-> _`*` There are many [asterisks](#asterisks) involved in transferable objects...there's a lot. I've sorted out some of
-> 
-
-<br>
-
-
-
-There are a few asterisks that you should be aware of, before using `transferables`:
-
-- `transferables` doesn't check for `SharedArrayBuffer` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `MessagePort` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `ReadableStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `WritableStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `TransformStream` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `File` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `FileList` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `Blob` objects, because they're not supported in all browsers. If you're using them, you can check for them using `ArrayBuffer.isView` or `ArrayBuffer.isView`.
-- `transferables` doesn't check for `ImageData` objects
-
-## Benchmarks
-
-
-## Limitations
-
-There are a couple limitations to using transferable objects with Workers and the main thread:
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
-
-
-
-There are a couple limitations to using transferable objects with Workers and the main thread:
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
-
-
-
-## Asterisks\*
-
-
-There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to just not wanting to add the feature. 
-
-This is a list of the issues that I have found so far.
-* Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
-* [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
-* `OffscreenCanvas` is not supported on Safari
-* In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
 
 
 ## Browser Support
