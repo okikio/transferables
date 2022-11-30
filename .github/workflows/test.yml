@@ -11,7 +11,7 @@ on:
       - '*.js'
       - '*.json'
       - '*.yaml'
-      - '.github/test.yml'
+      - '.github/../test.yml'
       - 'src/**/*'
       - 'tests/**/*'
 
