@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('Benchmark transferables on browsers', async ({ page }) => {
+test('Benchmark transferables on browsers', async ({ page, browser }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
@@ -37,4 +37,6 @@ test('Benchmark transferables on browsers', async ({ page }) => {
 
   console.log(`postMessage (browser)`)
   console.log(postMessageResult.getAttribute("data-value"))
+
+  await browser.close();
 });
