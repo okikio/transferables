@@ -11,7 +11,7 @@ on:
       - '*.js'
       - '*.json'
       - '*.yaml'
-      - '.github/browser-benchmark.yml'
+      - '.github/**/browser-benchmark.yml'
       - 'src/**/*'
       - 'benchmark/**/*'
 
