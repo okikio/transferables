@@ -42,7 +42,7 @@
     "benchmark:deno": "deno run --allow-run --allow-env --allow-read --allow-hrtime ./benchmark/deno.ts",
     "benchmark:deno:worker": "deno run --allow-run --allow-env --allow-read --allow-hrtime ./benchmark/deno.worker.ts",
     "benchmark:bun": "bun run vitest run --passWithNoTests ./benchmark/bun.test.ts",
-    "benchmark": "pnpm benchmark:node && pnpm benchmark:deno && benchmark:deno:worker && pnpm benchmark:bun",
+    "benchmark": "pnpm benchmark:node && pnpm benchmark:deno && pnpm benchmark:deno:worker && pnpm benchmark:bun",
     "benchmark:all": "pnpm benchmark && pnpm benchmark:browser",
     "pre-release": "pnpm test:run && pnpm build",
     "semantic-release": "semantic-release"
