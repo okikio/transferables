@@ -30,12 +30,6 @@ jobs:
         with:
           # File containing the version Spec of the version to use.  Examples: .nvmrc, .node-version, .tool-versions.
           node-version-file: '.nvmrc' # optional
-          
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        
-      - name: Setup Bun
-        uses: xHyroM/setup-bun@v0.1.8
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
