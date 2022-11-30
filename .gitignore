@@ -107,3 +107,6 @@ dist
 lib/
 docs/
 @types/
+/test-results/
+/playwright-report/
+/playwright/.cache/

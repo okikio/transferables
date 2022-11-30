@@ -1,0 +1,8 @@
+{
+  "deno.enablePaths": [
+    "./benchmark/deno.ts",
+    "./benchmark/deno.worker.ts",
+    "./benchmark/workers/deno.ts"
+  ],
+  "deno.unstable": true
+}

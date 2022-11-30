@@ -10,7 +10,7 @@ interface IIterationType {
   variant: string;
   cycle: number;
   i: number;
-  obj?: object;
+  obj?: Record<string, unknown>;
 }
 
 interface ICreateWorkerIteratorOptions {
@@ -47,20 +47,20 @@ for (let cycle = 0; cycle < 5; cycle++) {
       const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
       await add(sizeStr, variant, async () => {
-        await createWorkerPromise({ index, variant });
+        await createWorkerPromise({ index, variant, cycle });
       })
     }
   }
 }
 
-let Head = ["", ...variants];
-let table: object[] = [];
+const Head = ["", ...variants];
+const table: Record<string, string[]>[] = [];
 
 let strVal = 'Map {\n'
 perfs.forEach((variants, name) => {
   strVal += `  "${name}" => Map { `;
 
-  let obj = {};
+  const obj: Record<string, string[]> = {};
   variants.forEach((durations, variant) => {
     const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
@@ -75,8 +75,8 @@ perfs.forEach((variants, name) => {
   strVal += `},\n`;
 })
 
-let str = table.map((x) => {
-  let [key] = Object.keys(x);
+const str = table.map((x) => {
+  const [key] = Object.keys(x);
   return [key, ...x[key]]
 })
 
@@ -84,6 +84,7 @@ strVal += `}`;
 
 console.log(markdownTable([Head, ...str]))
 console.log(strVal);
+
 
 
 

@@ -17,7 +17,7 @@
   },
   "include": [
     "src"
-  ],
+, "benchmark/fixtures"  ],
   "exclude": [
     "node_modules"
   ]

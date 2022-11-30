@@ -13,6 +13,8 @@ self.onmessage = ({ data }) => {
 
   try {
     let msg = { name, variant, cycle, i, obj };
+    console.log({ name, variant, cycle, i });
+    
     switch (variant) {
       case "postMessage": {
         self.postMessage(msg);
