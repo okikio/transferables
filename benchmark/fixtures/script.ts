@@ -8,7 +8,7 @@ const structuredCloneBtn: HTMLButtonElement = document.querySelector("#structure
 const postMessageBtn: HTMLButtonElement = document.querySelector("#postMessage");
 
 const structuredCloneResultEl: HTMLDivElement = document.createElement("div");
-const postMessageResultEl: HTMLDivElement = document.querySelector("div");
+const postMessageResultEl: HTMLDivElement = document.createElement("div");
 
 structuredCloneBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await structuredCloneBenchmark(e);
