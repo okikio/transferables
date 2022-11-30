@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+test.afterAll(async ({ browser }) => {
+  await browser.close();
+})
+
 test('Benchmark transferables on browsers', async ({ page, browser }) => {
   await page.goto('/');
 
@@ -38,5 +42,5 @@ test('Benchmark transferables on browsers', async ({ page, browser }) => {
   console.log(`postMessage (browser)`)
   console.log(postMessageResult.getAttribute("data-value"))
 
-  await browser.close();
+  // await browser.close();
 });
