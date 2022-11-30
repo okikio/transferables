@@ -7,18 +7,12 @@ on:
   push:
     branches: [main]
     paths:
-      - '.typedoc/**/*'
       - '*.ts'
       - '*.js'
       - '*.json'
-      - '*.css'
       - '*.yaml'
-      - 'README.md'
-      - '.github/**/*.yml'
+      - '.github/build.yml'
       - 'src/**/*'
-      - 'media/**/*'
-      - 'tests/**/*'
-      - 'benchmark/**/*'
 
 jobs:
   build:
