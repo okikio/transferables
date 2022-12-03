@@ -256,6 +256,10 @@ export async function add(name: string, variant: string, fn?: Function) {
  * This is a time formatter that enables us to format elapsed time into human readable measurements of time 
  */
 export const timeFormatter = new Intl.RelativeTimeFormat("en", {
-  style: "narrow",
   numeric: "auto",
+  style: "long",
 });
+
+export function timeFormat(time: number) {
+  return timeFormatter.format(time, "seconds").replace("seconds", "ms");
+}

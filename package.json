@@ -51,7 +51,8 @@
   "ultra": {
     "concurrent": [
       "pre-release",
-      "benchmark"
+      "benchmark",
+      "benchmark:all"
     ]
   },
   "release": {

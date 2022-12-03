@@ -1,4 +1,4 @@
-import { MB, add, perfs, timeFormatter } from "../utils";
+import { MB, add, perfs, timeFormat } from "../utils";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
@@ -68,9 +68,9 @@ export default async function (e: MouseEvent) {
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
       obj[name] ??= [];
-      obj[name].push(`${timeFormatter.format(mean / 1000, "seconds")} ± ${timeFormatter.format(std / 1000, "seconds").replace("in ", "")}`);
+      obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
 
-      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x / 1000, "seconds")).join(", ")}], `
+      strVal += `"${variant}" => [${durations.map(x => timeFormat(x)).join(", ")}], `
 
     });
 

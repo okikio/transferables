@@ -158,35 +158,40 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 
 To gurantee performance
 
-### Node 
+* `Node 19` - This benchmark was run using `vitest`
 
-This benchmark was run using `vitest`
+<details>
+<summary>Node</summary>
 
-|            | hasTransferables   | structuredClone (predefined) | getTransferable       | getTransferable(s)   | structuredClone (getTransferable) |
-| ---------- | ------------------ | ---------------------------- | --------------------- | -------------------- | --------------------------------- |
-| 1 B        | in 0.107s ± 0.172s | in 0.184s ± 0.09s            | in 0.138s ± 0.157s    | in 0.079s ± 0.1s     | in 0.136s ± 0.028s                |
-| 2 B        | in 0.018s ± 0.014s | in 0.109s ± 0.012s           | in 0.058s ± 0.037s    | in 0.043s ± 0.028s   | in 0.109s ± 0.008s                |
-| 4 B        | in 0.014s ± 0.006s | in 0.115s ± 0.024s           | in 0.063s ± 0.045s    | in 0.045s ± 0.036s   | in 0.117s ± 0.017s                |
-| 8 B        | in 0.014s ± 0.005s | in 0.111s ± 0.01s            | in 0.059s ± 0.035s    | in 0.052s ± 0.047s   | in 0.109s ± 0.011s                |
-| 16 B       | in 0.014s ± 0.005s | in 0.107s ± 0.005s           | in 0.063s ± 0.039s    | in 0.046s ± 0.033s   | in 0.107s ± 0.007s                |
-| 32 B       | in 0.014s ± 0.005s | in 0.119s ± 0.019s           | in 0.065s ± 0.037s    | in 0.047s ± 0.03s    | in 0.118s ± 0.011s                |
-| 64 B       | in 0.014s ± 0.005s | in 0.118s ± 0.005s           | in 0.076s ± 0.048s    | in 0.057s ± 0.04s    | in 0.121s ± 0.007s                |
-| 128 B      | in 0.015s ± 0.006s | in 0.138s ± 0.007s           | in 0.108s ± 0.081s    | in 0.091s ± 0.07s    | in 0.155s ± 0.007s                |
-| 256 B      | in 0.017s ± 0.009s | in 0.182s ± 0.019s           | in 0.18s ± 0.148s     | in 0.139s ± 0.13s    | in 0.197s ± 0.037s                |
-| 512 B      | in 0.019s ± 0.011s | in 0.285s ± 0.054s           | in 0.2s ± 0.083s      | in 0.158s ± 0.07s    | in 0.267s ± 0.015s                |
-| 1.024 kB   | in 0.027s ± 0.014s | in 0.437s ± 0.014s           | in 0.335s ± 0.1s      | in 0.274s ± 0.097s   | in 0.446s ± 0.014s                |
-| 2.048 kB   | in 0.047s ± 0.039s | in 0.766s ± 0.033s           | in 0.625s ± 0.172s    | in 0.46s ± 0.164s    | in 0.759s ± 0.015s                |
-| 4.096 kB   | in 0.066s ± 0.047s | in 1.427s ± 0.036s           | in 1.192s ± 0.368s    | in 0.895s ± 0.311s   | in 1.495s ± 0.112s                |
-| 8.192 kB   | in 0.152s ± 0.178s | in 2.74s ± 0.096s            | in 1.98s ± 0.077s     | in 1.837s ± 0.831s   | in 2.788s ± 0.123s                |
-| 16.384 kB  | in 0.29s ± 0.203s  | in 5.696s ± 0.467s           | in 4.04s ± 0.155s     | in 2.999s ± 0.052s   | in 5.591s ± 0.222s                |
-| 32.768 kB  | in 0.456s ± 0.207s | in 10.809s ± 0.155s          | in 12.452s ± 8.693s   | in 6.523s ± 1.149s   | in 10.794s ± 0.07s                |
-| 65.536 kB  | in 0.948s ± 0.134s | in 22.749s ± 1.333s          | in 16.225s ± 0.227s   | in 12.532s ± 0.954s  | in 22.482s ± 2.391s               |
-| 131.072 kB | in 2.745s ± 1s     | in 45.608s ± 2.673s          | in 34.61s ± 1.621s    | in 26.465s ± 1.563s  | in 42.466s ± 0.529s               |
-| 262.144 kB | in 6.08s ± 0.921s  | in 98.637s ± 18.954s         | in 72.435s ± 2.186s   | in 52.642s ± 2.007s  | in 85.447s ± 2.417s               |
-| 524.288 kB | in 8.815s ± 0.62s  | in 172.039s ± 3.319s         | in 136.381s ± 2.384s  | in 100.077s ± 4.204s | in 170.564s ± 4.815s              |
-| 1.049 MB   | in 17.81s ± 0.731s | in 351.208s ± 6.101s         | in 282.361s ± 18.126s | in 198.821s ± 3.71s  | in 360.749s ± 12.424s             |
+|            | hasTransferables | structuredClone (predefined) | getTransferable    | getTransferable(s) | structuredClone (getTransferable) |
+| ---------- | ---------------- | ---------------------------- | ------------------ | ------------------ | --------------------------------- |
+| 1 B        | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 2 B        | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 4 B        | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 8 B        | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 16 B       | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 32 B       | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 64 B       | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 128 B      | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 256 B      | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 512 B      | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 1.024 kB   | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 2.048 kB   | now ± now        | now ± now                    | now ± now          | now ± now          | now ± now                         |
+| 4.096 kB   | now ± now        | in 0.007s ± now              | in 0.008s ± now    | in 0.006s ± now    | in 0.008s ± now                   |
+| 8.192 kB   | now ± now        | in 0.015s ± now              | in 0.017s ± now    | in 0.012s ± now    | in 0.014s ± now                   |
+| 16.384 kB  | now ± now        | in 0.031s ± now              | in 0.035s ± now    | in 0.026s ± now    | in 0.03s ± now                    |
+| 32.768 kB  | now ± now        | in 0.061s ± now              | in 0.068s ± now    | in 0.046s ± now    | in 0.062s ± now                   |
+| 65.536 kB  | now ± now        | in 0.123s ± now              | in 0.135s ± now    | in 0.093s ± now    | in 0.131s ± 0.017s                |
+| 131.072 kB | now ± now        | in 0.248s ± now              | in 0.277s ± 0.016s | in 0.186s ± now    | in 0.247s ± now                   |
+| 262.144 kB | in 0.006s ± now  | in 0.572s ± 0.008s           | in 0.529s ± 0.005s | in 0.359s ± now    | in 0.545s ± 0.036s                |
+| 524.288 kB | in 0.011s ± now  | in 1.188s ± 0.023s           | in 1.048s ± 0.012s | in 0.718s ± now    | in 1.215s ± now                   |
+| 1.049 MB   | in 0.02s ± now   | in 2.153s ± 0.155s           | in 2.157s ± 0.048s | in 1.44s ± now     | in 2.351s ± 0.008s                |
 
-### Deno
+</details>
+
+
+<details>
+<summary>Deno</summary>
 
 |            | hasTransferables            | structuredClone (predefined)  | getTransferable               | getTransferable(s)            | structuredClone (getTransferable) |
 | ---------- | --------------------------- | ----------------------------- | ----------------------------- | ----------------------------- | --------------------------------- |
@@ -212,7 +217,11 @@ This benchmark was run using `vitest`
 | 524.288 kB | in 12.437 sec. ± 1.746 sec. | in 208.805 sec. ± 15.47 sec.  | in 139.576 sec. ± 12.81 sec.  | in 85.163 sec. ± 6.734 sec.   | in 213.606 sec. ± 15.134 sec.     |
 | 1.049 MB   | in 11.897 sec. ± 0.307 sec. | in 472.841 sec. ± 65.988 sec. | in 296.482 sec. ± 61.616 sec. | in 191.668 sec. ± 25.715 sec. | in 509.71 sec. ± 58.659 sec.      |
 
-### Deno (Worker)
+</details>
+
+
+<details>
+<summary>Deno (Worker)</summary>
 
 |            | postMessage                    | postMessage (predefined)      | hasTransferables              | getTransferable               | getTransferable(s)            |
 | ---------- | ------------------------------ | ----------------------------- | ----------------------------- | ----------------------------- | ----------------------------- |
@@ -238,7 +247,11 @@ This benchmark was run using `vitest`
 | 524.288 kB | in 393.655 sec. ± 22.258 sec.  | in 354.24 sec. ± 15.541 sec.  | in 384.12 sec. ± 3.224 sec.   | in 515.708 sec. ± 9.455 sec.  | in 512.903 sec. ± 30.949 sec. |
 | 1.049 MB   | in 802.321 sec. ± 125.163 sec. | in 707.707 sec. ± 39.558 sec. | in 747.069 sec. ± 21.797 sec. | in 980.326 sec. ± 22.111 sec. | in 909.461 sec. ± 26.814 sec. |
 
-### Bun
+</details>
+
+
+<details>
+<summary>Bun</summary>
 
 |            | hasTransferables    | structuredClone (predefined) | getTransferable       | getTransferable(s)    | structuredClone (getTransferable) |
 | ---------- | ------------------- | ---------------------------- | --------------------- | --------------------- | --------------------------------- |
@@ -264,7 +277,7 @@ This benchmark was run using `vitest`
 | 524.288 kB | in 8.449s ± 0.539s  | in 187.417s ± 26.78s         | in 149.84s ± 30.415s  | in 110.388s ± 24.13s  | in 198.92s ± 50.062s              |
 | 1.049 MB   | in 24.285s ± 6.062s | in 410.515s ± 99.12s         | in 312.833s ± 70.597s | in 218.127s ± 22.755s | in 364.738s ± 14.092s             |
 
-
+</details>
 
 <br>
 

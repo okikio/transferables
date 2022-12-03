@@ -1,4 +1,4 @@
-import { MB, add, perfs, timeFormatter } from "./utils.ts";
+import { MB, add, perfs, timeFormat } from "./utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -65,9 +65,9 @@ perfs.forEach((variants, name) => {
     const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
     obj[name] ??= [];
-    obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
+    obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
 
-    strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x, "seconds")).join(", ")}], `
+    strVal += `"${variant}" => [${durations.map(x => timeFormat(x)).join(", ")}], `
 
   });
 
