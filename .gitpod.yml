@@ -34,6 +34,10 @@ tasks:
       pnpm install &&
       pnpm playwright:init
     command: >
+      nvm install &&
+      npm install -g pnpm &&
+      pnpm install &&
+      pnpm playwright:init &&
       pnpm build 
 vscode:
   extensions:
