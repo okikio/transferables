@@ -135,30 +135,29 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
 
   while (queue.length > 0 && maxCount > 0) {
     for (let item of queue) {
-      const newItem = !seen.has(item);
+      if (seen.has(item)) continue;
+
       if (isTypedArray(item)) {
-        if (newItem) {
-          const { buffer } = item;
-          if (!seen.has(buffer)) {
-            yield buffer;
-            seen.add(buffer);
-          }
+        const { buffer } = item;
+        if (seen.has(buffer)) continue;
 
-          seen.add(item);
-        }
+        yield buffer;
+        seen.add(buffer);
+        seen.add(item);
+      } else if (isTransferable(item)) {
+        yield item;
+        seen.add(item);
       } else if (isMessageChannel(item)) {
-        if (newItem) {
-          yield item.port1;
-          seen.add(item.port1);
+        if (seen.has(item.port1)) continue;
 
-          yield item.port2;
-          seen.add(item.port2);
-        }
-      } else if (isTransferable(item) || (streams && isStream(item))) {
-        if (newItem) {
-          yield item;
-          seen.add(item);
-        }
+        yield item.port1;
+        yield item.port2;
+        seen.add(item.port1);
+        seen.add(item.port2);
+        seen.add(item);
+      } else if ((streams && isStream(item))) {
+        yield item;
+        seen.add(item);
       } 
 
       /**  
