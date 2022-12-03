@@ -61,9 +61,9 @@ it("structuredClone", async () => {
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
       obj[name] ??= [];
-      obj[name].push(`${timeFormatter.format(mean, "seconds")} ± ${timeFormatter.format(std, "seconds").replace("in ", "")}`);
+      obj[name].push(`${timeFormatter.format(mean / 1000, "seconds")} ± ${timeFormatter.format(std / 1000, "seconds").replace("in ", "")}`);
 
-      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x, "seconds")).join(", ")}], `
+      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x / 1000, "seconds")).join(", ")}], `
 
     });
 
