@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-test.afterAll(async ({ browser }) => {
-  await browser.close();
-})
-
 test('Benchmark transferables on browsers', async ({ page, browser }) => {
   await page.goto('/');
 
@@ -24,7 +20,19 @@ test('Benchmark transferables on browsers', async ({ page, browser }) => {
   await structuredCloneResult.waitFor();
 
   console.log(`structuredClone (browser)`)
-  console.log(structuredCloneResult.getAttribute("data-value"))
+  console.log(await structuredCloneResult.getAttribute("data-value"))
+
+  page.on('console', (msg) => {
+    if (msg && msg.text) {
+      if (typeof msg.text === 'function') {
+        console.log('PAGE LOG:', msg.text());
+      } else {
+        console.log('PAGE LOG:', msg.text);
+      }
+    } else {
+      console.log('PAGE LOG:', msg);
+    }
+  });
 
   // create a locator
   const postMessageBtn = page.locator('button#postMessage');
@@ -40,7 +48,5 @@ test('Benchmark transferables on browsers', async ({ page, browser }) => {
   await postMessageResult.waitFor();
 
   console.log(`postMessage (browser)`)
-  console.log(postMessageResult.getAttribute("data-value"))
-
-  // await browser.close();
+  console.log(await postMessageResult.getAttribute("data-value"));
 });
