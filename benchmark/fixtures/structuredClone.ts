@@ -9,38 +9,36 @@ import { markdownTable } from 'markdown-table';
 export default async function (e: MouseEvent) {
   e.preventDefault();
 
-  let head = [`hasTransferables`, `structuredClone (predefined)`, `getTransferable`, `getTransferable(s)`, `structuredClone (getTransferable)`];
+  let head = [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable)`, `structuredClone (getTransferables)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
       const sizeStr = bytes(num, { maximumFractionDigits: 3 });
       const obj = generateObj(num / MB, { streams: false });
+      const obj1 = generateObj(num / MB, { streams: false });
+      const obj2 = generateObj(num / MB, { streams: false });
 
-      let has: boolean | null = null;
       await add(sizeStr, `hasTransferables`, () => {
-        has = hasTransferables(obj, true);
+        hasTransferables(obj, true);
       })
 
-      let clonedObj: any = {};
-      await add(sizeStr, `structuredClone (predefined)`, () => {
+      await add(sizeStr, `structuredClone (manually)`, () => {
         try {
-          clonedObj = structuredClone(obj, has ? { transfer: obj.transferable } : undefined);
+          structuredClone(obj, { transfer: obj.transferable });
         } catch (e) { console.warn(e); }
       })
 
-      let transferItt: any[] | null = null;
-      await add(sizeStr, `getTransferable`, () => {
-        transferItt = has ? Array.from(getTransferable(clonedObj, true)) : [];
-      })
-
-      let transferGen: any[] | null = null;
-      await add(sizeStr, `getTransferable(s)`, () => {
-        transferGen = has ? getTransferables(clonedObj, true) : [];
+      await add(sizeStr, `structuredClone (getTransferable)`, () => {
+        try {
+          const transfer = Array.from(getTransferable(obj1, true)) as Transferable[];
+          structuredClone(obj1, { transfer });
+        } catch (e) { console.warn(e); }
       })
 
       await add(sizeStr, `structuredClone (getTransferables)`, () => {
         try {
-          structuredClone(clonedObj, transferGen && transferGen.length > 0 ? { transfer: transferGen } : undefined);
+          const transfer = getTransferables(obj2, true) as Transferable[];
+          structuredClone(obj2, { transfer });
         } catch (e) { console.warn(e); }
       })
 

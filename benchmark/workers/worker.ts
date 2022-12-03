@@ -16,25 +16,25 @@ self.onmessage = ({ data }) => {
     console.log({ name, variant, cycle, i });
     
     switch (variant) {
-      case "postMessage": {
-        self.postMessage(msg);
-        break;
-      }
-      case "postMessage (predefined)": {
-        self.postMessage(msg, obj.transferable);
-        break;
-      }
       case "hasTransferables": {
         hasTransferables(obj, true);
         self.postMessage(msg);
         break;
       }
-      case "getTransferable": {
+      case "postMessage (no transfers)": {
+        self.postMessage(msg);
+        break;
+      }
+      case "postMessage (manually)": {
+        self.postMessage(msg, obj.transferable);
+        break;
+      }
+      case "postMessage (getTransferable)": {
         const transferItt: any[] | null = Array.from(getTransferable(obj, true));
         self.postMessage(msg, transferItt);
         break;
       }
-      case "getTransferable(s)": {
+      case "postMessage (getTransferables)": {
         const transferGen: any[] | null = getTransferables(obj, true);
         self.postMessage(msg, transferGen);
         break;

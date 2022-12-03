@@ -41,7 +41,7 @@ async function createWorkerPromise({ index, cycle = 0, variant }: ICreateWorkerI
 export default async function (e: MouseEvent) {
   e.preventDefault();
 
-  const variants = [`postMessage`, `postMessage (predefined)`, `hasTransferables`, `getTransferable`, `getTransferable(s)`];
+  const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable)`, `postMessage (getTransferables)`];
   const maxSize = 1.6;
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let variant of variants) {

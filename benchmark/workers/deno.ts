@@ -12,29 +12,29 @@ self.onmessage = ({ data }) => {
   const obj = generateObj(num / MB, { streams: false, channel: false });
 
   try {
-    let msg = { name, variant, cycle, i, obj };
+    const msg = { name, variant, cycle, i, obj };
     switch (variant) {
-      case "postMessage": {
-        self.postMessage(msg);
-        break;
-      }
-      case "postMessage (predefined)": {
-        self.postMessage(msg, obj.transferable);
-        break;
-      }
       case "hasTransferables": {
         hasTransferables(obj, true);
         self.postMessage(msg);
         break;
       }
-      case "getTransferable": {
-        const transferItt: any[] | null = Array.from(getTransferable(obj, true));
-        self.postMessage(msg, transferItt as Transferable[]);
+      case "postMessage (no transfers)": {
+        self.postMessage(msg);
         break;
       }
-      case "getTransferable(s)": {
-        const transferGen: any[] | null = getTransferables(obj, true);
-        self.postMessage(msg, transferGen as Transferable[]);
+      case "postMessage (manually)": {
+        self.postMessage(msg, obj.transferable);
+        break;
+      }
+      case "postMessage (getTransferable)": {
+        const transferItt: Transferable[] | null = Array.from(getTransferable(obj, true));
+        self.postMessage(msg, transferItt);
+        break;
+      }
+      case "postMessage (getTransferables)": {
+        const transferGen: Transferable[] | null = getTransferables(obj, true);
+        self.postMessage(msg, transferGen);
         break;
       }
     }
