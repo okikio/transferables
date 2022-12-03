@@ -1,4 +1,4 @@
-import { MB, generateObj, add, perfs, timeFormatter } from "./utils";
+import { MB, generateObj, add, perfs } from "./utils";
 
 import { it } from 'vitest';
 import { getTransferable, getTransferables, hasTransferables } from "../src";
@@ -61,9 +61,9 @@ it("structuredClone", async () => {
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
       obj[name] ??= [];
-      obj[name].push(`${timeFormatter.format(mean / 1000, "seconds")} ± ${timeFormatter.format(std / 1000, "seconds").replace("in ", "")}`);
+      obj[name].push(`${mean / 1000} ± ${std / 1000} secs`);
 
-      strVal += `"${variant}" => [${durations.map(x => timeFormatter.format(x / 1000, "seconds")).join(", ")}], `
+      strVal += `"${variant}" => [${durations.map(x => `${x / 1000} secs`).join(", ")}], `
 
     });
 
