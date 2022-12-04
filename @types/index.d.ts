@@ -12,6 +12,13 @@ export declare const RTCDataChannel: {
 export declare type TypeTypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array;
 export declare type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream | ImageBitmap | OffscreenCanvas | RTCDataChannel;
 /**
+ * Tests if certain transferable objects are actually supported in a specific js environment
+ */
+export declare function isSupported(): {
+    streams: boolean;
+    channel: boolean;
+};
+/**
  * Check if an object is an object or a function (because functions also count as objects)
  */
 export declare function isObject(obj: unknown): obj is object | Function;
