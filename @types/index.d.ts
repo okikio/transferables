@@ -15,8 +15,8 @@ export declare type TypeTransferable = ArrayBuffer | MessagePort | ReadableStrea
  * Tests if certain transferable objects are actually supported in a specific js environment
  */
 export declare function isSupported(): {
-    streams: boolean;
     channel: boolean;
+    streams: boolean;
 };
 /**
  * Check if an object is an object or a function (because functions also count as objects)
