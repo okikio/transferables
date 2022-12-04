@@ -1,15 +1,9 @@
 /// <reference lib="webworker" />
-import { MB, generateObj } from "../utils.ts";
 import { getTransferable, getTransferables, hasTransferables } from "../../src/index.ts";
 
 self.onmessage = ({ data }) => {
-  const { name, variant, cycle, i } = data;
-  const num = Math.pow(2, i);
-
-  /**
-   * Deno doesn't support transferable streams
-   */
-  const obj = generateObj(num / MB, { streams: false, channel: false });
+  const { name, variant, cycle, i, obj } = data;
+  console.log({ name, variant, cycle, i })
 
   try {
     const msg = { name, variant, cycle, i, obj };
@@ -28,13 +22,13 @@ self.onmessage = ({ data }) => {
         break;
       }
       case "postMessage (getTransferable)": {
-        const transferItt: Transferable[] | null = Array.from(getTransferable(obj, true));
-        self.postMessage(msg, transferItt);
+        const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+        self.postMessage(msg, transfer);
         break;
       }
       case "postMessage (getTransferables)": {
-        const transferGen: Transferable[] | null = getTransferables(obj, true);
-        self.postMessage(msg, transferGen);
+        const transfer = getTransferables(obj, true) as Transferable[];
+        self.postMessage(msg, transfer);
         break;
       }
     }

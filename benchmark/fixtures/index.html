@@ -11,6 +11,11 @@
   <button id="structuredClone" type="button">structuredClone</button>
   <button id="postMessage" type="button">postMessage</button>
 
-  <script type="module" src="./script.ts"></script>
+  <script type="module">
+    import { structuredCloneBtn } from "./main";
+    console.log({
+      structuredCloneBtn: structuredCloneBtn.id
+    })
+  </script>
 </body>
 </html>

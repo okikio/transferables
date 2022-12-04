@@ -1,4 +1,4 @@
-import { MB, generateObj, add, perfs, timeFormat } from "./utils";
+import { MB, generateObj, add, perfs, timeFormat, isClonable } from "./utils";
 
 import { it } from 'vitest';
 import { getTransferable, getTransferables, hasTransferables } from "../src";
@@ -8,15 +8,17 @@ import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
 
+console.log({ isClonable })
+
 it("structuredClone", async () => {
   let head = [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable)`, `structuredClone (getTransferables)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
       const sizeStr = bytes(num, { maximumFractionDigits: 3 });
-      const obj = generateObj(num / MB, { streams: false });
-      const obj1 = generateObj(num / MB, { streams: false });
-      const obj2 = generateObj(num / MB, { streams: false });
+      const obj = generateObj(num / MB, isClonable);
+      const obj1 = generateObj(num / MB, isClonable);
+      const obj2 = generateObj(num / MB, isClonable);
 
       await add(sizeStr, `hasTransferables`, () => {
         hasTransferables(obj, true);
@@ -76,6 +78,7 @@ it("structuredClone", async () => {
 
   strVal += `}`;
 
-  console.log(markdownTable([Head, ...str]))
-  console.log(strVal);
+  console.log(markdownTable([Head, ...str]));
+  console.log("\n");
+  // console.log(strVal);
 })

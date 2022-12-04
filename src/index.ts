@@ -8,6 +8,47 @@ export type TypeTypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16A
 export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream /* | typeof AudioData */ | ImageBitmap /* | typeof VideoFrame */ | OffscreenCanvas | RTCDataChannel;
 
 /**
+ * Tests if certain transferable objects are actually supported in a specific js environment
+ */
+export function isSupported() {
+  const channel = (() => {
+    try {
+      const obj = { channel: new MessageChannel() }
+      structuredClone(obj, {
+        transfer: [
+          obj.channel.port1,
+          obj.channel.port2
+        ]
+      })
+    } catch (e) {
+      console.warn(e);
+      return false;
+    }
+
+    return true;
+  })();
+
+  const streams = (() => {
+    try {
+      const streams = {
+        readonly: new ReadableStream(),
+        writeonly: new WritableStream(),
+        tranformonly: new TransformStream()
+      }
+
+      structuredClone(streams, { transfer: Object.values(streams) })
+    } catch (e) {
+      console.warn(e);
+      return false;
+    }
+
+    return true;
+  })();
+
+  return { streams, channel };
+}
+
+/**
  * Check if an object is an object or a function (because functions also count as objects)
  */
 export function isObject(obj: unknown): obj is object | Function {
@@ -85,7 +126,7 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
   while (queue.length > 0 && maxCount > 0) {
     for (let item of queue) {
       if (isTypedArray(item)) {
-        result.add((item as TypeTypedArray).buffer);
+        result.add(item.buffer);
       } else if (isTransferable(item)) {
         result.add(item);
       } else if (isMessageChannel(item)) {
@@ -99,7 +140,7 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
        * Streams are circular objects, to avoid an infinite loop 
        * we need to ensure that the object is not a stream 
       */
-      else if (isObject(item) && !isStream(item)) {
+      else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
         const len = values.length;
         
@@ -138,24 +179,25 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
       if (seen.has(item)) continue;
 
       if (isTypedArray(item)) {
+        seen.add(item);
         const { buffer } = item;
         if (seen.has(buffer)) continue;
 
         yield buffer;
         seen.add(buffer);
-        seen.add(item);
       } else if (isTransferable(item)) {
         yield item;
         seen.add(item);
       } else if (isMessageChannel(item)) {
-        if (seen.has(item.port1)) continue;
+        seen.add(item);
+        if (seen.has(item.port1) || seen.has(item.port2)) continue;
 
         yield item.port1;
         yield item.port2;
+
         seen.add(item.port1);
         seen.add(item.port2);
-        seen.add(item);
-      } else if ((streams && isStream(item))) {
+      } else if (streams && isStream(item)) {
         yield item;
         seen.add(item);
       } 

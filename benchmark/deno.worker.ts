@@ -1,4 +1,4 @@
-import { MB, add, perfs, timeFormat } from "./utils.ts";
+import { MB, generateObj, add, perfs, timeFormat, isClonable } from "./utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -17,40 +17,67 @@ interface ICreateWorkerIteratorOptions {
   index: number;
   variant: string;
   cycle?: number;
+  obj: Record<string, unknown>;
+  worker: Worker;
+  queue: Map<string, ReturnType<typeof createPromise>>;
 }
 
-async function createWorkerPromise({ index, cycle = 0, variant }: ICreateWorkerIteratorOptions) {
-  const worker = new Worker(new URL("./workers/deno.ts", import.meta.url).href, { type: "module" });
+function createPromise() {
+  let resolve: ((value: unknown) => void) | undefined;
+  let reject: ((value: unknown) => void) | undefined;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
 
+  return { promise, resolve, reject };
+}
+
+async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
   const num = Math.pow(2, index);
   const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
-  const msg = { name: sizeStr, variant, cycle, i: index };
+  const msg = { name: sizeStr, variant, cycle, i: index, obj };
   worker.postMessage(msg);
-
-  const data = await new Promise<IIterationType>(resolve => {
-    worker.onmessage = ({ data }: MessageEvent<IIterationType>) => {
-      resolve(data);
-    }
-  });
-
-  worker.terminate();
-  return data;
+  
+  const promise = createPromise();
+  const queueKey = `${sizeStr}-${variant}-${cycle}-${index}`;
+  queue.set(queueKey, promise);
+  await promise.promise;
 }
 
 const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable)`, `postMessage (getTransferables)`];
 const maxSize = 1.6;
 for (let cycle = 0; cycle < 5; cycle++) {
+  const queue = new Map<string, ReturnType<typeof createPromise>>();
+  const worker = new Worker(new URL("./workers/deno.ts", import.meta.url).href, { type: "module" });
+
+  worker.onmessage = ({ data }: MessageEvent<IIterationType>) => {
+    const { name, variant, cycle, i: index } = data;
+
+    const queueKey = `${name}-${variant}-${cycle}-${index}`;
+    const { resolve } = queue.get(queueKey) ?? {};
+    resolve?.(data);
+  }
+
   for (let variant of variants) {
     for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
       const num = Math.pow(2, index);
       const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
+      /**
+       * Deno doesn't support transferable streams
+       */
+      const obj = generateObj(num / MB, isClonable);
+
       await add(sizeStr, variant, async () => {
-        await createWorkerPromise({ index, variant, cycle });
+        await createWorkerPromise({ index, variant, cycle, obj, worker, queue });
       })
     }
   }
+
+  worker.terminate();
+  queue.clear();
 }
 
 const Head = ["", ...variants];
@@ -82,8 +109,9 @@ const str = table.map((x) => {
 
 strVal += `}`;
 
-console.log(markdownTable([Head, ...str]))
-console.log(strVal);
+console.log(markdownTable([Head, ...str]));
+console.log("\n");
+// console.log(strVal);
 
 
 

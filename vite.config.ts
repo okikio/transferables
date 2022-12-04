@@ -13,9 +13,6 @@ export default defineConfig({
       outputDir: "@types"
     })
   ],
-  worker: {
-    format: "iife"
-  },
   build: {
     outDir: "lib",
     lib: {

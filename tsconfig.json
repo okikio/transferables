@@ -16,8 +16,9 @@
     "skipLibCheck": true
   },
   "include": [
-    "src"
-, "benchmark/fixtures"  ],
+    "src", 
+    "benchmark/fixtures"  
+  ],
   "exclude": [
     "node_modules"
   ]

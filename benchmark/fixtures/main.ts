@@ -4,11 +4,11 @@ import structuredCloneBenchmark from "./structuredClone";
 import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
 
-const structuredCloneBtn: HTMLButtonElement = document.querySelector("#structuredClone");
-const postMessageBtn: HTMLButtonElement = document.querySelector("#postMessage");
+export const structuredCloneBtn: HTMLButtonElement = document.querySelector("#structuredClone");
+export const postMessageBtn: HTMLButtonElement = document.querySelector("#postMessage");
 
-const structuredCloneResultEl: HTMLDivElement = document.createElement("div");
-const postMessageResultEl: HTMLDivElement = document.createElement("div");
+export const structuredCloneResultEl: HTMLDivElement = document.createElement("div");
+export const postMessageResultEl: HTMLDivElement = document.createElement("div");
 
 structuredCloneBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await structuredCloneBenchmark(e);

@@ -37,7 +37,7 @@
     "test:run": "vitest run tests",
     "build": "vite build",
     "playwright:init": "playwright install --with-deps",
-    "browser:fixture": "vite dev ./benchmark/fixtures --port 3000",
+    "browser:fixture": "vite build ./benchmark/fixtures && vite preview ./benchmark/fixtures --port 3000",
     "benchmark:node": "vitest run ./benchmark/node.test.ts",
     "benchmark:browser": "playwright test ./benchmark/browsers.spec.ts",
     "benchmark:deno": "deno run --allow-run --allow-env --allow-read --allow-hrtime ./benchmark/deno.ts",

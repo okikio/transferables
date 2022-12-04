@@ -1,3 +1,5 @@
+import { isSupported } from "../src"
+
 // 16MB = 1024 * 1024 * 16
 export const MB = 1024 * 1024;
 
@@ -9,6 +11,8 @@ export const MB = 1024 * 1024;
 export function range(size = 16) {
   return Array.from({ length: size * MB }, (v, i) => i);
 }
+
+export const isClonable = isSupported();
 
 /**
  * Generates a complex object for various array buffer sizes, 
@@ -82,17 +86,21 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
 
   const channel = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
   const ports = channel && [channel?.port1, channel?.port2];
-  Array.isArray(ports) && transferable.push(...ports) 
+  Array.isArray(ports) && transferable.push(...ports)
+
+  const readable = "ReadableStream" in globalThis;
+  const writable = "WritableStream" in globalThis;
+  const transform = "TransformStream" in globalThis;
 
   const streams = isStream && {
-    readonly: new ReadableStream(),
-    writeonly: new WritableStream(),
-    tranformonly: new TransformStream()
+    readonly: readable && new ReadableStream(),
+    writeonly: writable && new WritableStream(),
+    tranformonly: transform && new TransformStream()
   }
 
   streams && streams.readonly && transferable.push(streams.readonly)
   streams && streams.writeonly && transferable.push(streams.writeonly)
-  streams && streams.tranformonly && transferable.push(streams.tranformonly) 
+  streams && streams.tranformonly && transferable.push(streams.tranformonly)
 
   // No polyfill for OffscreenCanvas, RTCPeerConnection, and RTCDataChannel
   // const offscreencanvas = new OffscreenCanvas(200, 200);
@@ -175,8 +183,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
 
     const channel_ = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
     const ports_ = channel_ && [channel_.port1, channel_.port2];
-
-    Array.isArray(ports_) && transferable.push(...ports_) 
+    Array.isArray(ports_) && transferable.push(...ports_)
 
     const streams_ = isStream && {
       readonly: new ReadableStream(),
@@ -186,7 +193,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
 
     streams_ && streams_.readonly && transferable.push(streams_.readonly)
     streams_ && streams_.writeonly && transferable.push(streams_.writeonly)
-    streams_ && streams_.tranformonly && transferable.push(streams_.tranformonly) 
+    streams_ && streams_.tranformonly && transferable.push(streams_.tranformonly)
 
     dynamic_size_object[i] = {
       uint8_all: [
