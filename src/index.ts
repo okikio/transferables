@@ -17,7 +17,7 @@ export function isSupported() {
       structuredClone(obj, {
         transfer: [
           obj.channel.port1,
-          obj.channel.port2
+          obj.channel.port2,
         ]
       })
     } catch (e) {
@@ -36,7 +36,13 @@ export function isSupported() {
         tranformonly: new TransformStream()
       }
 
-      structuredClone(streams, { transfer: Object.values(streams) })
+      structuredClone(streams, { 
+        transfer: [
+          streams.readonly as unknown as Transferable, 
+          streams.writeonly as unknown as Transferable, 
+          streams.tranformonly as unknown as Transferable,
+        ] 
+      })
     } catch (e) {
       console.warn(e);
       return false;
@@ -45,7 +51,7 @@ export function isSupported() {
     return true;
   })();
 
-  return { streams, channel };
+  return { channel, streams };
 }
 
 /**

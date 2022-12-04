@@ -1,4 +1,4 @@
-import { isSupported } from "../src"
+import { isSupported } from "../src/index.ts";
 
 // 16MB = 1024 * 1024 * 16
 export const MB = 1024 * 1024;
@@ -84,6 +84,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     arrbuf_float32: [arrbuf, float32]
   }
 
+  // @ts-ignore MessageChannel
   const channel = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
   const ports = channel && [channel?.port1, channel?.port2];
   Array.isArray(ports) && transferable.push(...ports)
@@ -156,7 +157,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     }()
   }
 
-  const dynamic_size_object = {};
+  const dynamic_size_object: Record<string | number, unknown> = {};
   const len = Math.min(Math.max(size + 10, 1), 1000);
 
   for (let i = 0; i < len; i++) {
@@ -181,6 +182,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
     transferable.push(float32_.buffer);
     transferable.push(float64_.buffer);
 
+    // @ts-ignore MessageChannel
     const channel_ = isChannel && ('MessageChannel' in globalThis) && new globalThis.MessageChannel();
     const ports_ = channel_ && [channel_.port1, channel_.port2];
     Array.isArray(ports_) && transferable.push(...ports_)

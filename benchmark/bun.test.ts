@@ -8,8 +8,10 @@ import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
 
+console.log({ isClonable })
+
 it("structuredClone", async () => {
-  let head = [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable)`, `structuredClone (getTransferables)`];
+  let head = [`hasTransferables`, `structuredClone (manually)`, `structuredClone (*getTransferable)`, `structuredClone (getTransferables)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
@@ -28,7 +30,7 @@ it("structuredClone", async () => {
         } catch (e) { console.warn(e); }
       })
 
-      await add(sizeStr, `structuredClone (getTransferable)`, () => {
+      await add(sizeStr, `structuredClone (*getTransferable)`, () => {
         try {
           const transfer = Array.from(getTransferable(obj1, true)) as Transferable[];
           structuredClone(obj1, { transfer });

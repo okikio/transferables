@@ -10,14 +10,14 @@ interface IIterationType {
   variant: string;
   cycle: number;
   i: number;
-  obj?: Record<string, unknown>;
+  obj: ReturnType<typeof generateObj>;
 }
 
 interface ICreateWorkerIteratorOptions {
   index: number;
   variant: string;
   cycle?: number;
-  obj: Record<string, unknown>;
+  obj: ReturnType<typeof generateObj>;
   worker: Worker;
   queue: Map<string, ReturnType<typeof createPromise>>;
 }
@@ -37,8 +37,12 @@ async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, que
   const num = Math.pow(2, index);
   const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
-  const msg = { name: sizeStr, variant, cycle, i: index, obj };
-  worker.postMessage(msg);
+  try {
+    const msg = { name: sizeStr, variant, cycle, i: index, obj };
+    worker.postMessage(msg);
+  } catch (e) { 
+    console.warn(e); 
+  }
   
   const promise = createPromise();
   const queueKey = `${sizeStr}-${variant}-${cycle}-${index}`;
@@ -46,7 +50,9 @@ async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, que
   await promise.promise;
 }
 
-const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable)`, `postMessage (getTransferables)`];
+console.log({ isClonable })
+
+const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (*getTransferable)`, `postMessage (getTransferables)`];
 const maxSize = 1.6;
 for (let cycle = 0; cycle < 5; cycle++) {
   const queue = new Map<string, ReturnType<typeof createPromise>>();
@@ -66,9 +72,9 @@ for (let cycle = 0; cycle < 5; cycle++) {
       const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
       /**
-       * Deno doesn't support transferable streams
+       * Deno doesn't allow for transfering message channels
        */
-      const obj = generateObj(num / MB, isClonable);
+      const obj = generateObj(num / MB, { ...isClonable, channel: false });
 
       await add(sizeStr, variant, async () => {
         await createWorkerPromise({ index, variant, cycle, obj, worker, queue });

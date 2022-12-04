@@ -10,14 +10,14 @@ interface IIterationType {
   variant: string;
   cycle: number;
   i: number;
-  obj?: Record<string, unknown>;
+  obj: ReturnType<typeof generateObj>;
 }
 
 interface ICreateWorkerIteratorOptions {
   index: number;
   variant: string;
   cycle?: number;
-  obj: Record<string, unknown>;
+  obj: ReturnType<typeof generateObj>;
   worker: Worker;
   queue: Map<string, ReturnType<typeof createPromise>>;
 }
@@ -48,8 +48,9 @@ async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, que
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
+  console.log({ isClonable })
 
-  const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable)`, `postMessage (getTransferables)`];
+  const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (*getTransferable)`, `postMessage (getTransferables)`];
   const maxSize = 1.6;
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();
@@ -71,7 +72,7 @@ export default async function (e: MouseEvent) {
         /**
          * Deno doesn't support transferable streams
          */
-        const obj = generateObj(num / MB, isClonable);
+        const obj = generateObj(num / MB, { ...isClonable, channel: false, streams: false });
 
         await add(sizeStr, variant, async () => {
           await createWorkerPromise({ index, variant, cycle, obj, worker, queue });

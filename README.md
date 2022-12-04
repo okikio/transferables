@@ -99,7 +99,7 @@ const transferablesIterator = containsTransferables ? Array.from(getTransferable
 structuredClone(data, transferablesIterator);
 
 // isSupported
-isSupported() // { channel: true, streams: true }
+isSupported(); // { channel: true, streams: true }
 
 // isObject
 isObject(data); // true
@@ -168,29 +168,29 @@ To gurantee performance
 <summary>Node (structuredClone)</summary>  
 
 
-|            | hasTransferables         | structuredClone (manually)  | structuredClone (getTransferable) | structuredClone (getTransferables) |
-| ---------- | ------------------------ | --------------------------- | --------------------------------- | ---------------------------------- |
-| 1 B        | in 0.147 ms ± 0.232 ms   | in 0.569 ms ± 0.214 ms      | in 0.729 ms ± 0.432 ms            | in 0.664 ms ± 0.41 ms              |
-| 2 B        | in 0.03 ms ± 0.026 ms    | in 0.41 ms ± 0.123 ms       | in 0.654 ms ± 0.378 ms            | in 0.569 ms ± 0.288 ms             |
-| 4 B        | in 0.023 ms ± 0.012 ms   | in 0.413 ms ± 0.154 ms      | in 0.648 ms ± 0.261 ms            | in 0.561 ms ± 0.296 ms             |
-| 8 B        | in 0.024 ms ± 0.013 ms   | in 0.402 ms ± 0.125 ms      | in 0.63 ms ± 0.308 ms             | in 0.604 ms ± 0.339 ms             |
-| 16 B       | in 0.019 ms ± 0.007 ms   | in 0.423 ms ± 0.141 ms      | in 0.65 ms ± 0.219 ms             | in 0.629 ms ± 0.225 ms             |
-| 32 B       | in 0.02 ms ± 0.007 ms    | in 0.491 ms ± 0.165 ms      | in 0.934 ms ± 0.453 ms            | in 0.626 ms ± 0.195 ms             |
-| 64 B       | in 0.023 ms ± 0.011 ms   | in 0.506 ms ± 0.114 ms      | in 2.315 ms ± 3.255 ms            | in 0.855 ms ± 0.474 ms             |
-| 128 B      | in 0.021 ms ± 0.008 ms   | in 0.619 ms ± 0.077 ms      | in 1.101 ms ± 0.361 ms            | in 0.909 ms ± 0.2 ms               |
-| 256 B      | in 0.025 ms ± 0.01 ms    | in 0.893 ms ± 0.098 ms      | in 1.599 ms ± 0.339 ms            | in 1.476 ms ± 0.464 ms             |
-| 512 B      | in 0.035 ms ± 0.019 ms   | in 1.489 ms ± 0.227 ms      | in 2.604 ms ± 0.303 ms            | in 2.185 ms ± 0.252 ms             |
-| 1.024 kB   | in 0.047 ms ± 0.027 ms   | in 2.565 ms ± 0.342 ms      | in 4.528 ms ± 0.446 ms            | in 5.917 ms ± 0.628 ms             |
-| 2.048 kB   | in 0.079 ms ± 0.038 ms   | in 4.718 ms ± 0.648 ms      | in 8.723 ms ± 0.97 ms             | in 7.435 ms ± 0.72 ms              |
-| 4.096 kB   | in 0.096 ms ± 0.095 ms   | in 8.754 ms ± 1.247 ms      | in 15.76 ms ± 2.092 ms            | in 13.823 ms ± 1.509 ms            |
-| 8.192 kB   | in 0.216 ms ± 0.28 ms    | in 18.357 ms ± 4.912 ms     | in 31.708 ms ± 5.171 ms           | in 27.055 ms ± 2.158 ms            |
-| 16.384 kB  | in 0.222 ms ± 0.032 ms   | in 33 ms ± 0.384 ms         | in 59.249 ms ± 0.606 ms           | in 57.015 ms ± 0.4 ms              |
-| 32.768 kB  | in 0.386 ms ± 0.023 ms   | in 65.738 ms ± 0.922 ms     | in 121.39 ms ± 0.904 ms           | in 107.748 ms ± 1.465 ms           |
-| 65.536 kB  | in 0.948 ms ± 0.04 ms    | in 134.843 ms ± 2.296 ms    | in 240.35 ms ± 1.717 ms           | in 216.227 ms ± 2.26 ms            |
-| 131.072 kB | in 2.144 ms ± 0.193 ms   | in 286.847 ms ± 29.822 ms   | in 531.237 ms ± 102.662 ms        | in 461.704 ms ± 69.267 ms          |
-| 262.144 kB | in 4.462 ms ± 0.211 ms   | in 606.305 ms ± 8.836 ms    | in 1,066.828 ms ± 37.086 ms       | in 940.847 ms ± 22.664 ms          |
-| 524.288 kB | in 10.149 ms ± 1.529 ms  | in 1,266.311 ms ± 70.35 ms  | in 2,089.966 ms ± 10.424 ms       | in 1,873.346 ms ± 21.954 ms        |
-| 1.049 MB   | in 34.709 ms ± 11.201 ms | in 2,519.413 ms ± 36.346 ms | in 4,214.762 ms ± 16.067 ms       | in 3,857.204 ms ± 176.52 ms        |
+|            | hasTransferables        | structuredClone (manually)  | structuredClone (getTransferable) | structuredClone (getTransferables) |
+| ---------- | ----------------------- | --------------------------- | --------------------------------- | ---------------------------------- |
+| 1 B        | in 0.207 ms ± 0.237 ms  | in 4.035 ms ± 1.394 ms      | in 3.72 ms ± 0.82 ms              | in 3.644 ms ± 1.136 ms             |
+| 2 B        | in 0.093 ms ± 0.034 ms  | in 3.329 ms ± 0.775 ms      | in 4.406 ms ± 2.512 ms            | in 3.584 ms ± 0.862 ms             |
+| 4 B        | in 0.072 ms ± 0.015 ms  | in 3.157 ms ± 0.687 ms      | in 3.28 ms ± 0.327 ms             | in 3.489 ms ± 0.467 ms             |
+| 8 B        | in 0.069 ms ± 0.014 ms  | in 3.098 ms ± 0.451 ms      | in 3.404 ms ± 0.704 ms            | in 3.276 ms ± 0.632 ms             |
+| 16 B       | in 0.086 ms ± 0.024 ms  | in 4.746 ms ± 3.103 ms      | in 6.883 ms ± 3.004 ms            | in 3.424 ms ± 0.467 ms             |
+| 32 B       | in 0.084 ms ± 0.024 ms  | in 3.637 ms ± 0.696 ms      | in 4.105 ms ± 0.898 ms            | in 3.903 ms ± 0.745 ms             |
+| 64 B       | in 0.094 ms ± 0.032 ms  | in 3.419 ms ± 0.122 ms      | in 11.573 ms ± 1.147 ms           | in 3.05 ms ± 0.223 ms              |
+| 128 B      | in 0.067 ms ± 0.014 ms  | in 2.973 ms ± 0.116 ms      | in 3.294 ms ± 0.2 ms              | in 3.108 ms ± 0.173 ms             |
+| 256 B      | in 0.062 ms ± 0.012 ms  | in 3.223 ms ± 0.096 ms      | in 3.823 ms ± 0.299 ms            | in 3.529 ms ± 0.125 ms             |
+| 512 B      | in 0.101 ms ± 0.016 ms  | in 3.851 ms ± 0.286 ms      | in 4.879 ms ± 0.567 ms            | in 4.465 ms ± 0.255 ms             |
+| 1.024 kB   | in 0.1 ms ± 0.046 ms    | in 4.637 ms ± 0.305 ms      | in 8.324 ms ± 2.119 ms            | in 8.716 ms ± 2.274 ms             |
+| 2.048 kB   | in 0.105 ms ± 0.023 ms  | in 6.573 ms ± 0.205 ms      | in 10.888 ms ± 1.075 ms           | in 11.614 ms ± 1.43 ms             |
+| 4.096 kB   | in 0.149 ms ± 0.062 ms  | in 11.231 ms ± 0.83 ms      | in 17.431 ms ± 1.408 ms           | in 15.273 ms ± 0.598 ms            |
+| 8.192 kB   | in 0.236 ms ± 0.203 ms  | in 21.292 ms ± 2.279 ms     | in 31.419 ms ± 1.585 ms           | in 28.886 ms ± 1.074 ms            |
+| 16.384 kB  | in 0.275 ms ± 0.029 ms  | in 36.087 ms ± 2.384 ms     | in 61.124 ms ± 1.846 ms           | in 60.629 ms ± 2.548 ms            |
+| 32.768 kB  | in 0.444 ms ± 0.052 ms  | in 67.182 ms ± 4.587 ms     | in 123.134 ms ± 6.56 ms           | in 116.684 ms ± 14.69 ms           |
+| 65.536 kB  | in 0.932 ms ± 0.054 ms  | in 131.45 ms ± 1.566 ms     | in 243.099 ms ± 15.986 ms         | in 219.32 ms ± 14.69 ms            |
+| 131.072 kB | in 3.001 ms ± 1.117 ms  | in 261.401 ms ± 10.264 ms   | in 491.725 ms ± 31.017 ms         | in 440.797 ms ± 31.359 ms          |
+| 262.144 kB | in 6.991 ms ± 1.898 ms  | in 643.805 ms ± 33.111 ms   | in 1,024.814 ms ± 46.353 ms       | in 901.455 ms ± 43.328 ms          |
+| 524.288 kB | in 10.858 ms ± 1.324 ms | in 1,265.384 ms ± 50.39 ms  | in 2,165.863 ms ± 258.351 ms      | in 1,951.202 ms ± 190.088 ms       |
+| 1.049 MB   | in 23.865 ms ± 6.409 ms | in 2,495.775 ms ± 98.087 ms | in 4,181.129 ms ± 26.851 ms       | in 3,689.064 ms ± 71.118 ms        |
 
 
 </details>
@@ -273,6 +273,24 @@ This is a list of the issues that I have found so far.
 So, as always, do your own research before using.
 
 There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
+
+Streams and message channel support is iffy here is a list of current support, as of Dec. 4, 2022.
+
+Chrome 107.0.1418.62
+Firefox 107.0.1
+Safari 16.4
+
+Node v19.2.0
+Bun 0.2.2
+Deno 1.28.3
+
+|                           | Chrome | Firefox | Safari | Node   | Deno   | Bun    | 
+| ------------------------- | ------ | ------- | ------ | ------ | ------ | ------ | 
+| structuredClone (channel) | false  | false   | false  | true   | true   | true   |   
+| structuredClone (streams) | true   | true    | false  | true   | false  | true   | 
+| postMessage (channel)     | false  | false   | false  | -      | true   | -      |   
+| postMessage (streams)     | false  | false   | false  | -      | false  | -      |   
+
 
 ### Transferable objects
 
