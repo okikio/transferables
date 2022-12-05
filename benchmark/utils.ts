@@ -314,11 +314,13 @@ export function createPromise() {
 }
 
 export async function createMessageChannelPromise({ name, index, cycle = 0, variant, obj, channel, queue }: ICreateMessageChannelIteratorOptions) {
+  const simpleMsg = { name, variant, cycle, i: index };
+  const msg = { ...simpleMsg, obj };
   try {
-    const msg = { name, variant, cycle, i: index, obj };
-    channel.port2.postMessage(msg);
+    channel.port2.postMessage(msg, obj.transferable);
   } catch (e) {
     console.warn(e);
+    channel.port2.postMessage(simpleMsg);
   }
 
   const promise = createPromise();
@@ -328,11 +330,14 @@ export async function createMessageChannelPromise({ name, index, cycle = 0, vari
 }
 
 export async function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
+  const simpleMsg = { name, variant, cycle, i: index };
+  const msg = { ...simpleMsg, obj };
   try {
-    const msg = { name, variant, cycle, i: index, obj };
-    worker.postMessage(msg);
+    console.log(obj.transferable)
+    worker.postMessage(msg, obj.transferable);
   } catch (e) {
     console.warn(e);
+    worker.postMessage(simpleMsg);
   }
 
   const promise = createPromise();

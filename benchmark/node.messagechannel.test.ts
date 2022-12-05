@@ -10,7 +10,7 @@ import { dmeanstdev } from '@stdlib/stats-base';
 import { markdownTable } from 'markdown-table';
 
 it("postMessage (message channel)", async () => {
-  for (let cycle = 0; cycle < 5; cycle++) {
+  for (let cycle = 0; cycle < 1; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();
     const channel = new MessageChannel();
 
@@ -29,14 +29,14 @@ it("postMessage (message channel)", async () => {
     }
 
     for (let variant of postMessageVariants) {
-      for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
+      for (let index = 0; index <= Math.log2(0.0025 * MB); index++) {
         const num = Math.pow(2, index);
         const name = bytes(num, { maximumFractionDigits: 3 });
 
         /**
          * Deno doesn't allow for transfering message channels
          */
-        const obj = generateObj(num / MB, { ...isClonable, channel: false });
+        const obj = generateObj(num / MB, isClonable);
 
         await add(name, variant, async () => {
           await createMessageChannelPromise({ name, index, variant, cycle, obj, channel: channel, queue });
