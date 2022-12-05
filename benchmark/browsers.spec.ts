@@ -35,18 +35,34 @@ test('Benchmark transferables on browsers', async ({ page, browser }) => {
   });
 
   // create a locator
-  const postMessageBtn = page.locator('button#postMessage');
+  const postMessageMessageChannelBtn = page.locator('button#postMessageMessageChannel');
 
   // Expect an attribute "to be strictly equal" to the value.
-  await expect(postMessageBtn).toHaveAttribute('type', 'button');
+  await expect(postMessageMessageChannelBtn).toHaveAttribute('type', 'button');
 
   // Click the get started link.
-  await postMessageBtn.click();
+  await postMessageMessageChannelBtn.click();
 
   // Expects the URL to contain intro.
-  const postMessageResult = page.locator("#postMessageResult");
-  await postMessageResult.waitFor();
+  const postMessageMessageChannel = page.locator("#postMessageMessageChannelResult");
+  await postMessageMessageChannel.waitFor();
 
-  console.log(`postMessage (browser)`)
-  console.log(await postMessageResult.getAttribute("data-value"));
+  console.log(`postMessage (MessageChannel) (browser)`)
+  console.log(await postMessageMessageChannel.getAttribute("data-value"));
+
+  // create a locator
+  const postMessageWorkerBtn = page.locator('button#postMessageWorker');
+
+  // Expect an attribute "to be strictly equal" to the value.
+  await expect(postMessageWorkerBtn).toHaveAttribute('type', 'button');
+
+  // Click the get started link.
+  await postMessageWorkerBtn.click();
+
+  // Expects the URL to contain intro.
+  const postMessageWorker = page.locator("#postMessageWorkerResult");
+  await postMessageWorker.waitFor();
+
+  console.log(`postMessage (Worker) (browser)`)
+  console.log(await postMessageWorker.getAttribute("data-value"));
 });

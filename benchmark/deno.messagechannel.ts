@@ -1,9 +1,12 @@
 import { MB, generateObj, add, perfs, timeFormat, isClonable } from "./utils.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
 
 import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
+
+import { registerMessageListener } from "./workers/messagechannel.ts";
 
 interface IIterationType {
   name: string;
@@ -18,7 +21,7 @@ interface ICreateWorkerIteratorOptions {
   variant: string;
   cycle?: number;
   obj: ReturnType<typeof generateObj>;
-  worker: Worker;
+  channel: MessageChannel;
   queue: Map<string, ReturnType<typeof createPromise>>;
 }
 
@@ -33,17 +36,17 @@ function createPromise() {
   return { promise, resolve, reject };
 }
 
-async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
+async function createMessageChannelPromise({ index, cycle = 0, variant, obj, channel, queue }: ICreateWorkerIteratorOptions) {
   const num = Math.pow(2, index);
   const sizeStr = bytes(num, { maximumFractionDigits: 3 });
 
   try {
     const msg = { name: sizeStr, variant, cycle, i: index, obj };
-    worker.postMessage(msg);
-  } catch (e) { 
-    console.warn(e); 
+    channel.port1.postMessage(msg);
+  } catch (e) {
+    console.warn(e);
   }
-  
+
   const promise = createPromise();
   const queueKey = `${sizeStr}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
@@ -56,9 +59,15 @@ const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage
 const maxSize = 1.6;
 for (let cycle = 0; cycle < 5; cycle++) {
   const queue = new Map<string, ReturnType<typeof createPromise>>();
-  const worker = new Worker(new URL("./workers/deno.ts", import.meta.url).href, { type: "module" });
+  const channel = new MessageChannel();
 
-  worker.onmessage = ({ data }: MessageEvent<IIterationType>) => {
+  registerMessageListener(channel.port1, {
+    getTransferable,
+    getTransferables,
+    hasTransferables
+  })
+
+  channel.port2.onmessage = ({ data }: MessageEvent<IIterationType>) => {
     const { name, variant, cycle, i: index } = data;
 
     const queueKey = `${name}-${variant}-${cycle}-${index}`;
@@ -77,12 +86,12 @@ for (let cycle = 0; cycle < 5; cycle++) {
       const obj = generateObj(num / MB, { ...isClonable, channel: false });
 
       await add(sizeStr, variant, async () => {
-        await createWorkerPromise({ index, variant, cycle, obj, worker, queue });
+        await createMessageChannelPromise({ index, variant, cycle, obj, channel: channel, queue });
       })
     }
   }
 
-  worker.terminate();
+  channel?.port1?.close?.();
   queue.clear();
 }
 
@@ -117,8 +126,4 @@ strVal += `}`;
 
 console.log(markdownTable([Head, ...str]));
 console.log("\n");
-// console.log(strVal);
-
-
-
-
+  // console.log(strVal);

@@ -3,7 +3,8 @@
     "./benchmark/deno.ts",
     "./benchmark/utils.ts",
     "./benchmark/deno.worker.ts",
-    "./benchmark/workers/deno.ts"
+    "./benchmark/workers/deno.ts",
+    "./benchmark/deno.messagechannel.ts",
   ],
   "deno.unstable": true
 }

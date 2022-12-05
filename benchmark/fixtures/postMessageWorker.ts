@@ -46,11 +46,12 @@ async function createWorkerPromise({ index, cycle = 0, variant, obj, worker, que
   await promise.promise;
 }
 
+console.log({ isClonable })
+
 export default async function (e: MouseEvent) {
   e.preventDefault();
-  console.log({ isClonable })
 
-  const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (*getTransferable)`, `postMessage (getTransferables)`];
+  const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable*)`, `postMessage (getTransferables)`];
   const maxSize = 1.6;
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();

@@ -13,7 +13,7 @@ import { devices } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   testDir: './benchmark',
   /* Maximum time one test can run for. */
-  timeout: 900 * 1000,
+  timeout: 1500 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
