@@ -1,4 +1,4 @@
-import { MB, generateObj, add, perfs, timeFormat, isClonable } from "./utils";
+import { MB, generateObj, add, isClonable, printTable, createStructuredCloneVariants } from "./utils";
 
 import { it } from 'vitest';
 import { getTransferable, getTransferables, hasTransferables } from "../src";
@@ -8,77 +8,28 @@ import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
 
-console.log({ isClonable })
+const variants = createStructuredCloneVariants(hasTransferables, getTransferable, getTransferables);
+const keys = Object.keys(variants) as (keyof typeof variants)[];
+const len = keys.length;
 
 it("structuredClone", async () => {
-  let head = [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable*)`, `structuredClone (getTransferables)`];
   for (let cycle = 0; cycle < 5; cycle++) {
     for (let i = 0; i < Math.log2(1.6 * MB); i++) {
       const num = Math.pow(2, i);
-      const sizeStr = bytes(num, { maximumFractionDigits: 3 });
-      const obj = generateObj(num / MB, isClonable);
-      const obj1 = generateObj(num / MB, isClonable);
-      const obj2 = generateObj(num / MB, isClonable);
+      const name = bytes(num, { maximumFractionDigits: 3 });
 
-      await add(sizeStr, `hasTransferables`, () => {
-        hasTransferables(obj, true);
-      })
+      for (let j = 0; j < len; j++) {
+        const variant = keys[j];
+        const fn = variants[variant];
 
-      await add(sizeStr, `structuredClone (manually)`, () => {
-        try {
-          structuredClone(obj, { transfer: obj.transferable });
-        } catch (e) { console.warn(e); }
-      })
-
-      await add(sizeStr, `structuredClone (getTransferable*)`, () => {
-        try {
-          const transfer = Array.from(getTransferable(obj1, true)) as Transferable[];
-          structuredClone(obj1, { transfer });
-        } catch (e) { console.warn(e); }
-      })
-
-      await add(sizeStr, `structuredClone (getTransferables)`, () => {
-        try {
-          const transfer = getTransferables(obj2, true) as Transferable[];
-          structuredClone(obj2, { transfer });
-        } catch (e) { console.warn(e); }
-      })
+        const obj = generateObj(num / MB, isClonable);
+        await add(name, variant, fn, obj)
+      }
 
       await Promise.resolve();
     }
     console.log("\n")
   }
-  
-  let Head = ["", ...head];
-  let table: object[] = [];
 
-  let strVal = 'Map {\n';
-  perfs.forEach((variants, name) => {
-    strVal += `  "${name}" => Map { `;
-
-    let obj = {};
-    variants.forEach((durations, variant) => {
-      const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
-
-      obj[name] ??= [];
-      obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
-
-      strVal += `"${variant}" => [${durations.map(x => timeFormat(x)).join(", ")}], `
-
-    });
-
-    table.push(obj);
-    strVal += `},\n`;
-  })
-
-  let str = table.map((x) => {
-    let [key] = Object.keys(x);
-    return [key, ...x[key]]
-  })
-
-  strVal += `}`;
-
-  console.log(markdownTable([Head, ...str]));
-  console.log("\n");
-  // console.log(strVal);
-})
+  printTable(keys, dmeanstdev, markdownTable);
+ })

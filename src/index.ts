@@ -8,11 +8,12 @@ export type TypeTypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16A
 export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream /* | typeof AudioData */ | ImageBitmap /* | typeof VideoFrame */ | OffscreenCanvas | RTCDataChannel;
 
 /**
- * Tests if certain transferable objects are actually supported in a specific js environment
+ * Tests if certain transferable objects are actually supported in a specific js environment when using `structuredClone` and `MessageChannel postMessage`
  */
 export function isSupported() {
   const channel = (() => {
     try {
+      const messageChannel = new MessageChannel()
       const obj = { channel: new MessageChannel() }
       structuredClone(obj, {
         transfer: [
@@ -20,6 +21,15 @@ export function isSupported() {
           obj.channel.port2,
         ]
       })
+
+      const obj1 = { channel: new MessageChannel() }
+      messageChannel.port1.postMessage(obj1, {
+        transfer: [
+          obj1.channel.port1,
+          obj1.channel.port2,
+        ]
+      })
+      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;
@@ -30,6 +40,7 @@ export function isSupported() {
 
   const streams = (() => {
     try {
+      const messageChannel = new MessageChannel()
       const streams = {
         readonly: new ReadableStream(),
         writeonly: new WritableStream(),
@@ -43,6 +54,20 @@ export function isSupported() {
           streams.tranformonly as unknown as Transferable,
         ] 
       })
+
+      const streams1 = {
+        readonly: new ReadableStream(),
+        writeonly: new WritableStream(),
+        tranformonly: new TransformStream()
+      }
+      messageChannel.port1.postMessage(streams1, {
+        transfer: [
+          streams1.readonly as unknown as Transferable,
+          streams1.writeonly as unknown as Transferable,
+          streams1.tranformonly as unknown as Transferable,
+        ]
+      })
+      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;

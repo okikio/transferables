@@ -13,7 +13,6 @@ export function registerMessageListener(
 ) {
   port.onmessage = ({ data }) => {
     const { name, variant, cycle, i, obj } = data;
-    console.log({ name, variant, cycle, i })
 
     const simpleMsg = { name, variant, cycle, i };
     const msg = { ...simpleMsg, obj };

@@ -1,3 +1,4 @@
+import type { getTransferable as transferable, getTransferables as transferables, hasTransferables as has } from "../src/index.ts";
 import { isSupported } from "../src/index.ts";
 
 // 16MB = 1024 * 1024 * 16
@@ -250,9 +251,9 @@ export const perfs = new Map<string, Map<string, number[]>>();
  * @param variant The name of the variant
  * @param fn The function to call to run the benchmark
  */
-export async function add(name: string, variant: string, fn?: Function) {
+export async function add(name: string, variant: string, fn?: Function, obj?: unknown) {
   const start = performance.now();
-  await fn?.();
+  await fn?.(obj);
   const end = performance.now();
   const duration = end - start;
 
@@ -272,3 +273,138 @@ export const timeFormatter = new Intl.RelativeTimeFormat("en", {
 export function timeFormat(time: number) {
   return timeFormatter.format(time, "seconds").replace("seconds", "ms");
 }
+
+export interface IIterationType {
+  name: string;
+  variant: string;
+  cycle: number;
+  i: number;
+  obj: ReturnType<typeof generateObj>;
+}
+
+export interface ICreateMessageChannelIteratorOptions {
+  name: string;
+  index: number;
+  variant: string;
+  cycle?: number;
+  obj: ReturnType<typeof generateObj>;
+  channel: MessageChannel;
+  queue: Map<string, ReturnType<typeof createPromise>>;
+}
+
+interface ICreateWorkerIteratorOptions {
+  name: string;
+  index: number;
+  variant: string;
+  cycle?: number;
+  obj: ReturnType<typeof generateObj>;
+  worker: Worker;
+  queue: Map<string, ReturnType<typeof createPromise>>;
+}
+
+export function createPromise() {
+  let resolve: ((value: unknown) => void) | undefined;
+  let reject: ((value: unknown) => void) | undefined;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return { promise, resolve, reject };
+}
+
+export async function createMessageChannelPromise({ name, index, cycle = 0, variant, obj, channel, queue }: ICreateMessageChannelIteratorOptions) {
+  try {
+    const msg = { name, variant, cycle, i: index, obj };
+    channel.port2.postMessage(msg);
+  } catch (e) {
+    console.warn(e);
+  }
+
+  const promise = createPromise();
+  const queueKey = `${name}-${variant}-${cycle}-${index}`;
+  queue.set(queueKey, promise);
+  await promise.promise;
+}
+
+export async function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
+  try {
+    const msg = { name, variant, cycle, i: index, obj };
+    worker.postMessage(msg);
+  } catch (e) {
+    console.warn(e);
+  }
+
+  const promise = createPromise();
+  const queueKey = `${name}-${variant}-${cycle}-${index}`;
+  queue.set(queueKey, promise);
+  await promise.promise;
+}
+
+// [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable*)`, `structuredClone (getTransferables)`]
+export function createStructuredCloneVariants(
+  hasTransferables: typeof has, 
+  getTransferable: typeof transferable, 
+  getTransferables: typeof transferables
+) {
+  return {
+    hasTransferables(obj: ReturnType<typeof generateObj>) {
+      return hasTransferables(obj, true);
+    },
+
+    "structuredClone (manually)": function (obj: ReturnType<typeof generateObj>) {
+      try {
+        structuredClone(obj, { transfer: obj.transferable });
+      } catch (e) { console.warn(e); }
+    },
+
+    "structuredClone (getTransferable*)": function (obj: ReturnType<typeof generateObj>) {
+      try {
+        const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+        structuredClone(obj, { transfer });
+      } catch (e) { console.warn(e); }
+    },
+
+    "structuredClone (getTransferables)": function (obj: ReturnType<typeof generateObj>) {
+      try {
+        const transfer = getTransferables(obj, true) as Transferable[];
+        structuredClone(obj, { transfer });
+      } catch (e) { console.warn(e); }
+    }
+  };
+}
+
+export const postMessageVariants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable*)`, `postMessage (getTransferables)`];
+export const maxSize = 1.6;
+
+export function printTable(variants: string[], dmeanstdev: any, markdownTable: any) {
+  const head = ["", ...variants];
+  const table: Record<string, string[]>[] = [];
+
+  perfs.forEach((variants, name) => {
+    const obj: Record<string, string[]> = {};
+    variants.forEach((durations) => {
+      const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
+
+      obj[name] ??= [];
+      obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
+
+    });
+
+    table.push(obj);
+  })
+
+  const str = table.map((x) => {
+    const [key] = Object.keys(x);
+    return [key, ...x[key]]
+  })
+
+  const result = markdownTable([head, ...str]);
+  console.log(result);
+  console.log("\n");
+
+  return result;
+}
+
+console.log({ isClonable })
+

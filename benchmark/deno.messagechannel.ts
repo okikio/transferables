@@ -1,4 +1,4 @@
-import { MB, generateObj, add, perfs, timeFormat, isClonable } from "./utils.ts";
+import { MB, generateObj, add, isClonable, createMessageChannelPromise, createPromise, IIterationType, maxSize, printTable, postMessageVariants } from "./utils.ts";
 import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
@@ -8,55 +8,6 @@ import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
 import { registerMessageListener } from "./workers/messagechannel.ts";
 
-interface IIterationType {
-  name: string;
-  variant: string;
-  cycle: number;
-  i: number;
-  obj: ReturnType<typeof generateObj>;
-}
-
-interface ICreateWorkerIteratorOptions {
-  index: number;
-  variant: string;
-  cycle?: number;
-  obj: ReturnType<typeof generateObj>;
-  channel: MessageChannel;
-  queue: Map<string, ReturnType<typeof createPromise>>;
-}
-
-function createPromise() {
-  let resolve: ((value: unknown) => void) | undefined;
-  let reject: ((value: unknown) => void) | undefined;
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-
-  return { promise, resolve, reject };
-}
-
-async function createMessageChannelPromise({ index, cycle = 0, variant, obj, channel, queue }: ICreateWorkerIteratorOptions) {
-  const num = Math.pow(2, index);
-  const sizeStr = bytes(num, { maximumFractionDigits: 3 });
-
-  try {
-    const msg = { name: sizeStr, variant, cycle, i: index, obj };
-    channel.port1.postMessage(msg);
-  } catch (e) {
-    console.warn(e);
-  }
-
-  const promise = createPromise();
-  const queueKey = `${sizeStr}-${variant}-${cycle}-${index}`;
-  queue.set(queueKey, promise);
-  await promise.promise;
-}
-
-console.log({ isClonable })
-
-const variants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable*)`, `postMessage (getTransferables)`];
-const maxSize = 1.6;
 for (let cycle = 0; cycle < 5; cycle++) {
   const queue = new Map<string, ReturnType<typeof createPromise>>();
   const channel = new MessageChannel();
@@ -75,18 +26,18 @@ for (let cycle = 0; cycle < 5; cycle++) {
     resolve?.(data);
   }
 
-  for (let variant of variants) {
+  for (let variant of postMessageVariants) {
     for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
       const num = Math.pow(2, index);
-      const sizeStr = bytes(num, { maximumFractionDigits: 3 });
+      const name = bytes(num, { maximumFractionDigits: 3 });
 
       /**
        * Deno doesn't allow for transfering message channels
        */
       const obj = generateObj(num / MB, { ...isClonable, channel: false });
 
-      await add(sizeStr, variant, async () => {
-        await createMessageChannelPromise({ index, variant, cycle, obj, channel: channel, queue });
+      await add(name, variant, async () => {
+        await createMessageChannelPromise({ name, index, variant, cycle, obj, channel: channel, queue });
       })
     }
   }
@@ -95,35 +46,4 @@ for (let cycle = 0; cycle < 5; cycle++) {
   queue.clear();
 }
 
-const Head = ["", ...variants];
-const table: Record<string, string[]>[] = [];
-
-let strVal = 'Map {\n'
-perfs.forEach((variants, name) => {
-  strVal += `  "${name}" => Map { `;
-
-  const obj: Record<string, string[]> = {};
-  variants.forEach((durations, variant) => {
-    const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
-
-    obj[name] ??= [];
-    obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
-
-    strVal += `"${variant}" => [${durations.map(x => timeFormat(x)).join(", ")}], `
-
-  });
-
-  table.push(obj);
-  strVal += `},\n`;
-})
-
-const str = table.map((x) => {
-  const [key] = Object.keys(x);
-  return [key, ...x[key]]
-})
-
-strVal += `}`;
-
-console.log(markdownTable([Head, ...str]));
-console.log("\n");
-  // console.log(strVal);
+printTable(postMessageVariants, dmeanstdev, markdownTable)
