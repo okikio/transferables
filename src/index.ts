@@ -13,7 +13,6 @@ export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | Writ
 export async function isSupported() {
   const channel = await (async () => {
     try {
-      const messageChannel = new MessageChannel()
       const obj = { channel: new MessageChannel() }
       structuredClone(obj, {
         transfer: [
@@ -22,12 +21,9 @@ export async function isSupported() {
         ]
       })
 
+      const messageChannel = new MessageChannel()
       const obj1 = { channel: new MessageChannel() }
-
       await new Promise<void>(resolve => {
-        messageChannel.port1.start();
-        messageChannel.port2.start();
-
         messageChannel.port1.postMessage(obj1, [
           obj1.channel.port1,
           obj1.channel.port2,
@@ -40,7 +36,7 @@ export async function isSupported() {
           messageChannel.port2.postMessage(data, [
             data.channel.port1,
             data.channel.port2,
-          ]);
+          ].filter(x => x != undefined));
         }
       })
     } catch (e) {
@@ -53,13 +49,11 @@ export async function isSupported() {
 
   const streams = await (async () => {
     try {
-      const messageChannel = new MessageChannel()
       const streams = {
         readonly: new ReadableStream(),
         writeonly: new WritableStream(),
         tranformonly: new TransformStream()
       }
-
       structuredClone(streams, {
         transfer: [
           streams.readonly as unknown as Transferable,
@@ -68,15 +62,13 @@ export async function isSupported() {
         ]
       })
 
+      const messageChannel = new MessageChannel()
       const streams1 = {
         readonly: new ReadableStream(),
         writeonly: new WritableStream(),
         tranformonly: new TransformStream()
       }
-
       await new Promise<void>(resolve => {
-        messageChannel.port1.start();
-        messageChannel.port2.start();
         messageChannel.port1.postMessage(streams1, [
           streams1.readonly as unknown as Transferable,
           streams1.writeonly as unknown as Transferable,
@@ -91,7 +83,7 @@ export async function isSupported() {
             data.readonly as unknown as Transferable,
             data.writeonly as unknown as Transferable,
             data.tranformonly as unknown as Transferable,
-          ]);
+          ].filter(x => x != undefined));
         }
       })
     } catch (e) {

@@ -1,6 +1,6 @@
-import { MB, generateObj, add, isClonable, printTable, postMessageVariants, createMessageChannelPromise, createPromise, IIterationType, maxSize } from "../utils";
+import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, IIterationType, maxSize } from "../utils";
 
-import { getTransferable, getTransferables, hasTransferables } from "../../src";
+import { getTransferable, getTransferables, hasTransferables, isSupported } from "../../src";
 import { registerMessageListener } from "../workers/messagechannel";
 
 import bytes from "pretty-bytes";
@@ -10,6 +10,7 @@ import { markdownTable } from 'markdown-table';
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
+  const isClonable = await isSupported();
 
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();

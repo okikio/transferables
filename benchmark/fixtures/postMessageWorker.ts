@@ -1,12 +1,14 @@
-import { MB, generateObj, add, isClonable, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize } from "../utils";
+import { MB, generateObj, add, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize } from "../utils";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
+import { isSupported } from "../../src";
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
+  const isClonable = await isSupported();
 
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();

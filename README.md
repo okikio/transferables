@@ -159,10 +159,18 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 <br>
 
 ## Benchmarks
+**Machine**: [GitHub Action `ubuntu-latest`](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources)
+* 2-core CPU (x86_64)
+* 7 GB of RAM
+* 14 GB of SSD space
 
-To gurantee performance
-
+**JS Runtime**s:
 * `Node 19` - This benchmark was run using `vitest`
+* `Deno 1.28.3`
+* `Bun v0.2.2` - This benchmark was run using `vitest` (it's basically a clone of the nodejs benchmark)
+* `Chrome (latest)`
+* `Firefox (latest)`
+* `Safari (latest)`
 
 
 ### Node
@@ -437,7 +445,7 @@ To gurantee performance
 There are a lot of asterisks involved with transferable objects. 
 * First, not all transferable objects are supported in all browsers.
 * Second, not all transferable objects can be transfered between Workers and the main thread.
-* Third, `structuredClone` when not using transferable objects crashes if the object to be cloned contains transferable objects.
+* Third, `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
 * Fourth, and most important only use this library when you don't know the shape of the object to be transfered, as traversing the input object adds a delay.
 
 There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to either a lack of usage or just not wanting to add the feature. 

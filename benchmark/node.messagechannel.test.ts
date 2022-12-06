@@ -1,7 +1,7 @@
-import { MB, generateObj, add, isClonable, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants } from "./utils";
+import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants } from "./utils";
 
 import { it } from 'vitest';
-import { getTransferable, getTransferables, hasTransferables } from "../src";
+import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src";
 import { registerMessageListener } from "./workers/messagechannel";
 
 import bytes from "pretty-bytes";
@@ -10,6 +10,8 @@ import { dmeanstdev } from '@stdlib/stats-base';
 import { markdownTable } from 'markdown-table';
 
 it("postMessage (message channel)", async () => {
+  const isClonable = await isSupported();
+
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();
     const channel = new MessageChannel();
@@ -36,7 +38,7 @@ it("postMessage (message channel)", async () => {
         /**
          * Deno doesn't allow for transfering message channels
          */
-        const obj = generateObj(num / MB, isClonable);
+        const obj = generateObj(num / MB, { ...isClonable, channel: false, streams: false });
 
         await add(name, variant, async () => {
           await createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
