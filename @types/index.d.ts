@@ -14,10 +14,10 @@ export declare type TypeTransferable = ArrayBuffer | MessagePort | ReadableStrea
 /**
  * Tests if certain transferable objects are actually supported in a specific js environment when using `structuredClone` and `MessageChannel postMessage`
  */
-export declare function isSupported(): {
+export declare function isSupported(): Promise<{
     channel: boolean;
     streams: boolean;
-};
+}>;
 /**
  * Check if an object is an object or a function (because functions also count as objects)
  */
