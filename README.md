@@ -97,9 +97,21 @@ postMessage(data, transferables);
 // Clone data with transferables, if they exist
 const transferablesIterator = containsTransferables ? Array.from(getTransferable(data)) : undefined;
 structuredClone(data, transferablesIterator);
+```
+
+```ts
+import { 
+  isSupported, 
+  isObject, 
+  isTypedArray, 
+  isStream, 
+  isMessageChannel, 
+  isTransferable, 
+  filterOutDuplicates 
+} from "transferables";
 
 // isSupported
-isSupported(); // { channel: true, streams: true }
+isSupported(); // Promise<{ channel: true, streams: true }>
 
 // isObject
 isObject(data); // true
@@ -171,6 +183,15 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 * `Chrome (latest)`
 * `Firefox (latest)`
 * `Safari (latest)`
+
+The benchmark ran 5 cycles for 3 different forms of transferable objects all in a transfer list of 132 objects with one run per object size ranging from `1 B` to `1,049 MB` (with 21 sizes from the total range).
+
+We ran the benchmark with 3 main ways to use transferable objects, namely,
+1. `structuredClone`
+2. `MessageChannel`
+3. `Worker`
+
+> Note: `Worker`'s aren't supported in all runtimes, but   
 
 
 ### Node
@@ -446,7 +467,7 @@ There are a lot of asterisks involved with transferable objects.
 * First, not all transferable objects are supported in all browsers.
 * Second, not all transferable objects can be transfered between Workers and the main thread.
 * Third, `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
-* Fourth, and most important only use this library when you don't know the shape of the object to be transfered, as traversing the input object adds a delay.
+* Fourth, and most important, only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the benchmark above to see the delay in action.
 
 There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to either a lack of usage or just not wanting to add the feature. 
 

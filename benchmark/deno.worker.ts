@@ -5,6 +5,13 @@ import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.
 
 import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
+for (let i = 0; i < Math.log2(maxSize * MB); i++) {
+  const num = Math.pow(2, i);
+  const name = bytes(num, { maximumFractionDigits: 3 });
+  const obj = generateObj(num / MB, isClonable);
+  console.log({ name, transferable: obj.transferable.length })
+}
+
 for (let cycle = 0; cycle < 5; cycle++) {
   const queue = new Map<string, ReturnType<typeof createPromise>>();
   const worker = new Worker(new URL("./workers/deno.ts", import.meta.url).href, { type: "module" });

@@ -11,6 +11,12 @@ import { markdownTable } from 'markdown-table';
 
 it("postMessage (message channel)", async () => {
   const isClonable = await isSupported();
+  for (let i = 0; i < Math.log2(maxSize * MB); i++) {
+    const num = Math.pow(2, i);
+    const name = bytes(num, { maximumFractionDigits: 3 });
+    const obj = generateObj(num / MB, isClonable);
+    console.log({ name, transferable: obj.transferable.length })
+  }
 
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();

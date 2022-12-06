@@ -1,4 +1,4 @@
-import { MB, generateObj, add, printTable, createStructuredCloneVariants } from "./utils";
+import { MB, generateObj, add, printTable, createStructuredCloneVariants, maxSize } from "./utils";
 
 import { it } from 'vitest';
 import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src";
@@ -14,9 +14,15 @@ const len = keys.length;
 
 it("structuredClone", async () => {
   const isClonable = await isSupported();
+  for (let i = 0; i < Math.log2(maxSize * MB); i++) {
+    const num = Math.pow(2, i);
+    const name = bytes(num, { maximumFractionDigits: 3 });
+    const obj = generateObj(num / MB, isClonable);
+    console.log({ name, transferable: obj.transferable.length })
+  }
 
   for (let cycle = 0; cycle < 5; cycle++) {
-    for (let i = 0; i < Math.log2(1.6 * MB); i++) {
+    for (let i = 0; i < Math.log2(maxSize * MB); i++) {
       const num = Math.pow(2, i);
       const name = bytes(num, { maximumFractionDigits: 3 });
 
