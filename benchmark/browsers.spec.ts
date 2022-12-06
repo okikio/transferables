@@ -46,7 +46,7 @@ test('MessageChannel (browser)', async ({ page }) => {
   console.log(await postMessageMessageChannel.getAttribute("data-value"));
 })
 
-test('MessageChannel (browser)', async ({ page }) => {
+test('Worker (browser)', async ({ page }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
