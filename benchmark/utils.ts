@@ -15,6 +15,8 @@ export function range(size = 16) {
 
 export const isClonable = await isSupported();
 
+console.log({ isClonable })
+
 /**
  * Generates a complex object for various array buffer sizes, 
  * to test how much of an impact transferable objects actually have
@@ -333,7 +335,6 @@ export async function createWorkerPromise({ name, index, cycle = 0, variant, obj
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
   try {
-    console.log(obj.transferable)
     worker.postMessage(msg, obj.transferable);
   } catch (e) {
     console.warn(e);
@@ -410,6 +411,4 @@ export function printTable(variants: string[], dmeanstdev: any, markdownTable: a
 
   return result;
 }
-
-console.log({ isClonable })
 

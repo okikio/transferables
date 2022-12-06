@@ -48,6 +48,4 @@ export function registerMessageListener(
       port.postMessage(simpleMsg);
     }
   }
-
-  // (port as MessagePort)?.start?.();
 }
