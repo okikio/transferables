@@ -202,7 +202,29 @@ To gurantee performance
 <details>
 <summary>MessageChannel</summary>  
 
-
+|            | hasTransferables            | postMessage (no transfers)   | postMessage (manually)       | postMessage (getTransferable*) | postMessage (getTransferables) |
+| ---------- | --------------------------- | ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ |
+| 1 B        | in 0.572 ms ± 0.303 ms      | in 0.613 ms ± 0.125 ms       | in 0.724 ms ± 0.176 ms       | in 1.087 ms ± 0.361 ms         | in 0.92 ms ± 0.135 ms          |
+| 2 B        | in 0.336 ms ± 0.024 ms      | in 0.494 ms ± 0.059 ms       | in 0.585 ms ± 0.069 ms       | in 0.794 ms ± 0.101 ms         | in 12.373 ms ± 23.371 ms       |
+| 4 B        | in 0.292 ms ± 0.022 ms      | in 0.498 ms ± 0.082 ms       | in 0.568 ms ± 0.088 ms       | in 0.751 ms ± 0.091 ms         | in 0.854 ms ± 0.179 ms         |
+| 8 B        | in 0.298 ms ± 0.025 ms      | in 0.513 ms ± 0.07 ms        | in 0.535 ms ± 0.045 ms       | in 0.781 ms ± 0.131 ms         | in 5.724 ms ± 9.664 ms         |
+| 16 B       | in 0.366 ms ± 0.065 ms      | in 0.552 ms ± 0.072 ms       | in 0.542 ms ± 0.011 ms       | in 0.814 ms ± 0.134 ms         | in 0.949 ms ± 0.359 ms         |
+| 32 B       | in 0.411 ms ± 0.073 ms      | in 0.612 ms ± 0.087 ms       | in 0.631 ms ± 0.028 ms       | in 1.036 ms ± 0.246 ms         | in 5.493 ms ± 9.067 ms         |
+| 64 B       | in 0.486 ms ± 0.166 ms      | in 0.831 ms ± 0.164 ms       | in 0.753 ms ± 0.034 ms       | in 1.268 ms ± 0.272 ms         | in 1.116 ms ± 0.299 ms         |
+| 128 B      | in 0.583 ms ± 0.065 ms      | in 1.155 ms ± 0.187 ms       | in 1.136 ms ± 0.189 ms       | in 1.739 ms ± 0.381 ms         | in 1.487 ms ± 0.342 ms         |
+| 256 B      | in 0.821 ms ± 0.076 ms      | in 1.697 ms ± 0.22 ms        | in 1.622 ms ± 0.151 ms       | in 4.138 ms ± 3.54 ms          | in 2.203 ms ± 0.472 ms         |
+| 512 B      | in 1.422 ms ± 0.132 ms      | in 2.84 ms ± 0.374 ms        | in 2.765 ms ± 0.354 ms       | in 4.286 ms ± 0.731 ms         | in 11.174 ms ± 13.864 ms       |
+| 1.024 kB   | in 2.589 ms ± 0.355 ms      | in 5.138 ms ± 0.723 ms       | in 5.119 ms ± 0.688 ms       | in 6.843 ms ± 0.319 ms         | in 7 ms ± 1.151 ms             |
+| 2.048 kB   | in 4.923 ms ± 0.847 ms      | in 9.568 ms ± 1.39 ms        | in 9.578 ms ± 1.362 ms       | in 12.955 ms ± 0.699 ms        | in 13.293 ms ± 2.112 ms        |
+| 4.096 kB   | in 8.465 ms ± 0.138 ms      | in 19.355 ms ± 4.535 ms      | in 17.75 ms ± 0.917 ms       | in 31.352 ms ± 7.008 ms        | in 27.615 ms ± 5.205 ms        |
+| 8.192 kB   | in 17.735 ms ± 2.094 ms     | in 35.301 ms ± 2.799 ms      | in 34.435 ms ± 1.824 ms      | in 54.482 ms ± 11.626 ms       | in 52.157 ms ± 11.877 ms       |
+| 16.384 kB  | in 42.497 ms ± 5.61 ms      | in 74.145 ms ± 2.401 ms      | in 75.17 ms ± 3.51 ms        | in 110.657 ms ± 20.587 ms      | in 102.849 ms ± 21.945 ms      |
+| 32.768 kB  | in 69.581 ms ± 4.887 ms     | in 142.885 ms ± 8.179 ms     | in 147.824 ms ± 9.997 ms     | in 216.289 ms ± 38.624 ms      | in 202.999 ms ± 35.166 ms      |
+| 65.536 kB  | in 142.708 ms ± 13.538 ms   | in 294.519 ms ± 22.334 ms    | in 284.79 ms ± 14.444 ms     | in 443.316 ms ± 110.387 ms     | in 402.639 ms ± 66.026 ms      |
+| 131.072 kB | in 275.193 ms ± 7.918 ms    | in 606.462 ms ± 26.131 ms    | in 564.778 ms ± 27.358 ms    | in 822.995 ms ± 106.78 ms      | in 812.484 ms ± 138.545 ms     |
+| 262.144 kB | in 638.652 ms ± 18.611 ms   | in 1,270.838 ms ± 26.366 ms  | in 1,340.494 ms ± 37.816 ms  | in 1,771.083 ms ± 116.978 ms   | in 1,619.731 ms ± 74.565 ms    |
+| 524.288 kB | in 1,313.968 ms ± 44.102 ms | in 2,518.425 ms ± 93.157 ms  | in 2,719.672 ms ± 84.072 ms  | in 3,594.096 ms ± 157.428 ms   | in 3,309.634 ms ± 103.748 ms   |
+| 1.049 MB   | in 2,528.012 ms ± 61.709 ms | in 5,346.026 ms ± 190.173 ms | in 5,290.777 ms ± 296.915 ms | in 7,493.436 ms ± 537.441 ms   | in 6,659.471 ms ± 244.316 ms   |
 
 
 </details>

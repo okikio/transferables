@@ -7,6 +7,7 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   test: {
     environment: 'happy-dom', // or 'jsdom', 'node'
+    testTimeout: 1_500_000,
   },
   plugins: [
     dts({

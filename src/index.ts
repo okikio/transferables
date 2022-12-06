@@ -10,8 +10,8 @@ export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | Writ
 /**
  * Tests if certain transferable objects are actually supported in a specific js environment when using `structuredClone` and `MessageChannel postMessage`
  */
-export function isSupported() {
-  const channel = (() => {
+export async function isSupported() {
+  const channel = await (async () => {
     try {
       const messageChannel = new MessageChannel()
       const obj = { channel: new MessageChannel() }
@@ -23,13 +23,26 @@ export function isSupported() {
       })
 
       const obj1 = { channel: new MessageChannel() }
-      messageChannel.port1.postMessage(obj1, {
-        transfer: [
+
+      await new Promise<void>(resolve => {
+        messageChannel.port1.start();
+        messageChannel.port2.start();
+
+        messageChannel.port1.postMessage(obj1, [
           obj1.channel.port1,
           obj1.channel.port2,
-        ]
+        ])
+        messageChannel.port1.onmessage = () => {
+          messageChannel.port1.close();
+          resolve()
+        }
+        messageChannel.port2.onmessage = ({ data }) => {
+          messageChannel.port2.postMessage(data, [
+            data.channel.port1,
+            data.channel.port2,
+          ]);
+        }
       })
-      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;
@@ -38,7 +51,7 @@ export function isSupported() {
     return true;
   })();
 
-  const streams = (() => {
+  const streams = await (async () => {
     try {
       const messageChannel = new MessageChannel()
       const streams = {
@@ -47,12 +60,12 @@ export function isSupported() {
         tranformonly: new TransformStream()
       }
 
-      structuredClone(streams, { 
+      structuredClone(streams, {
         transfer: [
-          streams.readonly as unknown as Transferable, 
-          streams.writeonly as unknown as Transferable, 
+          streams.readonly as unknown as Transferable,
+          streams.writeonly as unknown as Transferable,
           streams.tranformonly as unknown as Transferable,
-        ] 
+        ]
       })
 
       const streams1 = {
@@ -60,14 +73,27 @@ export function isSupported() {
         writeonly: new WritableStream(),
         tranformonly: new TransformStream()
       }
-      messageChannel.port1.postMessage(streams1, {
-        transfer: [
+
+      await new Promise<void>(resolve => {
+        messageChannel.port1.start();
+        messageChannel.port2.start();
+        messageChannel.port1.postMessage(streams1, [
           streams1.readonly as unknown as Transferable,
           streams1.writeonly as unknown as Transferable,
           streams1.tranformonly as unknown as Transferable,
-        ]
+        ])
+        messageChannel.port1.onmessage = () => {
+          messageChannel.port1.close();
+          resolve();
+        }
+        messageChannel.port2.onmessage = ({ data }) => {
+          messageChannel.port2.postMessage(data, [
+            data.readonly as unknown as Transferable,
+            data.writeonly as unknown as Transferable,
+            data.tranformonly as unknown as Transferable,
+          ]);
+        }
       })
-      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;
@@ -113,7 +139,7 @@ export function isStream(obj: unknown): obj is ReadableStream | WritableStream |
  */
 export function isMessageChannel(obj: unknown): obj is MessageChannel {
   return (
-    ("MessageChannel" in globalThis && obj instanceof MessageChannel) 
+    ("MessageChannel" in globalThis && obj instanceof MessageChannel)
   );
 }
 
@@ -174,7 +200,7 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
       else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
         const len = values.length;
-        
+
         for (let j = 0; j < len; j++) {
           nextQueue.push(values[j]);
         }
@@ -231,7 +257,7 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
       } else if (streams && isStream(item)) {
         yield item;
         seen.add(item);
-      } 
+      }
 
       /**  
        * Streams are circular objects, to avoid an infinite loop 
@@ -240,7 +266,7 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
       else if (!isStream(item) && isObject(item)) {
         const values = (Array.isArray(item) ? item : Object.values(item));
         const len = values.length;
-        
+
         for (let j = 0; j < len; j++) {
           nextQueue.push(values[j])
         }
@@ -278,7 +304,7 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
       if (isTypedArray(item)) {
         return true;
       } else if (isTransferable(item)) {
-        return true; 
+        return true;
       } else if (isMessageChannel(item)) {
         return true;
       } else if (streams && isStream(item)) {

@@ -13,7 +13,7 @@ export function range(size = 16) {
   return Array.from({ length: size * MB }, (v, i) => i);
 }
 
-export const isClonable = isSupported();
+export const isClonable = await isSupported();
 
 /**
  * Generates a complex object for various array buffer sizes, 
