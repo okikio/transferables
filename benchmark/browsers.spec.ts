@@ -6,6 +6,18 @@ test('structuredClone (browser)', async ({ page }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
 
+  page.on('console', (msg) => {
+    if (msg && msg.text) {
+      if (typeof msg.text === 'function') {
+        console.log('PAGE LOG:', msg.text());
+      } else {
+        console.log('PAGE LOG:', msg.text);
+      }
+    } else {
+      console.log('PAGE LOG:', msg);
+    }
+  });
+
   // create a locator
   const structuredCloneBtn = page.locator('button#structuredClone');
 
@@ -29,6 +41,18 @@ test('MessageChannel (browser)', async ({ page }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
 
+  page.on('console', (msg) => {
+    if (msg && msg.text) {
+      if (typeof msg.text === 'function') {
+        console.log('PAGE LOG:', msg.text());
+      } else {
+        console.log('PAGE LOG:', msg.text);
+      }
+    } else {
+      console.log('PAGE LOG:', msg);
+    }
+  });
+
   // create a locator
   const postMessageMessageChannelBtn = page.locator('button#postMessageMessageChannel');
 
@@ -51,6 +75,18 @@ test('Worker (browser)', async ({ page }) => {
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
+
+  page.on('console', (msg) => {
+    if (msg && msg.text) {
+      if (typeof msg.text === 'function') {
+        console.log('PAGE LOG:', msg.text());
+      } else {
+        console.log('PAGE LOG:', msg.text);
+      }
+    } else {
+      console.log('PAGE LOG:', msg);
+    }
+  });
 
   // create a locator
   const postMessageWorkerBtn = page.locator('button#postMessageWorker');
