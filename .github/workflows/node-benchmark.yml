@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Benchmark CI
+name: Node Benchmark CI
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - '*.js'
       - '*.json'
       - '*.yaml'
-      - '.github/**/benchmark.yml'
+      - '.github/**/node-benchmark.yml'
       - 'src/**/*'
       - 'benchmark/**/*'
 
@@ -30,12 +30,6 @@ jobs:
         with:
           # File containing the version Spec of the version to use.  Examples: .nvmrc, .node-version, .tool-versions.
           node-version-file: '.nvmrc' # optional
-          
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        
-      - name: Setup Bun
-        uses: xHyroM/setup-bun@v0.1.8
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -63,5 +57,5 @@ jobs:
         run: pnpm install
 
       - name: Run Benchmark
-        run: pnpm ultra benchmark 
+        run: pnpm benchmark:node:all 
         
