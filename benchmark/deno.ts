@@ -1,5 +1,5 @@
-import { MB, generateObj, add, isClonable, createStructuredCloneVariants, printTable, maxSize } from "./utils.ts";
-import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
+import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize } from "./utils.ts";
+import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src/index.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -10,11 +10,12 @@ const variants = createStructuredCloneVariants(hasTransferables, getTransferable
 const keys = Object.keys(variants) as (keyof typeof variants)[];
 const len = keys.length;
 
+const isClonable = { ...await isSupported() };
 for (let i = 0; i < Math.log2(maxSize * MB); i++) {
   const num = Math.pow(2, i);
   const name = bytes(num, { maximumFractionDigits: 3 });
   const obj = generateObj(num / MB, isClonable);
-  console.log({ name, transferable: obj.transferable.length })
+  console.log({ type: "structuredClone [deno]", name, transferable: obj.transferable.length })
 }
 
 for (let cycle = 0; cycle < 5; cycle++) {

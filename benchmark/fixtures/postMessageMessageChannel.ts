@@ -10,7 +10,14 @@ import { markdownTable } from 'markdown-table';
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
-  const isClonable = await isSupported();
+
+  const isClonable = { ...await isSupported(), channel: false, streams: false };
+  for (let i = 0; i < Math.log2(maxSize * MB); i++) {
+    const num = Math.pow(2, i);
+    const name = bytes(num, { maximumFractionDigits: 3 });
+    const obj = generateObj(num / MB, isClonable);
+    console.log({ type: "postMessageMessageChannel (browser)", name, transferable: obj.transferable.length })
+  }
 
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();
@@ -38,7 +45,7 @@ export default async function (e: MouseEvent) {
         /**
          * Deno doesn't allow for transfering message channels
          */
-        const obj = generateObj(num / MB, { ...isClonable, channel: false, streams: false });
+        const obj = generateObj(num / MB, isClonable);
 
         await add(name, variant, async () => {
           await createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });

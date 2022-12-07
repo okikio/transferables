@@ -176,22 +176,22 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 * 7 GB of RAM
 * 14 GB of SSD space
 
-**JS Runtime**s:
-* `Node 19` - This benchmark was run using `vitest`
+**JS Runtimes**:
+* `Node 19` - Run using `vitest`
 * `Deno 1.28.3`
-* `Bun v0.2.2` - This benchmark was run using `vitest` (it's basically a clone of the nodejs benchmark)
+* `Bun v0.2.2` - Run using `vitest` (it's basically a clone of the nodejs benchmark)
 * `Chrome (latest)`
 * `Firefox (latest)`
 * `Safari (latest)`
 
 The benchmark ran 5 cycles for 3 different forms of transferable objects all in a transfer list of 132 objects with one run per object size ranging from `1 B` to `1,049 MB` (with 21 sizes from the total range).
 
-We ran the benchmark with 3 main ways to use transferable objects, namely,
-1. `structuredClone`
-2. `MessageChannel`
-3. `Worker`
+We ran the benchmark with 
+1. `structuredClone` (`All`)
+2. `MessageChannel` (`All`)
+3. `Worker` (`Deno`, `Chrome`, `Firefox`, and `Safari`)
 
-> Note: `Worker`'s aren't supported in all runtimes, but   
+> Note: `Worker`'s aren't supported in all runtimes   
 
 
 ### Node
@@ -200,29 +200,29 @@ We ran the benchmark with 3 main ways to use transferable objects, namely,
 <summary>structuredClone</summary>  
 
 
-|            | hasTransferables        | structuredClone (manually)  | structuredClone (getTransferable*) | structuredClone (getTransferables) |
-| ---------- | ----------------------- | --------------------------- | ---------------------------------- | ---------------------------------- |
-| 1 B        | in 0.236 ms ± 0.213 ms  | in 4.872 ms ± 1.536 ms      | in 4.913 ms ± 1.989 ms             | in 4.955 ms ± 1.995 ms             |
-| 2 B        | in 0.118 ms ± 0.019 ms  | in 4.56 ms ± 1.915 ms       | in 4.65 ms ± 1.766 ms              | in 4.575 ms ± 1.757 ms             |
-| 4 B        | in 0.112 ms ± 0.02 ms   | in 4.071 ms ± 1.767 ms      | in 4.266 ms ± 1.485 ms             | in 4.465 ms ± 1.363 ms             |
-| 8 B        | in 0.096 ms ± 0.01 ms   | in 3.661 ms ± 1.199 ms      | in 4.154 ms ± 1.653 ms             | in 5.028 ms ± 2.563 ms             |
-| 16 B       | in 0.1 ms ± 0.019 ms    | in 5.457 ms ± 4.709 ms      | in 7.949 ms ± 2.636 ms             | in 4.308 ms ± 1.446 ms             |
-| 32 B       | in 0.12 ms ± 0.035 ms   | in 4.37 ms ± 1.791 ms       | in 4.28 ms ± 1.518 ms              | in 3.871 ms ± 1.208 ms             |
-| 64 B       | in 0.121 ms ± 0.029 ms  | in 6.079 ms ± 4.468 ms      | in 10.952 ms ± 4.055 ms            | in 3.675 ms ± 0.823 ms             |
-| 128 B      | in 0.093 ms ± 0.009 ms  | in 3.75 ms ± 1.109 ms       | in 4.026 ms ± 1.142 ms             | in 4.141 ms ± 1.412 ms             |
-| 256 B      | in 0.104 ms ± 0.026 ms  | in 3.898 ms ± 1.123 ms      | in 4.599 ms ± 1.304 ms             | in 6.024 ms ± 3.107 ms             |
-| 512 B      | in 0.131 ms ± 0.059 ms  | in 4.501 ms ± 1.136 ms      | in 5.489 ms ± 1.163 ms             | in 5.217 ms ± 1.225 ms             |
-| 1.024 kB   | in 0.132 ms ± 0.025 ms  | in 6.407 ms ± 2 ms          | in 8.602 ms ± 4.44 ms              | in 9.678 ms ± 1.826 ms             |
-| 2.048 kB   | in 0.142 ms ± 0.015 ms  | in 7.446 ms ± 1.569 ms      | in 11.972 ms ± 2.425 ms            | in 13.765 ms ± 3.61 ms             |
-| 4.096 kB   | in 0.152 ms ± 0.05 ms   | in 11.829 ms ± 2.282 ms     | in 18.41 ms ± 3.901 ms             | in 17.337 ms ± 3.333 ms            |
-| 8.192 kB   | in 0.534 ms ± 0.689 ms  | in 22.943 ms ± 3.914 ms     | in 37.064 ms ± 6.373 ms            | in 32.482 ms ± 6.235 ms            |
-| 16.384 kB  | in 0.32 ms ± 0.08 ms    | in 40.381 ms ± 8.647 ms     | in 70.484 ms ± 12.781 ms           | in 68.021 ms ± 12.511 ms           |
-| 32.768 kB  | in 0.444 ms ± 0.036 ms  | in 66.95 ms ± 4.575 ms      | in 122.046 ms ± 7.226 ms           | in 117.206 ms ± 11.53 ms           |
-| 65.536 kB  | in 1 second ± 0.074 ms  | in 130.533 ms ± 2.157 ms    | in 242.031 ms ± 9.481 ms           | in 222.998 ms ± 11.668 ms          |
-| 131.072 kB | in 2.437 ms ± 0.952 ms  | in 257.059 ms ± 4.67 ms     | in 489.348 ms ± 28.648 ms          | in 476.162 ms ± 92.423 ms          |
-| 262.144 kB | in 5.812 ms ± 1.166 ms  | in 616.424 ms ± 47.499 ms   | in 1,013.188 ms ± 76.474 ms        | in 928.491 ms ± 24.666 ms          |
-| 524.288 kB | in 9.499 ms ± 1.463 ms  | in 1,224.647 ms ± 63.669 ms | in 2,111.471 ms ± 110.902 ms       | in 1,892.643 ms ± 50.748 ms        |
-| 1.049 MB   | in 19.494 ms ± 1.372 ms | in 2,540.146 ms ± 44.994 ms | in 4,334.773 ms ± 147.678 ms       | in 3,934.628 ms ± 352.028 ms       |
+|            | hasTransferables         | structuredClone (manually)   | structuredClone (getTransferable*) | structuredClone (getTransferables) |
+| ---------- | ------------------------ | ---------------------------- | ---------------------------------- | ---------------------------------- |
+| 1 B        | in 0.445 ms ± 0.779 ms   | in 7.061 ms ± 4.722 ms       | in 10.51 ms ± 4.357 ms             | in 6.242 ms ± 3.255 ms             |
+| 2 B        | in 0.061 ms ± 0.015 ms   | in 5.629 ms ± 2.308 ms       | in 4.628 ms ± 0.715 ms             | in 4.397 ms ± 0.384 ms             |
+| 4 B        | in 0.071 ms ± 0.058 ms   | in 3.964 ms ± 0.251 ms       | in 4.133 ms ± 0.26 ms              | in 4.146 ms ± 0.218 ms             |
+| 8 B        | in 0.047 ms ± 0.01 ms    | in 4.913 ms ± 1.705 ms       | in 4.215 ms ± 0.415 ms             | in 4.546 ms ± 0.723 ms             |
+| 16 B       | in 0.05 ms ± 0.014 ms    | in 14.197 ms ± 4.941 ms      | in 4.449 ms ± 0.584 ms             | in 4.304 ms ± 0.509 ms             |
+| 32 B       | in 0.047 ms ± 0.005 ms   | in 4.967 ms ± 1.405 ms       | in 4.234 ms ± 0.303 ms             | in 4.446 ms ± 0.749 ms             |
+| 64 B       | in 0.056 ms ± 0.019 ms   | in 23.418 ms ± 10.178 ms     | in 4.685 ms ± 0.92 ms              | in 4.814 ms ± 1.752 ms             |
+| 128 B      | in 0.046 ms ± 0.012 ms   | in 3.872 ms ± 0.182 ms       | in 4.363 ms ± 0.253 ms             | in 5.513 ms ± 2.818 ms             |
+| 256 B      | in 0.052 ms ± 0.014 ms   | in 4.466 ms ± 0.711 ms       | in 4.855 ms ± 0.204 ms             | in 14.498 ms ± 4.903 ms            |
+| 512 B      | in 0.06 ms ± 0.013 ms    | in 4.694 ms ± 0.075 ms       | in 5.848 ms ± 0.166 ms             | in 5.55 ms ± 0.135 ms              |
+| 1.024 kB   | in 0.096 ms ± 0.052 ms   | in 5.606 ms ± 0.209 ms       | in 8.415 ms ± 0.491 ms             | in 7.423 ms ± 0.12 ms              |
+| 2.048 kB   | in 0.089 ms ± 0.04 ms    | in 7.519 ms ± 0.162 ms       | in 12.465 ms ± 0.691 ms            | in 11.047 ms ± 0.552 ms            |
+| 4.096 kB   | in 0.122 ms ± 0.075 ms   | in 11.957 ms ± 0.976 ms      | in 21.987 ms ± 2.109 ms            | in 18.531 ms ± 0.059 ms            |
+| 8.192 kB   | in 0.202 ms ± 0.161 ms   | in 21.249 ms ± 1.054 ms      | in 40.056 ms ± 1.92 ms             | in 36.133 ms ± 2.15 ms             |
+| 16.384 kB  | in 0.32 ms ± 0.011 ms    | in 40.834 ms ± 3.35 ms       | in 74.905 ms ± 5.508 ms            | in 68.596 ms ± 1.258 ms            |
+| 32.768 kB  | in 0.566 ms ± 0.02 ms    | in 71.664 ms ± 9.916 ms      | in 141.631 ms ± 5.737 ms           | in 124.294 ms ± 5.175 ms           |
+| 65.536 kB  | in 1.503 ms ± 0.369 ms   | in 137.615 ms ± 17.73 ms     | in 286.211 ms ± 2.113 ms           | in 251.425 ms ± 1.258 ms           |
+| 131.072 kB | in 3.567 ms ± 0.292 ms   | in 279 ms ± 8.86 ms          | in 567.116 ms ± 25.789 ms          | in 482.521 ms ± 25.338 ms          |
+| 262.144 kB | in 16.714 ms ± 2.995 ms  | in 780.75 ms ± 41.798 ms     | in 1,408.089 ms ± 95.159 ms        | in 1,318.552 ms ± 134.962 ms       |
+| 524.288 kB | in 26.079 ms ± 19.455 ms | in 1,412.332 ms ± 71.87 ms   | in 2,685.257 ms ± 68.368 ms        | in 2,270.075 ms ± 101.738 ms       |
+| 1.049 MB   | in 43.351 ms ± 16.836 ms | in 2,706.992 ms ± 177.034 ms | in 5,245.171 ms ± 89.433 ms        | in 4,597.683 ms ± 127.638 ms       |
 
 
 </details>
@@ -467,30 +467,23 @@ There are a lot of asterisks involved with transferable objects.
 * First, not all transferable objects are supported in all browsers.
 * Second, not all transferable objects can be transfered between Workers and the main thread.
 * Third, `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
-* Fourth, and most important, only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the benchmark above to see the delay in action.
+* Fourth, and most important, only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the [#benchmark](#benchmarks) above to see the delay in action.
 
-There is quite a bit of browser compatibility issues with Transferable Objects that are just not yet resolved as far as I can tell a large number of them occur on Safari, due to either a lack of usage or just not wanting to add the feature. 
+All environments have compatability problems, but the environment with the least number is `Chrome` followed closely behind are `Node`/`Bun`, then `Deno`, and it just continues down from there. 
 
-This is a list of the issues that I have found so far.
+Here is a list of issues that I've found so far.
 
 * Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
 * [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
 * `OffscreenCanvas` is not supported on Safari
 * In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
+* `Deno` doesn't support transferable `MessagePort`
 
 So, as always, do your own research before using.
 
 There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
 
 Streams and message channel support is iffy here is a list of current support, as of Dec. 4, 2022.
-
-Chrome 107.0.1418.62
-Firefox 107.0.1
-Safari 16.4
-
-Node v19.2.0
-Bun 0.2.2
-Deno 1.28.3
 
 |                           | Chrome | Firefox | Safari | Node   | Deno   | Bun    | 
 | ------------------------- | ------ | ------- | ------ | ------ | ------ | ------ | 

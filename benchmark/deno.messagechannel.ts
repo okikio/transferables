@@ -1,5 +1,5 @@
-import { MB, generateObj, add, isClonable, createMessageChannelPromise, createPromise, IIterationType, maxSize, printTable, postMessageVariants } from "./utils.ts";
-import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
+import { MB, generateObj, add, createMessageChannelPromise, createPromise, IIterationType, maxSize, printTable, postMessageVariants } from "./utils.ts";
+import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src/index.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -8,11 +8,12 @@ import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
 import { registerMessageListener } from "./workers/messagechannel.ts";
 
+const isClonable = { ...await isSupported(), channel: false };
 for (let i = 0; i < Math.log2(maxSize * MB); i++) {
   const num = Math.pow(2, i);
   const name = bytes(num, { maximumFractionDigits: 3 });
   const obj = generateObj(num / MB, isClonable);
-  console.log({ name, transferable: obj.transferable.length })
+  console.log({ type: "postMessage [deno] (MessageChannel)", name, transferable: obj.transferable.length })
 }
 
 for (let cycle = 0; cycle < 5; cycle++) {
@@ -41,7 +42,7 @@ for (let cycle = 0; cycle < 5; cycle++) {
       /**
        * Deno doesn't allow for transfering message channels
        */
-      const obj = generateObj(num / MB, { ...isClonable, channel: false });
+      const obj = generateObj(num / MB, isClonable);
 
       await add(name, variant, async () => {
         await createMessageChannelPromise({ name, index, variant, cycle, obj, channel: channel, queue });

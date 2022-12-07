@@ -4,8 +4,6 @@ import structuredCloneBenchmark from "./structuredClone";
 
 import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
-import { maxSize, MB, generateObj, isClonable } from "../utils";
-import bytes from "pretty-bytes";
 
 export const structuredCloneBtn: HTMLButtonElement = document.querySelector("#structuredClone");
 export const postMessageMessageChannelBtn: HTMLButtonElement = document.querySelector("#postMessageMessageChannel");
@@ -14,13 +12,6 @@ export const postMessageWorkerBtn: HTMLButtonElement = document.querySelector("#
 export const structuredCloneResultEl: HTMLDivElement = document.createElement("div");
 export const postMessageMessageChannelResultEl: HTMLDivElement = document.createElement("div");
 export const postMessageWorkerResultEl: HTMLDivElement = document.createElement("div");
-
-for (let i = 0; i < Math.log2(maxSize * MB); i++) {
-  const num = Math.pow(2, i);
-  const name = bytes(num, { maximumFractionDigits: 3 });
-  const obj = generateObj(num / MB, isClonable);
-  console.log({ name, transferable: obj.transferable.length })
-}
 
 structuredCloneBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await structuredCloneBenchmark(e);
