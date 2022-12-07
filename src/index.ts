@@ -159,7 +159,7 @@ export function filterOutDuplicates<T>(array: T[]): T[] {
 
 /**
  * Creates an array of transferable objects which exist in a given input, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
@@ -210,7 +210,7 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
 
 /**
  * An iterator that contains the transferable objects from the input, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
@@ -280,7 +280,7 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
 
 /**
  * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable

@@ -6,7 +6,7 @@
 
 A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be moved between Workers and the main thread\*.
 
-> _`*` There are many [asterisks](#asterisks) involved in transferable objects, I've listed out some of them to be aware of, but as always, do your own research before using._
+> _`*` There are many [asterisks](#asterisks) involved in transferable objects, I've listed out some of them, but as always, do your own research before using._
 
 <!-- > You can also read the [blog post](https://blog.okikio.dev/transferables), created for it's launch. -->
 
@@ -75,9 +75,9 @@ A couple sites/projects that use `transferables`:
 The API of `transferables` is pretty straight forward, 
 * `hasTransferables` quickly checks if the input contains at least one [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
 * `getTransferable` returns an iterator that contains the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
-* `getTransferables` generates an [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
-* `isSupported` tests what transferable objects are actually supported (support isn't always guranteed) and returns an object with features that are supported.
-* `isObject`, `isTypedArray`, `isStream`, `isMessageChannel`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferable`.
+* `getTransferables` generates an array of [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
+* `isSupported` tests what transferable objects are actually supported (support isn't always guranteed) and returns an object with keys-value pairs that represent if message channel and streams are supported [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+* `isObject`, `isTypedArray`, `isStream`, `isMessageChannel`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferables`, but you can use them as well to customize transferable to match your usecase.
 
 You use them like this:
 
@@ -135,14 +135,9 @@ filterOutDuplicates([1, 2, 3, 3, 4, 5, 5]); // [1, 2, 3, 4, 5]
 
 ### Advanced Usage
 
-> Note: `(Readable/Writeable/Transform)streams` aren't transferables in all js runtimes; devs can decide based off the runtime whether to support streams or not
- 
-> Note: depending on how large your object is you may blow through the `maxCount` (max iteration count), if you need to change the max number of iterations remember that--that might cause the thread to be blocked while it's computing.
-
 ```ts
 /**
  * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
- * Thanks @aaorris
  * 
  * @param obj Input object
  * @param streams Includes streams as transferable
@@ -168,9 +163,14 @@ getTransferables(data: unknown, streams: boolean, maxCount: number): TypeTransfe
 getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>
 ```
 
+> Note: `(Readable/Writeable/Transform)streams` and `MessagePort` aren't transferable in all js runtimes; devs can decide based off the runtime whether to support streams and message channel/port or not
+ 
+> Note: depending on how large your object is you may need go over the `maxCount` (max iteration count), if you need to change the max number of iterations remember that--that might cause the thread to be blocked while it's computing.
+
 <br>
 
 ## Benchmarks
+
 **Machine**: [GitHub Action `ubuntu-latest`](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources)
 * 2-core CPU (x86_64)
 * 7 GB of RAM
@@ -184,14 +184,30 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 * `Firefox (latest)`
 * `Safari (latest)`
 
-The benchmark ran 5 cycles for 3 different forms of transferable objects all in a transfer list of 132 objects with one run per object size ranging from `1 B` to `1,049 MB` (with 21 sizes from the total range).
+To determine just how useful the `transferables` library was, I ran a benchmark to compare it to manually grabbing the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the object to be transferred, here are the results.
 
+The benchmark ran using the 3 different forms of transfering [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) 
 We ran the benchmark with 
 1. `structuredClone` (`All`)
 2. `MessageChannel` (`All`)
-3. `Worker` (`Deno`, `Chrome`, `Firefox`, and `Safari`)
+3. `Worker` (`Deno`, `Chrome`, `Firefox`, and `Safari`) 
 
 > Note: `Worker`'s aren't supported in all runtimes   
+
+Each form ran for 5 cycles, with a transfer list of ranging from 108 - 168 objects per run (depending on the js environement), with 21 different data sizes ranging from `1 B` to `1,049 MB` in the transfer list.
+
+Each cycle had variants, specifically for the `structuredClone` form, we had these variants
+* hasTransferables
+* structuredClone (manually) 
+* structuredClone (getTransferable*) 
+* structuredClone (getTransferables)
+
+for the `MessageChannel` and `Worker` forms we had these variants
+* hasTransferables
+* postMessage (no transfers) - `postMessage` doesn't actually require listing out objects in the transfer list, only `structuredClone` requires that; TIL
+* postMessage (manually) 
+* postMessage (getTransferable*) 
+* postMessage (getTransferables)
 
 
 ### Node
@@ -425,7 +441,29 @@ We ran the benchmark with
 <details>
 <summary>structuredClone</summary>
 
-
+|            | hasTransferables       | structuredClone (manually) | structuredClone (getTransferable*) | structuredClone (getTransferables) |
+| ---------- | ---------------------- | -------------------------- | ---------------------------------- | ---------------------------------- |
+| 1 B        | in 0.38 ms ± 0.56 ms   | in 4.36 ms ± 2.228 ms      | in 3.68 ms ± 1.61 ms               | in 3.08 ms ± 0.319 ms              |
+| 2 B        | in 0.14 ms ± 0.049 ms  | in 2.9 ms ± 0.374 ms       | in 3.22 ms ± 0.204 ms              | in 2.92 ms ± 0.204 ms              |
+| 4 B        | in 0.06 ms ± 0.049 ms  | in 2.98 ms ± 0.662 ms      | in 3.32 ms ± 0.564 ms              | in 2.84 ms ± 0.08 ms               |
+| 8 B        | in 0.12 ms ± 0.04 ms   | in 2.48 ms ± 0.133 ms      | in 2.84 ms ± 0.224 ms              | in 2.84 ms ± 0.206 ms              |
+| 16 B       | in 0.04 ms ± 0.049 ms  | in 2.6 ms ± 0.11 ms        | in 2.88 ms ± 0.147 ms              | in 3.46 ms ± 1.224 ms              |
+| 32 B       | in 0.06 ms ± 0.049 ms  | in 3.08 ms ± 1.114 ms      | in 2.98 ms ± 0.133 ms              | in 2.92 ms ± 0.075 ms              |
+| 64 B       | in 0.1 ms ± now        | in 2.6 ms ± 0.089 ms       | in 3.12 ms ± 0.04 ms               | in 3.16 ms ± 0.326 ms              |
+| 128 B      | in 0.1 ms ± now        | in 2.88 ms ± 0.204 ms      | in 3.66 ms ± 0.224 ms              | in 3.64 ms ± 0.383 ms              |
+| 256 B      | in 0.06 ms ± 0.049 ms  | in 4 ms ± 2.001 ms         | in 4.58 ms ± 0.172 ms              | in 4.36 ms ± 0.12 ms               |
+| 512 B      | in 0.04 ms ± 0.049 ms  | in 3.56 ms ± 0.12 ms       | in 7.46 ms ± 2.072 ms              | in 6.28 ms ± 0.117 ms              |
+| 1.024 kB   | in 0.12 ms ± 0.04 ms   | in 4.76 ms ± 0.12 ms       | in 10.34 ms ± 0.174 ms             | in 9.7 ms ± 0.245 ms               |
+| 2.048 kB   | in 0.1 ms ± 0.063 ms   | in 16.5 ms ± 1.049 ms      | in 17.56 ms ± 0.185 ms             | in 16.5 ms ± 0.167 ms              |
+| 4.096 kB   | in 0.18 ms ± 0.117 ms  | in 11.42 ms ± 0.172 ms     | in 32.44 ms ± 0.15 ms              | in 30.14 ms ± 0.162 ms             |
+| 8.192 kB   | in 0.16 ms ± 0.08 ms   | in 20.44 ms ± 0.08 ms      | in 62.38 ms ± 0.271 ms             | in 57.92 ms ± 0.075 ms             |
+| 16.384 kB  | in 0.22 ms ± 0.04 ms   | in 38.68 ms ± 0.147 ms     | in 124.9 ms ± 0.797 ms             | in 115.14 ms ± 0.393 ms            |
+| 32.768 kB  | in 0.32 ms ± 0.04 ms   | in 113.02 ms ± 14.603 ms   | in 258.5 ms ± 4.415 ms             | in 237.22 ms ± 2.185 ms            |
+| 65.536 kB  | in 0.88 ms ± 0.04 ms   | in 182.08 ms ± 16.483 ms   | in 514.76 ms ± 4.892 ms            | in 474.62 ms ± 1.713 ms            |
+| 131.072 kB | in 7.06 ms ± 9.737 ms  | in 350.32 ms ± 14.262 ms   | in 1,031.86 ms ± 9.737 ms          | in 961.94 ms ± 15.397 ms           |
+| 262.144 kB | in 4.56 ms ± 0.496 ms  | in 768.4 ms ± 21.294 ms    | in 2,154.2 ms ± 40.285 ms          | in 1,989.9 ms ± 41.096 ms          |
+| 524.288 kB | in 11.44 ms ± 4.998 ms | in 1,490.48 ms ± 21.782 ms | in 4,241.44 ms ± 79.844 ms         | in 3,932.52 ms ± 45.042 ms         |
+| 1.049 MB   | in 20.44 ms ± 4.786 ms | in 2,918.96 ms ± 16.422 ms | in 8,426.74 ms ± 97.78 ms          | in 7,830.9 ms ± 40.914 ms          |
 
 </details>
 
@@ -441,7 +479,29 @@ We ran the benchmark with
 <details>
 <summary>Worker</summary>
 
-
+|            | hasTransferables            | postMessage (no transfers) | postMessage (manually)      | postMessage (getTransferable*) | postMessage (getTransferables) |
+| ---------- | --------------------------- | -------------------------- | --------------------------- | ------------------------------ | ------------------------------ |
+| 1 B        | in 19.02 ms ± 2.068 ms      | in 0.94 ms ± 0.049 ms      | in 2.46 ms ± 2.275 ms       | in 5.78 ms ± 2.24 ms           | in 1.98 ms ± 0.16 ms           |
+| 2 B        | in 0.6 ms ± now             | in 0.78 ms ± 0.223 ms      | in 1.88 ms ± 1.273 ms       | in 2.22 ms ± 0.741 ms          | in 4.84 ms ± 3.975 ms          |
+| 4 B        | in 0.58 ms ± 0.04 ms        | in 0.68 ms ± 0.098 ms      | in 1.76 ms ± 1.401 ms       | in 1.34 ms ± 0.049 ms          | in 1.8 ms ± 0.927 ms           |
+| 8 B        | in 0.56 ms ± 0.049 ms       | in 0.8 ms ± 0.11 ms        | in 0.9 ms ± 0.063 ms        | in 1.46 ms ± 0.174 ms          | in 2.62 ms ± 1.889 ms          |
+| 16 B       | in 0.72 ms ± 0.098 ms       | in 0.72 ms ± 0.04 ms       | in 0.92 ms ± 0.098 ms       | in 1.54 ms ± 0.196 ms          | in 2.16 ms ± 1.218 ms          |
+| 32 B       | in 0.6 ms ± 0.063 ms        | in 0.82 ms ± 0.075 ms      | in 1.02 ms ± 0.098 ms       | in 4.48 ms ± 2.727 ms          | in 2.3 ms ± 1.226 ms           |
+| 64 B       | in 0.8 ms ± 0.352 ms        | in 1.06 ms ± 0.049 ms      | in 1.1 ms ± 0.089 ms        | in 1.96 ms ± 0.233 ms          | in 2.94 ms ± 1.524 ms          |
+| 128 B      | in 0.78 ms ± 0.04 ms        | in 1.46 ms ± 0.242 ms      | in 1.56 ms ± 0.28 ms        | in 4.14 ms ± 1.524 ms          | in 3.1 ms ± 0.787 ms           |
+| 256 B      | in 1.08 ms ± 0.075 ms       | in 2.5 ms ± 0.329 ms       | in 2.16 ms ± 0.08 ms        | in 6.56 ms ± 4.13 ms           | in 8.24 ms ± 5.8 ms            |
+| 512 B      | in 1.9 ms ± 0.155 ms        | in 3.24 ms ± 0.049 ms      | in 3.22 ms ± 0.098 ms       | in 9.96 ms ± 5.743 ms          | in 13.8 ms ± 9.351 ms          |
+| 1.024 kB   | in 2.92 ms ± 0.075 ms       | in 5.66 ms ± 0.08 ms       | in 5.44 ms ± 0.102 ms       | in 10.5 ms ± 0.141 ms          | in 15.44 ms ± 7.115 ms         |
+| 2.048 kB   | in 5.32 ms ± 0.075 ms       | in 11.04 ms ± 0.102 ms     | in 9.94 ms ± 0.287 ms       | in 19.94 ms ± 0.755 ms         | in 18.28 ms ± 0.417 ms         |
+| 4.096 kB   | in 10.3 ms ± 0.253 ms       | in 21.04 ms ± 0.215 ms     | in 18.76 ms ± 0.287 ms      | in 38.98 ms ± 0.471 ms         | in 35.72 ms ± 0.412 ms         |
+| 8.192 kB   | in 21.64 ms ± 1.422 ms      | in 43.02 ms ± 0.688 ms     | in 37.3 ms ± 0.879 ms       | in 76.96 ms ± 0.692 ms         | in 76.46 ms ± 11.123 ms        |
+| 16.384 kB  | in 39.48 ms ± 0.945 ms      | in 86.68 ms ± 0.956 ms     | in 81.24 ms ± 8.582 ms      | in 155.3 ms ± 2.762 ms         | in 150.98 ms ± 11.749 ms       |
+| 32.768 kB  | in 84.16 ms ± 0.855 ms      | in 184.3 ms ± 1.582 ms     | in 165.22 ms ± 0.968 ms     | in 318.32 ms ± 3.85 ms         | in 298.54 ms ± 0.55 ms         |
+| 65.536 kB  | in 268.56 ms ± 52.149 ms    | in 381.24 ms ± 3.859 ms    | in 382.64 ms ± 3.548 ms     | in 644.72 ms ± 1.973 ms        | in 616.08 ms ± 18.339 ms       |
+| 131.072 kB | in 354.76 ms ± 4.268 ms     | in 780.04 ms ± 2.978 ms    | in 681.94 ms ± 11.47 ms     | in 1,295.72 ms ± 3.476 ms      | in 1,298.32 ms ± 49.522 ms     |
+| 262.144 kB | in 719.28 ms ± 27.295 ms    | in 1,582.86 ms ± 20.347 ms | in 1,532.42 ms ± 52.647 ms  | in 2,705.44 ms ± 50.805 ms     | in 2,585.04 ms ± 17.655 ms     |
+| 524.288 kB | in 1,515.9 ms ± 68.67 ms    | in 3,194.06 ms ± 37.702 ms | in 2,939.12 ms ± 47.484 ms  | in 5,366.22 ms ± 30.136 ms     | in 5,231.04 ms ± 54.129 ms     |
+| 1.049 MB   | in 3,068.14 ms ± 177.355 ms | in 6,363.08 ms ± 56.965 ms | in 5,890.74 ms ± 139.254 ms | in 10,621.68 ms ± 46.681 ms    | in 10,031.56 ms ± 92.691 ms    |
 
 </details>
 
@@ -452,7 +512,29 @@ We ran the benchmark with
 <details>
 <summary>structuredClone</summary>
 
-
+|            | hasTransferables      | structuredClone (manually) | structuredClone (getTransferable*) | structuredClone (getTransferables) |
+| ---------- | --------------------- | -------------------------- | ---------------------------------- | ---------------------------------- |
+| 1 B        | in 1.4 ms ± 2.332 ms  | in 3.8 ms ± 0.4 ms         | in 5.2 ms ± 0.4 ms                 | in 4.2 ms ± 0.4 ms                 |
+| 2 B        | in 0.2 ms ± 0.4 ms    | in 4.6 ms ± 0.8 ms         | in 5.4 ms ± 1.497 ms               | in 5.2 ms ± 1.47 ms                |
+| 4 B        | in 0.2 ms ± 0.4 ms    | in 5.8 ms ± 2.482 ms       | in 5.4 ms ± 2.332 ms               | in 5.6 ms ± 1.855 ms               |
+| 8 B        | in 0.4 ms ± 0.49 ms   | in 14.2 ms ± 18.915 ms     | in 5 ms ± 2 ms                     | in 5.2 ms ± 1.47 ms                |
+| 16 B       | in 0.6 ms ± 0.49 ms   | in 5 ms ± 2.28 ms          | in 7 ms ± 1.414 ms                 | in 5.6 ms ± 1.744 ms               |
+| 32 B       | now ± now             | in 4.2 ms ± 1.47 ms        | in 7 ms ± 3.033 ms                 | in 6.2 ms ± 1.47 ms                |
+| 64 B       | in 1.8 ms ± 3.124 ms  | in 3.8 ms ± 1.6 ms         | in 7.8 ms ± 1.6 ms                 | in 8.4 ms ± 1.356 ms               |
+| 128 B      | in 0.2 ms ± 0.4 ms    | in 4.4 ms ± 1.744 ms       | in 12 ms ± 2.191 ms                | in 11.2 ms ± 2.04 ms               |
+| 256 B      | in 0.2 ms ± 0.4 ms    | in 4.8 ms ± 3.124 ms       | in 19.4 ms ± 3.878 ms              | in 16 ms ± 1.673 ms                |
+| 512 B      | now ± now             | in 4.6 ms ± 1.744 ms       | in 29.6 ms ± 2.059 ms              | in 27 ms ± 2 ms                    |
+| 1.024 kB   | in 0.2 ms ± 0.4 ms    | in 6.2 ms ± 2.04 ms        | in 53.6 ms ± 4.841 ms              | in 49.2 ms ± 3.544 ms              |
+| 2.048 kB   | in 0.2 ms ± 0.4 ms    | in 7 ms ± 1.549 ms         | in 101.4 ms ± 5.004 ms             | in 92.8 ms ± 5.307 ms              |
+| 4.096 kB   | in 0.4 ms ± 0.49 ms   | in 11.2 ms ± 1.47 ms       | in 194.6 ms ± 10.929 ms            | in 180.8 ms ± 9.579 ms             |
+| 8.192 kB   | in 0.4 ms ± 0.49 ms   | in 18 ms ± 2.28 ms         | in 381.2 ms ± 18.713 ms            | in 356.6 ms ± 17.962 ms            |
+| 16.384 kB  | in 0.4 ms ± 0.49 ms   | in 33.2 ms ± 3.187 ms      | in 757.6 ms ± 37.361 ms            | in 712 ms ± 39.105 ms              |
+| 32.768 kB  | in 1.2 ms ± 0.748 ms  | in 63.4 ms ± 3.007 ms      | in 1,506.2 ms ± 79.881 ms          | in 1,412.4 ms ± 69.79 ms           |
+| 65.536 kB  | in 1.6 ms ± 0.49 ms   | in 116.4 ms ± 6.053 ms     | in 3,002.6 ms ± 160.333 ms         | in 2,808.8 ms ± 138.937 ms         |
+| 131.072 kB | in 4.8 ms ± 3.6 ms    | in 240.8 ms ± 1.72 ms      | in 6,105.6 ms ± 15.679 ms          | in 5,771.2 ms ± 50.499 ms          |
+| 262.144 kB | in 6 ms ± 0.632 ms    | in 465.6 ms ± 19.314 ms    | in 11,963.8 ms ± 526.572 ms        | in 11,250.2 ms ± 534.584 ms        |
+| 524.288 kB | in 10.8 ms ± 0.748 ms | in 922.4 ms ± 39.586 ms    | in 23,918.4 ms ± 1,042.155 ms      | in 22,471.6 ms ± 1,108.208 ms      |
+| 1.049 MB   | in 20.2 ms ± 1.327 ms | in 1,814.2 ms ± 85.78 ms   | in 47,775.6 ms ± 2,347.632 ms      | in 45,096.6 ms ± 2,139.707 ms      |
 
 </details>
 
@@ -468,7 +550,29 @@ We ran the benchmark with
 <details>
 <summary>Worker</summary>
 
-
+|            | hasTransferables          | postMessage (no transfers) | postMessage (manually)    | postMessage (getTransferable*) | postMessage (getTransferables) |
+| ---------- | ------------------------- | -------------------------- | ------------------------- | ------------------------------ | ------------------------------ |
+| 1 B        | in 40.8 ms ± 32.214 ms    | in 1 second ± 0.632 ms     | in 7.8 ms ± 1.72 ms       | in 10.2 ms ± 2.04 ms           | in 3 ms ± now                  |
+| 2 B        | in 1 second ± 0.632 ms    | in 1 second ± now          | in 1 second ± 0.632 ms    | in 1.4 ms ± 0.49 ms            | in 2.8 ms ± 0.748 ms           |
+| 4 B        | in 1.2 ms ± 0.4 ms        | in 0.4 ms ± 0.49 ms        | in 1 second ± now         | in 1.6 ms ± 0.49 ms            | in 1.8 ms ± 0.4 ms             |
+| 8 B        | in 1.2 ms ± 0.4 ms        | in 0.8 ms ± 0.4 ms         | in 1 second ± 0.632 ms    | in 2 ms ± now                  | in 1.2 ms ± 0.4 ms             |
+| 16 B       | in 2.2 ms ± 0.748 ms      | in 0.6 ms ± 0.49 ms        | in 1.2 ms ± 0.748 ms      | in 1.4 ms ± 0.49 ms            | in 1.4 ms ± 0.49 ms            |
+| 32 B       | in 0.6 ms ± 0.49 ms       | in 1 second ± now          | in 1.4 ms ± 0.8 ms        | in 2.2 ms ± 0.748 ms           | in 2 ms ± 0.632 ms             |
+| 64 B       | in 0.8 ms ± 0.748 ms      | in 1 second ± 0.632 ms     | in 1.2 ms ± 0.4 ms        | in 2.2 ms ± 0.748 ms           | in 2 ms ± 0.894 ms             |
+| 128 B      | in 0.8 ms ± 0.4 ms        | in 1.8 ms ± 0.4 ms         | in 1.2 ms ± 0.4 ms        | in 3.6 ms ± 0.49 ms            | in 3.4 ms ± 0.49 ms            |
+| 256 B      | in 1.2 ms ± 0.4 ms        | in 1.6 ms ± 0.49 ms        | in 3.4 ms ± 2.059 ms      | in 5.2 ms ± 0.748 ms           | in 5 ms ± 0.632 ms             |
+| 512 B      | in 2 ms ± now             | in 3.4 ms ± 0.49 ms        | in 3 ms ± 1.549 ms        | in 11 ms ± 1.789 ms            | in 9 ms ± 0.632 ms             |
+| 1.024 kB   | in 2.6 ms ± 0.8 ms        | in 4.8 ms ± 0.748 ms       | in 6 ms ± 1.549 ms        | in 18.4 ms ± 0.8 ms            | in 17 ms ± 0.632 ms            |
+| 2.048 kB   | in 5 ms ± 0.632 ms        | in 9.6 ms ± 0.8 ms         | in 9.4 ms ± 2.8 ms        | in 35.6 ms ± 1.744 ms          | in 31.6 ms ± 0.8 ms            |
+| 4.096 kB   | in 8.2 ms ± 0.98 ms       | in 16.6 ms ± 1.02 ms       | in 18.8 ms ± 5.636 ms     | in 73.6 ms ± 3.666 ms          | in 63 ms ± 2.28 ms             |
+| 8.192 kB   | in 17.2 ms ± 2.482 ms     | in 34.4 ms ± 1.625 ms      | in 37.2 ms ± 10.889 ms    | in 141.4 ms ± 4.8 ms           | in 122.8 ms ± 5.192 ms         |
+| 16.384 kB  | in 30 ms ± 1.265 ms       | in 69.8 ms ± 3.25 ms       | in 77.8 ms ± 24.975 ms    | in 283.2 ms ± 3.868 ms         | in 248.8 ms ± 15.315 ms        |
+| 32.768 kB  | in 68 ms ± 6.229 ms       | in 139.8 ms ± 4.996 ms     | in 141.4 ms ± 23.079 ms   | in 561.4 ms ± 1.744 ms         | in 502.2 ms ± 35.369 ms        |
+| 65.536 kB  | in 121.2 ms ± 2.638 ms    | in 267.6 ms ± 11.289 ms    | in 244 ms ± 9.592 ms      | in 1,112.6 ms ± 6.151 ms       | in 920 ms ± 51.225 ms          |
+| 131.072 kB | in 259.4 ms ± 9.521 ms    | in 529.8 ms ± 21.085 ms    | in 469.4 ms ± 11.603 ms   | in 2,218 ms ± 12.215 ms        | in 1,921.2 ms ± 84.45 ms       |
+| 262.144 kB | in 499.4 ms ± 9.666 ms    | in 1,068.8 ms ± 19.487 ms  | in 918.6 ms ± 27.659 ms   | in 4,338.2 ms ± 190.453 ms     | in 3,797.2 ms ± 172.089 ms     |
+| 524.288 kB | in 933 ms ± 39.228 ms     | in 2,291 ms ± 40.679 ms    | in 1,842.2 ms ± 23.541 ms | in 8,684.4 ms ± 421.588 ms     | in 7,620.4 ms ± 325.047 ms     |
+| 1.049 MB   | in 2,055.6 ms ± 57.514 ms | in 4,986 ms ± 941.164 ms   | in 3,901.4 ms ± 57.674 ms | in 18,136.2 ms ± 64.135 ms     | in 15,438.4 ms ± 740.739 ms    |
 
 </details>
 
@@ -479,7 +583,29 @@ We ran the benchmark with
 <details>
 <summary>structuredClone</summary>
 
-
+|            | hasTransferables       | structuredClone (manually) | structuredClone (getTransferable*) | structuredClone (getTransferables) |
+| ---------- | ---------------------- | -------------------------- | ---------------------------------- | ---------------------------------- |
+| 1 B        | in 0.2 ms ± 0.4 ms     | in 0.6 ms ± 0.49 ms        | in 1.6 ms ± 1.2 ms                 | in 1 second ± now                  |
+| 2 B        | now ± now              | in 0.8 ms ± 0.4 ms         | in 1 second ± now                  | in 1 second ± now                  |
+| 4 B        | in 0.2 ms ± 0.4 ms     | in 0.2 ms ± 0.4 ms         | in 0.8 ms ± 0.4 ms                 | in 0.8 ms ± 0.4 ms                 |
+| 8 B        | now ± now              | in 0.4 ms ± 0.49 ms        | in 1 second ± now                  | in 1 second ± now                  |
+| 16 B       | now ± now              | now ± now                  | in 1.4 ms ± 0.49 ms                | in 1 second ± now                  |
+| 32 B       | now ± now              | now ± now                  | in 1.4 ms ± 0.49 ms                | in 1.2 ms ± 0.4 ms                 |
+| 64 B       | now ± now              | in 0.6 ms ± 0.49 ms        | in 2.8 ms ± 0.748 ms               | in 2.2 ms ± 0.4 ms                 |
+| 128 B      | now ± now              | in 0.2 ms ± 0.4 ms         | in 3.8 ms ± 0.748 ms               | in 3.4 ms ± 0.49 ms                |
+| 256 B      | in 0.4 ms ± 0.49 ms    | in 0.2 ms ± 0.4 ms         | in 6.4 ms ± 0.49 ms                | in 6.2 ms ± 0.98 ms                |
+| 512 B      | now ± now              | in 1 second ± now          | in 12.2 ms ± 0.98 ms               | in 10.4 ms ± 0.49 ms               |
+| 1.024 kB   | now ± now              | in 1 second ± now          | in 23 ms ± 1.265 ms                | in 20 ms ± 0.632 ms                |
+| 2.048 kB   | now ± now              | in 1.2 ms ± 0.4 ms         | in 45 ms ± 0.894 ms                | in 39.4 ms ± 0.49 ms               |
+| 4.096 kB   | in 0.2 ms ± 0.4 ms     | in 3.8 ms ± 1.72 ms        | in 88.2 ms ± 1.327 ms              | in 80.4 ms ± 2.871 ms              |
+| 8.192 kB   | in 0.4 ms ± 0.49 ms    | in 6.4 ms ± 0.49 ms        | in 173.4 ms ± 1.744 ms             | in 156.4 ms ± 4.224 ms             |
+| 16.384 kB  | in 0.2 ms ± 0.4 ms     | in 9.4 ms ± 1.02 ms        | in 323 ms ± 4.561 ms               | in 316 ms ± 19.026 ms              |
+| 32.768 kB  | in 1 second ± now      | in 17.4 ms ± 1.855 ms      | in 651.2 ms ± 4.445 ms             | in 619.8 ms ± 9.064 ms             |
+| 65.536 kB  | in 1 second ± 0.632 ms | in 33.6 ms ± 1.625 ms      | in 1,290.4 ms ± 22.33 ms           | in 1,269.4 ms ± 19.896 ms          |
+| 131.072 kB | in 1.6 ms ± 0.49 ms    | in 73.8 ms ± 1.72 ms       | in 2,584.2 ms ± 36.135 ms          | in 2,496.8 ms ± 40.445 ms          |
+| 262.144 kB | in 4 ms ± 0.894 ms     | in 141.4 ms ± 7.632 ms     | in 5,103.2 ms ± 23.095 ms          | in 4,980.8 ms ± 39.957 ms          |
+| 524.288 kB | in 8.6 ms ± 2.059 ms   | in 279 ms ± 4.604 ms       | in 10,191 ms ± 118.786 ms          | in 10,004.2 ms ± 85.464 ms         |
+| 1.049 MB   | in 17.4 ms ± 0.8 ms    | in 538 ms ± 23.858 ms      | in 20,322.4 ms ± 330.194 ms        | in 19,782.4 ms ± 219.27 ms         |
 
 </details>
 
@@ -495,7 +621,29 @@ We ran the benchmark with
 <details>
 <summary>Worker</summary>
 
-
+|            | hasTransferables        | postMessage (no transfers) | postMessage (manually)  | postMessage (getTransferable*) | postMessage (getTransferables) |
+| ---------- | ----------------------- | -------------------------- | ----------------------- | ------------------------------ | ------------------------------ |
+| 1 B        | in 34.4 ms ± 12.339 ms  | in 2.8 ms ± 2.638 ms       | in 5 ms ± 2.898 ms      | in 14 ms ± 3.033 ms            | in 8 ms ± 1.673 ms             |
+| 2 B        | in 2.2 ms ± 1.939 ms    | in 0.8 ms ± 0.4 ms         | in 3.2 ms ± 2.315 ms    | in 4.4 ms ± 2.332 ms           | in 3.4 ms ± 1.855 ms           |
+| 4 B        | in 1.2 ms ± 0.4 ms      | in 1 second ± now          | in 1.2 ms ± 0.4 ms      | in 2.8 ms ± 1.72 ms            | in 1.6 ms ± 0.49 ms            |
+| 8 B        | in 3.4 ms ± 2.332 ms    | in 1 second ± 0.632 ms     | in 1 second ± 0.632 ms  | in 3.4 ms ± 2.154 ms           | in 2.8 ms ± 2.638 ms           |
+| 16 B       | in 2.6 ms ± 1.356 ms    | in 2.6 ms ± 2.245 ms       | in 1 second ± now       | in 2 ms ± 0.632 ms             | in 2 ms ± 0.632 ms             |
+| 32 B       | in 1 second ± now       | in 1.4 ms ± 0.49 ms        | in 0.8 ms ± 0.4 ms      | in 5.6 ms ± 3.611 ms           | in 2.2 ms ± 0.4 ms             |
+| 64 B       | in 2.6 ms ± 2.059 ms    | in 1 second ± now          | in 1.2 ms ± 0.4 ms      | in 7.2 ms ± 4.874 ms           | in 4.6 ms ± 2.871 ms           |
+| 128 B      | in 2.8 ms ± 2.227 ms    | in 1.4 ms ± 0.49 ms        | in 1.4 ms ± 0.49 ms     | in 6.4 ms ± 2.728 ms           | in 9 ms ± 2.28 ms              |
+| 256 B      | in 1 second ± now       | in 1.4 ms ± 0.49 ms        | in 1.8 ms ± 0.4 ms      | in 10.2 ms ± 4.4 ms            | in 11 ms ± 1.897 ms            |
+| 512 B      | in 5.6 ms ± 4.8 ms      | in 5 ms ± 5.02 ms          | in 3.4 ms ± 2.8 ms      | in 21 ms ± 7.403 ms            | in 15.2 ms ± 3.059 ms          |
+| 1.024 kB   | in 3.6 ms ± 2.728 ms    | in 3.6 ms ± 0.8 ms         | in 4.8 ms ± 3.487 ms    | in 31.2 ms ± 4.445 ms          | in 24.6 ms ± 2.059 ms          |
+| 2.048 kB   | in 3 ms ± 1.095 ms      | in 5 ms ± 0.632 ms         | in 5.8 ms ± 3.059 ms    | in 63.8 ms ± 10.206 ms         | in 46.6 ms ± 5.004 ms          |
+| 4.096 kB   | in 4.4 ms ± 0.49 ms     | in 9 ms ± 1.095 ms         | in 9.6 ms ± 4.128 ms    | in 97.6 ms ± 9.091 ms          | in 84.4 ms ± 4.716 ms          |
+| 8.192 kB   | in 9.2 ms ± 2.713 ms    | in 17.2 ms ± 3.816 ms      | in 12.8 ms ± 0.748 ms   | in 205 ms ± 15.633 ms          | in 182.2 ms ± 4.308 ms         |
+| 16.384 kB  | in 17.6 ms ± 4.271 ms   | in 26.6 ms ± 2.059 ms      | in 22.8 ms ± 2.786 ms   | in 354.2 ms ± 14.386 ms        | in 331.4 ms ± 7.31 ms          |
+| 32.768 kB  | in 22.8 ms ± 1.166 ms   | in 61 ms ± 2.608 ms        | in 41.8 ms ± 5.344 ms   | in 704.8 ms ± 17.871 ms        | in 676.6 ms ± 28.689 ms        |
+| 65.536 kB  | in 44.4 ms ± 1.356 ms   | in 128.2 ms ± 5.845 ms     | in 81.6 ms ± 7.864 ms   | in 1,380.6 ms ± 13.306 ms      | in 1,323.2 ms ± 41.662 ms      |
+| 131.072 kB | in 92.6 ms ± 5.276 ms   | in 252.8 ms ± 19.631 ms    | in 156.8 ms ± 8.424 ms  | in 2,711 ms ± 50.577 ms        | in 2,635.6 ms ± 86.217 ms      |
+| 262.144 kB | in 185.8 ms ± 6.21 ms   | in 539 ms ± 69.888 ms      | in 314.4 ms ± 19.231 ms | in 5,364.4 ms ± 107.548 ms     | in 5,247.8 ms ± 130.177 ms     |
+| 524.288 kB | in 321.8 ms ± 20.351 ms | in 1,029.8 ms ± 78.311 ms  | in 621.6 ms ± 20.264 ms | in 10,844.8 ms ± 242.852 ms    | in 10,595.8 ms ± 309.165 ms    |
+| 1.049 MB   | in 673.4 ms ± 37.644 ms | in 2,071.8 ms ± 218.478 ms | in 1,183 ms ± 66.753 ms | in 21,731.4 ms ± 585.302 ms    | in 20,947 ms ± 585.932 ms      |
 
 </details>
 
@@ -504,20 +652,18 @@ We ran the benchmark with
 
 ## Asterisks\* & Limitations
 
-There are a lot of asterisks involved with transferable objects. 
-* First, not all transferable objects are supported in all browsers.
-* Second, not all transferable objects can be transfered between Workers and the main thread.
-* Third, `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
-* Fourth, and most important, only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the [#benchmark](#benchmarks) above to see the delay in action.
-
-All environments have compatability problems, but the environment with the least number is `Chrome` followed closely behind are `Node`/`Bun`, then `Deno`, and it just continues down from there. 
+There are lots of asterisks involved with [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects). 
+1. Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are supported in all browsers.
+2. Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread.
+3. `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
+4. Only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the [#benchmark](#benchmarks) above to view the delay in action.
 
 Here is a list of issues that I've found so far.
 
 * Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
 * [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
 * `OffscreenCanvas` is not supported on Safari
-* In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
+* In a reverse uno card action, **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
 * `Deno` doesn't support transferable `MessagePort`
 
 ### Transferable objects
@@ -541,20 +687,18 @@ From the brief research I've done on the topic, I've found that
 
 - **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's really the only type of data buffer that can be transferred. 
 - **`TypedArray`**: A data view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They ***can't*** directly be transferred between Workers and the main thread, but the `ArrayBuffer` they contain can. Due to this fact, it's possible if you have multiple `TypedArray`'s that all share the same `ArrayBuffer`, that only that `ArrayBuffer` is transfered. 
-- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread. Support for this isn't guranteed in all js endpoints, and can be finicky in `Deno` 
+- **`MessagePort`** (`~`): A port to communicate with other workers. Can be transferred between Workers and the main thread. Support for this isn't guranteed in all js endpoints, and can be finicky in `Deno` 
 - **`ImageBitmap`** (`^`): An image that can be transferred between Workers and the main thread. It represents a bitmap image which can be drawn to a `<canvas>` without undue latency. It can also be used as textures in WebGL.
 - **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
 - **`(Readable/Writable/Transform)Stream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects. Support across js runtimes is very spotty
 
 
 > _`^` unverified/untested - Make sure to do your own research for this specific use case._
+
 > _`~` spotty support - Check below for js runtimes where it's ok to use_
 
-> 
 
-There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
-
-Streams and MessageChannel support is iffy, here is support matrix that might help your decision making process.
+Here is a support matrix that might help your decision making process,
 
 |                              | Chrome | Firefox | Safari | Node   | Deno   | Bun    | 
 | ---------------------------- | ------ | ------- | ------ | ------ | ------ | ------ | 
@@ -564,7 +708,7 @@ Streams and MessageChannel support is iffy, here is support matrix that might he
 | Worker.postMessage (streams) | false  | false   | false  | -      | false  | -      |   
 
 
-So, as always, do your own research before using.
+So, do your own research before using.
 
 <br>
 
@@ -573,29 +717,29 @@ So, as always, do your own research before using.
 
 ### What are transferable objects?
 
-Transferable objects are objects that can be transferred between Workers and the main thread. It works sort of like ploping out the piece of memory attached to the Worker for the transferable object (e.g. an ArrayBuffer) and then moving that piece of memory to the main-thread for use by a newly created transferable object and vice-versa. You can read more about them in the [MDN docs](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
+Transferable objects are objects that can be transferred between Workers and the main thread. It works sort of like ploping out the piece of memory attached to the Worker for the transferable object (e.g. an ArrayBuffer) and then moving that piece of memory to the main-thread for use by a newly created [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) and vice-versa. You can read more about them on the [MDN docs](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
 
-> Notable exceptions to the transferable objects list are `Blob` and `File` objects, which are not transferable, but can be cloned.
+> Note: Notable exceptions to the transferable objects list are `Blob` and `File` objects, which are not transferable, but can be cloned.
 
 <br />
 
 
 ### Why should I use this?
 
-It's main use case is for determining when there is a transferable object and then listing said transferable objects out. A good example of when to use this is when working with [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone). `structuredClone` errors out when using transferables objects as they are not cloneable, e.g. 
+The main use case of the `transferables` library is for determining when there is a transferable object and/or then listing said [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) out. A good example of when to use this is when working with [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone). `structuredClone` errors out when using transferables objects as they are not cloneable, e.g. 
 
 ![Error shown when trying to use structuredClone with an object which contains a transferable object](assets/structuredclone-transfer-error.png)
 
+> Warning: Remember the previous thread [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are transfered from lose all access to the transfered data.
 
-You should really only use this when the Web Worker or main thread no longer needs the transferable object for use. e.g. returning the result of a complex from a Worker in ArrayBuffer form (assuming that the result is no longer nesscary in the Worker). 
-> Warning: There is a performance threshold for transferable objects, before which using transferable objects becomes genuinly slower, it's probably not worth it to use this library if you reach that threshold [#benchmark](#benchmark). You can read more about that in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage#performance_considerations). 
+> Warning: There is a performance threshold for transferable objects, before which using transferable objects becomes genuinly slower, it's probably not worth it to use this library if you reach that threshold [#benchmark](#benchmark). 
 
 <br />
 
 ### What is the difference between transferable objects and cloneable objects?
 
-Transferable objects are objects that can be transferred between Workers and the main thread. They can be transferred from the main thread to a Worker, and vice versa. Cloneable objects are objects that can be cloned between Workers and the main thread. They can
-be cloned from the main thread to a Worker, and vice versa. You can read more about them in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+Transferable objects are objects that can be transferred between Workers and the main thread. They can be transferred from the main thread to a Worker, and vice versa. Cloneable objects are objects that can be cloned using the [structured clone algorithim](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm), due to not all objects being cloneable we use [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) to move transfer uncloneable object to the new cloned object, [MDN - structured clone algorithim](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+
 
 
 <br />
@@ -608,10 +752,12 @@ be cloned from the main thread to a Worker, and vice versa. You can read more ab
 | ------ | ---- | ------- | ------ |
 | 7+     | 12+  | 41+     | 5+     |
 
-Native support for `transferables` is actually rather good, but which [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are supported is where the complexity comes in, [#astericks](#asterisks--limitations) covers these limitations.
+Native support for `transferables` is actually rather good, but which [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are supported is where the complexity comes in, [#astericks](#asterisks--limitations) covers these limitations.
 
 
 ## Contributing
+
+> Thanks [@aaorris](https://github.com/aaorris) for the helping optimize performance.
 
 I encourage you to use [pnpm](https://pnpm.io/configuring) to contribute to this repo, but you can also use [yarn](https://classic.yarnpkg.com/lang/en/) or [npm](https://npmjs.com) if you prefer.
 
@@ -651,7 +797,7 @@ npm run benchmark:deno:all &&
 npm run benhmark:bun:all
 ```
 
-> _**Note**: this project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for commits, so, please format your commits using the rules it sets out._
+> _Note: This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for commits, so, please format your commits using the rules it sets out._
 
 ## Licence
 
