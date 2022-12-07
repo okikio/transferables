@@ -33,7 +33,32 @@ jobs:
           
       - name: Setup Deno
         uses: denoland/setup-deno@v1
+        
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          # Version of pnpm to install
+          version: latest # optional
+          # If specified, run `pnpm install`
+          run_install: false # optional, default is null
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+          
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+            
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Run Benchmark
-        run: npm run benchmark:deno:all 
+        run: pnpm benchmark:deno:all 
         
