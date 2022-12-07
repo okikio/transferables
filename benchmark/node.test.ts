@@ -1,7 +1,7 @@
-import { MB, generateObj, add, printTable, createStructuredCloneVariants, maxSize } from "./utils";
+import { MB, generateObj, isClonable, add, printTable, createStructuredCloneVariants, maxSize } from "./utils";
 
 import { it } from 'vitest';
-import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src";
+import { getTransferable, getTransferables, hasTransferables } from "../src";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
@@ -13,7 +13,6 @@ const keys = Object.keys(variants) as (keyof typeof variants)[];
 const len = keys.length;
 
 it("structuredClone", async () => {
-  const isClonable = { ...await isSupported() };
   for (let i = 0; i < Math.log2(maxSize * MB); i++) {
     const num = Math.pow(2, i);
     const name = bytes(num, { maximumFractionDigits: 3 });
@@ -42,4 +41,4 @@ it("structuredClone", async () => {
   }
 
   printTable(keys, dmeanstdev, markdownTable);
- })
+})

@@ -1,7 +1,7 @@
-import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants } from "./utils";
+import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants, isClonable } from "./utils";
 
 import { it } from 'vitest';
-import { getTransferable, getTransferables, hasTransferables, isSupported } from "../src";
+import { getTransferable, getTransferables, hasTransferables } from "../src";
 import { registerMessageListener } from "./workers/messagechannel";
 
 import bytes from "pretty-bytes";
@@ -10,7 +10,6 @@ import { dmeanstdev } from '@stdlib/stats-base';
 import { markdownTable } from 'markdown-table';
 
 it("postMessage (MessageChannel)", async () => {
-  const isClonable = { ...await isSupported(), channel: false, streams: false };
   for (let i = 0; i < Math.log2(maxSize * MB); i++) {
     const num = Math.pow(2, i);
     const name = bytes(num, { maximumFractionDigits: 3 });

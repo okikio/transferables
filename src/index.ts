@@ -13,32 +13,30 @@ export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | Writ
 export async function isSupported() {
   const channel = await (async () => {
     try {
-      const obj = { channel: new MessageChannel() }
-      structuredClone(obj, {
+      const msgChanl = new MessageChannel();
+      const obj = { port1: msgChanl.port1 }
+      const clonedObj = structuredClone(obj, {
         transfer: [
-          obj.channel.port1,
-          obj.channel.port2,
+          msgChanl.port1,
         ]
       })
 
       const messageChannel = new MessageChannel()
-      const obj1 = { channel: new MessageChannel() }
+      const obj1 = { port1: clonedObj.port1 }
       await new Promise<void>(resolve => {
         messageChannel.port1.postMessage(obj1, [
-          obj1.channel.port1,
-          obj1.channel.port2,
+          obj1.port1,
         ])
         messageChannel.port1.onmessage = () => {
-          messageChannel.port1.close();
           resolve()
         }
         messageChannel.port2.onmessage = ({ data }) => {
           messageChannel.port2.postMessage(data, [
-            data.channel.port1,
-            data.channel.port2,
-          ].filter(x => x != undefined));
+            data.port1,
+          ]);
         }
       })
+      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;
@@ -54,7 +52,7 @@ export async function isSupported() {
         writeonly: new WritableStream(),
         tranformonly: new TransformStream()
       }
-      structuredClone(streams, {
+      const clonedObj = structuredClone(streams, {
         transfer: [
           streams.readonly as unknown as Transferable,
           streams.writeonly as unknown as Transferable,
@@ -63,11 +61,7 @@ export async function isSupported() {
       })
 
       const messageChannel = new MessageChannel()
-      const streams1 = {
-        readonly: new ReadableStream(),
-        writeonly: new WritableStream(),
-        tranformonly: new TransformStream()
-      }
+      const streams1 = clonedObj;
       await new Promise<void>(resolve => {
         messageChannel.port1.postMessage(streams1, [
           streams1.readonly as unknown as Transferable,
@@ -75,7 +69,6 @@ export async function isSupported() {
           streams1.tranformonly as unknown as Transferable,
         ])
         messageChannel.port1.onmessage = () => {
-          messageChannel.port1.close();
           resolve();
         }
         messageChannel.port2.onmessage = ({ data }) => {
@@ -86,6 +79,7 @@ export async function isSupported() {
           ].filter(x => x != undefined));
         }
       })
+      messageChannel.port1.close();
     } catch (e) {
       console.warn(e);
       return false;

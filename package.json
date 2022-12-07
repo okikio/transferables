@@ -58,6 +58,9 @@
     "pre-release": "pnpm test:run && pnpm build",
     "semantic-release": "semantic-release"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "ultra": {
     "concurrent": [
       "pre-release",

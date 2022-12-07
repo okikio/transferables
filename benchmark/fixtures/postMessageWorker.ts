@@ -1,14 +1,12 @@
-import { MB, generateObj, add, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize } from "../utils";
+import { MB, generateObj, add, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize, isClonable } from "../utils";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
-import { isSupported } from "../../src";
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
-  const isClonable = { ...await isSupported(), channel: false, streams: false };
   for (let i = 0; i < Math.log2(maxSize * MB); i++) {
     const num = Math.pow(2, i);
     const name = bytes(num, { maximumFractionDigits: 3 });

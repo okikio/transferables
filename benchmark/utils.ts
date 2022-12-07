@@ -124,7 +124,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
   fn1.ports = ports;
 
   function fn2() { }
-  fn2.channel = channel;
+  // fn2.channel = channel;
 
   const other_objects = {
     arr: range(size),
@@ -143,7 +143,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
 
     complexTypedArrObj,
     streams,
-    channel,
+    // channel,
     ports,
     instanciatedClass: new class {
       #x = {
@@ -211,7 +211,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
         uint32_,
         float32_,
         float64_,
-        channel_,
+        // channel_,
         ports_,
         streams_,
       ],
@@ -225,7 +225,7 @@ export function generateObj(size = 16, enable: { streams?: boolean, channel?: bo
       uint32_,
       float32_,
       float64_,
-      channel_,
+      // channel_,
       ports_,
       streams_,
     };

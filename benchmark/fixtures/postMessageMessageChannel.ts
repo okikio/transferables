@@ -1,6 +1,6 @@
-import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, IIterationType, maxSize } from "../utils";
+import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, IIterationType, maxSize, isClonable } from "../utils";
 
-import { getTransferable, getTransferables, hasTransferables, isSupported } from "../../src";
+import { getTransferable, getTransferables, hasTransferables } from "../../src";
 import { registerMessageListener } from "../workers/messagechannel";
 
 import bytes from "pretty-bytes";
@@ -11,7 +11,6 @@ import { markdownTable } from 'markdown-table';
 export default async function (e: MouseEvent) {
   e.preventDefault();
 
-  const isClonable = { ...await isSupported(), channel: false, streams: false };
   for (let i = 0; i < Math.log2(maxSize * MB); i++) {
     const num = Math.pow(2, i);
     const name = bytes(num, { maximumFractionDigits: 3 });
