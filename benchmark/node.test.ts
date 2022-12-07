@@ -31,7 +31,9 @@ it("structuredClone", async () => {
         const fn = variants[variant];
 
         const obj = generateObj(num / MB, isClonable);
-        await add(name, variant, fn, obj)
+        await add(name, variant, fn, obj);
+
+        console.log({ name, index: i, variant, cycle })
       }
 
       await Promise.resolve();

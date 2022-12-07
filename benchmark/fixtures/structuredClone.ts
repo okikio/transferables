@@ -31,6 +31,8 @@ export default async function (e: MouseEvent) {
 
         const obj = generateObj(num / MB, isClonable);
         await add(name, variant, fn, obj)
+
+        console.log({ name, index: i, variant, cycle })
       }
 
       await Promise.resolve();

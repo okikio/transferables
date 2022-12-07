@@ -29,6 +29,8 @@ for (let cycle = 0; cycle < 5; cycle++) {
 
       const obj = generateObj(num / MB, isClonable);
       await add(name, variant, fn, obj)
+
+      console.log({ name, index: i, variant, cycle })
     }
 
     await Promise.resolve();
