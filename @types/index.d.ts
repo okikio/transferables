@@ -53,7 +53,7 @@ export declare function isTransferable(obj: unknown): obj is TypeTransferable;
 export declare function filterOutDuplicates<T>(array: T[]): T[];
 /**
  * Creates an array of transferable objects which exist in a given input, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
@@ -63,7 +63,7 @@ export declare function filterOutDuplicates<T>(array: T[]): T[];
 export declare function getTransferables(obj: unknown, streams?: boolean, maxCount?: number): TypeTransferable[];
 /**
  * An iterator that contains the transferable objects from the input, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
@@ -73,7 +73,7 @@ export declare function getTransferables(obj: unknown, streams?: boolean, maxCou
 export declare function getTransferable(obj: unknown, streams?: boolean, maxCount?: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>;
 /**
  * Quickly checks to see if input contains at least one transferable object, up to a max number of iterations
- * Thanks @aaorris
+ * Thanks @aaorris for the help optimizing perf.
  *
  * @param obj Input object
  * @param streams Includes streams as transferable
