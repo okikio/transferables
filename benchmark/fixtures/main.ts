@@ -26,7 +26,7 @@ structuredCloneBtn?.addEventListener('click', async function (e: MouseEvent) {
 
 postMessageMessageChannelBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await postMessageMessageChannelBenchmark(e);
-  postMessageMessageChannelResultEl.id = "postMessageMessageChannel";
+  postMessageMessageChannelResultEl.id = "postMessageMessageChannelResult";
   postMessageMessageChannelResultEl.dataset.value = result;
   postMessageMessageChannelResultEl.innerHTML = micromark(result, {
     extensions: [gfm()],

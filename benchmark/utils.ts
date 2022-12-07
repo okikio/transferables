@@ -329,6 +329,7 @@ export async function createMessageChannelPromise({ name, index, cycle = 0, vari
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
   await promise.promise;
+  console.log({ name, index, variant, cycle })
 }
 
 export async function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
@@ -345,6 +346,7 @@ export async function createWorkerPromise({ name, index, cycle = 0, variant, obj
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
   await promise.promise;
+  console.log({ name, index, variant, cycle })
 }
 
 // [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable*)`, `structuredClone (getTransferables)`]

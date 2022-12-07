@@ -43,4 +43,4 @@ vscode:
   extensions:
     - denoland.vscode-deno
     - ZixuanChen.vitest-explorer
-    - ms-playwright.playwright
+    - github.github-vscode-theme
