@@ -502,7 +502,7 @@ We ran the benchmark with
 
 <br>
 
-## Asterisks\*
+## Asterisks\* & Limitations
 
 There are a lot of asterisks involved with transferable objects. 
 * First, not all transferable objects are supported in all browsers.
@@ -519,20 +519,6 @@ Here is a list of issues that I've found so far.
 * `OffscreenCanvas` is not supported on Safari
 * In a twist of fate **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
 * `Deno` doesn't support transferable `MessagePort`
-
-So, as always, do your own research before using.
-
-There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
-
-Streams and message channel support is iffy here is a list of current support, as of Dec. 4, 2022.
-
-|                           | Chrome | Firefox | Safari | Node   | Deno   | Bun    | 
-| ------------------------- | ------ | ------- | ------ | ------ | ------ | ------ | 
-| structuredClone (channel) | false  | false   | false  | true   | true   | true   |   
-| structuredClone (streams) | true   | true    | false  | true   | false  | true   | 
-| postMessage (channel)     | false  | false   | false  | -      | true   | -      |   
-| postMessage (streams)     | false  | false   | false  | -      | false  | -      |   
-
 
 ### Transferable objects
 
@@ -553,9 +539,9 @@ The following are [transferable objects](https://developer.mozilla.org/en-US/doc
 
 From the brief research I've done on the topic, I've found that 
 
-- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's the only type of data buffer that can be transferred. 
-- **`TypedArray`**: A data view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They ***can't*** directly be transferred between Workers and the main thread, but the `ArrayBuffer` they contain can. Due to this fact, it's possible if you can have multiple `TypedArray`'s that all share the same `ArrayBuffer` only that `ArrayBuffer` is transfered. 
-- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread. With little to now problems and good support across the board except for node which doesn't support `MessagePort` 
+- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's really the only type of data buffer that can be transferred. 
+- **`TypedArray`**: A data view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They ***can't*** directly be transferred between Workers and the main thread, but the `ArrayBuffer` they contain can. Due to this fact, it's possible if you have multiple `TypedArray`'s that all share the same `ArrayBuffer`, that only that `ArrayBuffer` is transfered. 
+- **`MessagePort`**: A port to communicate with other workers. Can be transferred between Workers and the main thread. Support for this isn't guranteed in all js endpoints, and can be finicky in `Deno` 
 - **`ImageBitmap`** (`^`): An image that can be transferred between Workers and the main thread. It represents a bitmap image which can be drawn to a `<canvas>` without undue latency. It can also be used as textures in WebGL.
 - **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
 - **`(Readable/Writable/Transform)Stream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects. Support across js runtimes is very spotty
@@ -566,20 +552,21 @@ From the brief research I've done on the topic, I've found that
 
 > 
 
+There are a couple asterisks involved in transferable objects, and it's important to note that not all transferable objects are supported in every browser.
+
+Streams and MessageChannel support is iffy, here is support matrix that might help your decision making process.
+
+|                              | Chrome | Firefox | Safari | Node   | Deno   | Bun    | 
+| ---------------------------- | ------ | ------- | ------ | ------ | ------ | ------ | 
+| structuredClone (channel)    | false  | false   | false  | true   | true   | true   |   
+| structuredClone (streams)    | true   | true    | false  | true   | false  | true   | 
+| Worker.postMessage (channel) | false  | false   | false  | -      | true   | -      |   
+| Worker.postMessage (streams) | false  | false   | false  | -      | false  | -      |   
+
+
+So, as always, do your own research before using.
+
 <br>
-
-
-
-
-## Limitations
-
-There are a couple limitations to using transferable objects with Workers and the main thread:
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread. For example, `ReadableStream` and `WritableStream` can only be transfered within a Worker or a Service Worker.
-
-- Not all [transferable objects](https://developer.mozilla.org/en-US/docs
-
-
 
 
 ## FAQ & Glossary
@@ -600,7 +587,7 @@ It's main use case is for determining when there is a transferable object and th
 ![Error shown when trying to use structuredClone with an object which contains a transferable object](assets/structuredclone-transfer-error.png)
 
 
-You should only really use this when Worker or main thread no longer needs the transferable object for use. e.g. returning the result of a complex from a Worker in ArrayBuffer form (assuming that the result is no longer nesscary in the Worker). 
+You should really only use this when the Web Worker or main thread no longer needs the transferable object for use. e.g. returning the result of a complex from a Worker in ArrayBuffer form (assuming that the result is no longer nesscary in the Worker). 
 > Warning: There is a performance threshold for transferable objects, before which using transferable objects becomes genuinly slower, it's probably not worth it to use this library if you reach that threshold [#benchmark](#benchmark). You can read more about that in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage#performance_considerations). 
 
 <br />
@@ -621,7 +608,7 @@ be cloned from the main thread to a Worker, and vice versa. You can read more ab
 | ------ | ---- | ------- | ------ |
 | 7+     | 12+  | 41+     | 5+     |
 
-Native support for `transferables` is dependent on which [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) great as it doesn't use any browser specific or nodejs specific API's, you should be good to use `transferables` in any environment.
+Native support for `transferables` is actually rather good, but which [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are supported is where the complexity comes in, [#astericks](#asterisks--limitations) covers these limitations.
 
 
 ## Contributing
@@ -644,6 +631,24 @@ Build project
 
 ```bash
 npm run build
+```
+
+You can also run the benchmarks
+
+```bash
+npm run benchmark:node:all
+```
+
+To run the browser benchmarks,
+```bash
+npm run playwright:init &&
+npm run benchmark:browser
+```
+
+To run the deno & bun benchmarks (install [deno](https://deno.land/manual@v1.28.3/getting_started/installation) & [bun](https://bun.sh/))
+```bash
+npm run benchmark:deno:all &&
+npm run benhmark:bun:all
 ```
 
 > _**Note**: this project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for commits, so, please format your commits using the rules it sets out._
