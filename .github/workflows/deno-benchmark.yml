@@ -1,0 +1,39 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Deno Benchmark CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*.ts'
+      - '*.js'
+      - '*.json'
+      - '*.yaml'
+      - '.github/**/deno-benchmark.yml'
+      - 'src/**/*'
+      - 'benchmark/**/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          # File containing the version Spec of the version to use.  Examples: .nvmrc, .node-version, .tool-versions.
+          node-version-file: '.nvmrc' # optional
+          
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+
+      - name: Run Benchmark
+        run: npm run benchmark:deno:all 
+        
