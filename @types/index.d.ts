@@ -3,11 +3,6 @@ export declare const AudioData: any;
 export declare const VideoFrame: any;
 export declare const OffscreenCanvas: {
     new (width: number, height: number): OffscreenCanvas;
-    /**
-     * Check's if an object is `ReadableStream`, `WritableStream` and/or `TransformStream`
-     *
-     * > Note: None of the stream API's are transferables in Safari 😥
-     */
     prototype: OffscreenCanvas;
 };
 export declare const RTCDataChannel: {
