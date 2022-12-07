@@ -60,5 +60,5 @@ jobs:
         run: pnpm install
 
       - name: Run Benchmark
-        run: pnpm benchmark:node:all 
+        run: pnpm benchmark:bun:all 
         
