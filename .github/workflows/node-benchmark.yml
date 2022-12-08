@@ -73,7 +73,7 @@ jobs:
           # See the `pathspec`-documentation for git
           # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
           # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
-          file_pattern: 'benchmark/results/'
+          file_pattern: 'benchmark/results/*.md'
           
           # Optional. Options used by `git-add`.
           # See https://git-scm.com/docs/git-add#_options
