@@ -15,7 +15,7 @@ export function capital(str: string) {
 }
 
 export async function writeFile(result: string, name: string, env: string) {
-  // if (process.env.CI) {
+  if (process.env.CI) {
     const fileDir = path.join(__dirname, `/results`);
     const filePath = path.join(__dirname, `/results/${env}.md`);
     console.log(`Writing/Appending to ${filePath}`)
@@ -30,5 +30,5 @@ export async function writeFile(result: string, name: string, env: string) {
       await write(filePath, `# ${capital(env)}\n${markdown}`, `utf-8`);
       console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
     }
-  // }
+  }
 }
