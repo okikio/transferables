@@ -254,14 +254,18 @@ export const perfs = new Map<string, Map<string, number[]>>();
  * @param fn The function to call to run the benchmark
  */
 export async function add(name: string, variant: string, fn?: Function, obj?: unknown) {
-  const start = performance.now();
-  await fn?.(obj);
-  const end = performance.now();
-  const duration = end - start;
+  try {
+    const start = performance.now();
+    await fn?.(obj);
+    const end = performance.now();
+    const duration = end - start;
 
-  if (!perfs.has(name)) perfs.set(name, new Map<string, number[]>());
-  if (!perfs.get(name)?.has(variant)) perfs.get(name)?.set(variant, []);
-  perfs.get(name)?.get(variant)?.push(duration);
+    if (!perfs.has(name)) perfs.set(name, new Map<string, number[]>());
+    if (!perfs.get(name)?.has(variant)) perfs.get(name)?.set(variant, []);
+    perfs.get(name)?.get(variant)?.push(duration);
+  } catch (e) {
+    console.warn(e);
+  }
 }
 
 /**
@@ -282,6 +286,7 @@ export interface IIterationType {
   cycle: number;
   i: number;
   obj: ReturnType<typeof generateObj>;
+  error?: string;
 }
 
 export interface ICreateMessageChannelIteratorOptions {
@@ -318,84 +323,80 @@ export function createPromise() {
 export async function createMessageChannelPromise({ name, index, cycle = 0, variant, obj, channel, queue }: ICreateMessageChannelIteratorOptions) {
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
-  try {
-    channel.port2.postMessage(msg, obj.transferable);
-  } catch (e) {
-    console.warn(e);
-    channel.port2.postMessage(simpleMsg);
-  }
+
+  channel.port2.postMessage(msg, obj.transferable);
 
   const promise = createPromise();
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
+
   await promise.promise;
-  console.log({ name, index, variant, cycle })
 }
 
 export async function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
-  try {
-    worker.postMessage(msg, obj.transferable);
-  } catch (e) {
-    console.warn(e);
-    worker.postMessage(simpleMsg);
-  }
+
+  worker.postMessage(msg, obj.transferable);
 
   const promise = createPromise();
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
+
   await promise.promise;
-  console.log({ name, index, variant, cycle })
 }
 
-// [`hasTransferables`, `structuredClone (manually)`, `structuredClone (getTransferable*)`, `structuredClone (getTransferables)`]
 export function createStructuredCloneVariants(
   hasTransferables: typeof has, 
   getTransferable: typeof transferable, 
   getTransferables: typeof transferables
 ) {
   return {
-    hasTransferables(obj: ReturnType<typeof generateObj>) {
-      return hasTransferables(obj, true);
+    async hasTransferables(obj: ReturnType<typeof generateObj>) {
+      hasTransferables(obj, true);
+      await Promise.resolve();
     },
 
-    "structuredClone (manually)": function (obj: ReturnType<typeof generateObj>) {
-      try {
-        structuredClone(obj, { transfer: obj.transferable });
-      } catch (e) { console.warn(e); }
+    "structuredClone (manually)": async function (obj: ReturnType<typeof generateObj>) {
+      structuredClone(obj, { transfer: obj.transferable });
+      await Promise.resolve();
     },
 
-    "structuredClone (getTransferable*)": function (obj: ReturnType<typeof generateObj>) {
-      try {
-        const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
-        structuredClone(obj, { transfer });
-      } catch (e) { console.warn(e); }
+    "structuredClone (getTransferable*)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+      structuredClone(obj, { transfer });
+      await Promise.resolve();
     },
 
-    "structuredClone (getTransferables)": function (obj: ReturnType<typeof generateObj>) {
-      try {
-        const transfer = getTransferables(obj, true) as Transferable[];
-        structuredClone(obj, { transfer });
-      } catch (e) { console.warn(e); }
+    "structuredClone (getTransferables)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = getTransferables(obj, true) as Transferable[];
+      structuredClone(obj, { transfer });
+      await Promise.resolve();
     }
   };
 }
 
-export const postMessageVariants = [`hasTransferables`, `postMessage (no transfers)`, `postMessage (manually)`, `postMessage (getTransferable*)`, `postMessage (getTransferables)`];
+export const postMessageVariants = [
+  `hasTransferables`, 
+  `postMessage (no transfers)`, 
+  `postMessage (manually)`, 
+  `postMessage (getTransferable*)`, 
+  `postMessage (getTransferables)`
+];
 export const maxSize = 1.6;
 
 export function printTable(variants: string[], dmeanstdev: any, markdownTable: any) {
   const head = ["", ...variants];
   const table: Record<string, string[]>[] = [];
 
-  perfs.forEach((variants, name) => {
+  perfs.forEach((_, name) => {
     const obj: Record<string, string[]> = {};
-    variants.forEach((durations) => {
+    variants.forEach((variant) => {
+      const durations = perfs.get(name)?.get(variant) ?? [];
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
       obj[name] ??= [];
-      obj[name].push(`${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
+      obj[name].push(durations.length == 0 ? `null` : `${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
 
     });
 

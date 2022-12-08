@@ -101,6 +101,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command: 'npm run browser:fixture',
     port: 3000,
+    reuseExistingServer: true
   },
 };
 

@@ -7,12 +7,11 @@ import { markdownTable } from 'markdown-table';
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
-  for (let i = 0; i < Math.log2(maxSize * MB); i++) {
-    const num = Math.pow(2, i);
-    const name = bytes(num, { maximumFractionDigits: 3 });
-    const obj = generateObj(num / MB, isClonable);
-    console.log({ type: "postMessageWorker (browser)", name, transferable: obj.transferable.length })
-  }
+  
+  const num_ = Math.pow(2, Math.log2(maxSize * MB));
+  const name_ = bytes(num_, { maximumFractionDigits: 3 });
+  const obj_ = generateObj(num_ / MB, isClonable);
+  console.log({ type: "Worker (browser)", name: name_, transferable: obj_.transferable.length })
 
   for (let cycle = 0; cycle < 5; cycle++) {
     const queue = new Map<string, ReturnType<typeof createPromise>>();
@@ -30,17 +29,15 @@ export default async function (e: MouseEvent) {
       for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
         const num = Math.pow(2, index);
         const name = bytes(num, { maximumFractionDigits: 3 });
-
-        /**
-         * Deno doesn't support transferable streams
-         */
         const obj = generateObj(num / MB, isClonable);
 
+        console.log({ name, index, variant, cycle })
         await add(name, variant, async () => {
           await createWorkerPromise({ name, index, variant, cycle, obj, worker, queue });
         })
       }
     }
+    console.log("\n")
 
     worker.terminate();
     queue.clear();

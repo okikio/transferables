@@ -6,12 +6,10 @@ import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.
 
 import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
-for (let i = 0; i < Math.log2(maxSize * MB); i++) {
-  const num = Math.pow(2, i);
-  const name = bytes(num, { maximumFractionDigits: 3 });
-  const obj = generateObj(num / MB, isClonable);
-  console.log({ type: "postMessage [deno] (Worker)", name, transferable: obj.transferable.length })
-}
+const num_ = Math.pow(2, Math.log2(maxSize * MB));
+const name_ = bytes(num_, { maximumFractionDigits: 3 });
+const obj_ = generateObj(num_ / MB, isClonable);
+console.log({ type: "Worker (deno)", name: name_, transferable: obj_.transferable.length })
 
 for (let cycle = 0; cycle < 5; cycle++) {
   const queue = new Map<string, ReturnType<typeof createPromise>>();
@@ -29,17 +27,15 @@ for (let cycle = 0; cycle < 5; cycle++) {
     for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
       const num = Math.pow(2, index);
       const name = bytes(num, { maximumFractionDigits: 3 });
-
-      /**
-       * Deno doesn't allow for transfering message channels
-       */
       const obj = generateObj(num / MB, isClonable);
 
+      console.log({ name, index, variant, cycle })
       await add(name, variant, async () => {
         await createWorkerPromise({ name, index, variant, cycle, obj, worker, queue });
       })
     }
   }
+  console.log("\n")
 
   worker.terminate();
   queue.clear();

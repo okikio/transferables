@@ -44,8 +44,7 @@ export function registerMessageListener(
         }
       }
     } catch (e) {
-      console.warn(e);
-      port.postMessage(simpleMsg);
+      port.postMessage({ ...simpleMsg, error: String(e) });
     }
   }
 }

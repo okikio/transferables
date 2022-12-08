@@ -1,5 +1,5 @@
-import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize } from "../utils";
-import { getTransferable, getTransferables, hasTransferables, isSupported } from "../../src";
+import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize, isClonable } from "../utils";
+import { getTransferable, getTransferables, hasTransferables } from "../../src";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
@@ -12,30 +12,25 @@ const len = keys.length;
 
 export default async function (e: MouseEvent) {
   e.preventDefault();
-  const isClonable = { ...await isSupported() };
-  for (let i = 0; i < Math.log2(maxSize * MB); i++) {
-    const num = Math.pow(2, i);
-    const name = bytes(num, { maximumFractionDigits: 3 });
-    const obj = generateObj(num / MB, isClonable);
-    console.log({ type: "structuredClone (browser)", name, transferable: obj.transferable.length })
-  }
+  
+  const num_ = Math.pow(2, Math.log2(maxSize * MB));
+  const name_ = bytes(num_, { maximumFractionDigits: 3 });
+  const obj_ = generateObj(num_ / MB, isClonable);
+  console.log({ type: "structuredClone (browser)", name: name_, transferable: obj_.transferable.length })
 
   for (let cycle = 0; cycle < 5; cycle++) {
-    for (let i = 0; i < Math.log2(maxSize * MB); i++) {
-      const num = Math.pow(2, i);
+    for (let index = 0; index < Math.log2(maxSize * MB); index++) {
+      const num = Math.pow(2, index);
       const name = bytes(num, { maximumFractionDigits: 3 });
 
       for (let j = 0; j < len; j++) {
         const variant = keys[j];
         const fn = variants[variant];
-
         const obj = generateObj(num / MB, isClonable);
+
+        console.log({ name, index, variant, cycle })
         await add(name, variant, fn, obj)
-
-        console.log({ name, index: i, variant, cycle })
       }
-
-      await Promise.resolve();
     }
     console.log("\n")
   }

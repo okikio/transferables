@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { writeFile } from './node.utils.ts';
+import { writeFile } from './node.utils.js';
 
 test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   await page.goto('/');
