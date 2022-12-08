@@ -2,6 +2,7 @@
   "deno.enablePaths": [
     "./benchmark/deno.ts",
     "./benchmark/utils.ts",
+    "./benchmark/deno.utils.ts",
     "./benchmark/deno.worker.ts",
     "./benchmark/workers/deno.ts",
     "./benchmark/deno.messagechannel.ts",

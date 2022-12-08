@@ -1,4 +1,5 @@
 import { MB, generateObj, add, printTable, createWorkerPromise, postMessageVariants, createPromise, IIterationType, maxSize, isClonable } from "./utils.ts";
+import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -44,8 +45,8 @@ for (let cycle = 0; cycle < 5; cycle++) {
   queue.clear();
 }
 
-printTable(postMessageVariants, dmeanstdev, markdownTable)
-
+const result = printTable(postMessageVariants, dmeanstdev, markdownTable);
+writeFile(result, `Worker`, `deno`);
 
 
 

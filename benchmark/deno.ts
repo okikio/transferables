@@ -1,5 +1,6 @@
 import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize, isClonable } from "./utils.ts";
 import { getTransferable, getTransferables, hasTransferables } from "../src/index.ts";
+import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
 import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
@@ -37,7 +38,8 @@ for (let cycle = 0; cycle < 5; cycle++) {
   console.log("\n")
 }
 
-printTable(keys, dmeanstdev, markdownTable);
+const result = printTable(keys, dmeanstdev, markdownTable);
+writeFile(result, `structuredClone`, `deno`);
 
 
 

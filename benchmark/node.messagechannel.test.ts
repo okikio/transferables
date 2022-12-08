@@ -1,15 +1,16 @@
-import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants, isClonable } from "./utils";
-
 import { it } from 'vitest';
-import { getTransferable, getTransferables, hasTransferables } from "../src";
-import { registerMessageListener } from "./workers/messagechannel";
 
 import bytes from "pretty-bytes";
 import { dmeanstdev } from '@stdlib/stats-base';
 
 import { markdownTable } from 'markdown-table';
 
-it("postMessage (MessageChannel)", async () => {
+import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants, isClonable } from "./utils";
+import { getTransferable, getTransferables, hasTransferables } from "../src";
+import { registerMessageListener } from "./workers/messagechannel";
+import { writeFile } from "./node.utils";
+
+it("MessageChannel", async ({ meta }) => {
   for (let i = 0; i < Math.log2(maxSize * MB); i++) {
     const num = Math.pow(2, i);
     const name = bytes(num, { maximumFractionDigits: 3 });
@@ -55,5 +56,6 @@ it("postMessage (MessageChannel)", async () => {
     queue.clear();
   }
 
-  printTable(postMessageVariants, dmeanstdev, markdownTable);
+  const result = printTable(postMessageVariants, dmeanstdev, markdownTable);
+  writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
 })

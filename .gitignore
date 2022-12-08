@@ -110,3 +110,4 @@ docs/
 /test-results/
 /playwright-report/
 /playwright/.cache/
+/benchmark/results/

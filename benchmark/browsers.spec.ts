@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { writeFile } from './node.utils';
 
-test('structuredClone (browser)', async ({ page }) => {
+test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
@@ -31,11 +32,14 @@ test('structuredClone (browser)', async ({ page }) => {
   const structuredCloneResult = page.locator("#structuredCloneResult");
   await structuredCloneResult.waitFor();
 
-  console.log(`structuredClone (browser)`)
-  console.log(await structuredCloneResult.getAttribute("data-value"))
+  const result = await structuredCloneResult.getAttribute("data-value") as string;
+  console.log(`structuredClone (${browserName})`)
+  console.log(result);
+
+  writeFile(result, title, browserName);
 })
 
-test('MessageChannel (browser)', async ({ page }) => {
+test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
@@ -66,11 +70,14 @@ test('MessageChannel (browser)', async ({ page }) => {
   const postMessageMessageChannel = page.locator("#postMessageMessageChannelResult");
   await postMessageMessageChannel.waitFor();
 
-  console.log(`MessageChannel (browser)`)
-  console.log(await postMessageMessageChannel.getAttribute("data-value"));
+  const result = await postMessageMessageChannel.getAttribute("data-value") as string;
+  console.log(`MessageChannel (${browserName})`)
+  console.log(result);
+
+  writeFile(result, title, browserName);
 })
 
-test('Worker (browser)', async ({ page }) => {
+test('Worker (browser)', async ({ page, browserName }, { title }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
@@ -101,6 +108,9 @@ test('Worker (browser)', async ({ page }) => {
   const postMessageWorker = page.locator("#postMessageWorkerResult");
   await postMessageWorker.waitFor();
 
-  console.log(`Worker (browser)`)
-  console.log(await postMessageWorker.getAttribute("data-value"));
+  const result = await postMessageWorker.getAttribute("data-value") as string;
+  console.log(`Worker (${browserName})`)
+  console.log(result);
+
+  writeFile(result, title, browserName);
 });
