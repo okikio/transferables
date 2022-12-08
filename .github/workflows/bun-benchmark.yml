@@ -62,6 +62,25 @@ jobs:
       - name: Run Benchmark
         run: pnpm benchmark:bun:all 
 
+      - name: Add benchmark/results/* to Git
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          git add -u --force benchmark/results
+          
+      - name: Commit files
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "chore(gh-bot): update bun benchmark results" --all --no-verify --signoff
+          
+      - name: Push changes
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
       - name: Add benchmark/results to Git
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
