@@ -1,5 +1,23 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type ConsoleMessage } from '@playwright/test';
 import { writeFile } from './node.utils.js';
+
+const consoleLog = async (msg: ConsoleMessage) => {
+  // if (msg && msg.text) {
+  //   if (typeof msg.text === 'function') {
+  //     console.log('PAGE LOG:', msg.text());
+  //   } else {
+  //     console.log('PAGE LOG:', msg.text);
+  //   }
+  // } else if ('jsonValue' in msg && typeof msg.jsonValue == 'function') {
+  //   console.log('PAGE LOG:', msg.jsonValue())
+  // } else {
+  //   console.log('PAGE LOG:', msg);
+  // }
+  const values: any[] = [];
+  for (const arg of msg.args())
+    values.push(await arg.jsonValue());
+  console.log(...values);
+}
 
 test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   await page.goto('/');
@@ -7,17 +25,7 @@ test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
 
-  page.on('console', (msg) => {
-    if (msg && msg.text) {
-      if (typeof msg.text === 'function') {
-        console.log('PAGE LOG:', msg.text());
-      } else {
-        console.log('PAGE LOG:', msg.text);
-      }
-    } else {
-      console.log('PAGE LOG:', msg);
-    }
-  });
+  page.on('console', consoleLog);
 
   // create a locator
   const structuredCloneBtn = page.locator('button#structuredClone');
@@ -45,17 +53,7 @@ test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
 
-  page.on('console', (msg) => {
-    if (msg && msg.text) {
-      if (typeof msg.text === 'function') {
-        console.log('PAGE LOG:', msg.text());
-      } else {
-        console.log('PAGE LOG:', msg.text);
-      }
-    } else {
-      console.log('PAGE LOG:', msg);
-    }
-  });
+  page.on('console', consoleLog);
 
   // create a locator
   const postMessageMessageChannelBtn = page.locator('button#postMessageMessageChannel');
@@ -83,17 +81,7 @@ test('Worker (browser)', async ({ page, browserName }, { title }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Benchmark/);
 
-  page.on('console', (msg) => {
-    if (msg && msg.text) {
-      if (typeof msg.text === 'function') {
-        console.log('PAGE LOG:', msg.text());
-      } else {
-        console.log('PAGE LOG:', msg.text);
-      }
-    } else {
-      console.log('PAGE LOG:', msg);
-    }
-  });
+  page.on('console', consoleLog);
 
   // create a locator
   const postMessageWorkerBtn = page.locator('button#postMessageWorker');
