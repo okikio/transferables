@@ -13,7 +13,7 @@ on:
       - '*.yaml'
       - '.github/**/firefox-benchmark.yml'
       - 'src/**/*'
-      - 'benchmark/**/*'
+      - 'benchmark/**/*.ts'
 
 jobs:
   build:
@@ -62,15 +62,7 @@ jobs:
       - name: Run Benchmark
         run: pnpm benchmark:browser:firefox
 
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-
       - name: Add benchmark/results to Git
-        if: steps.auto-commit-action.outputs.changes_detected == 'true'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore(gh-bot): update firefox benchmark results"
