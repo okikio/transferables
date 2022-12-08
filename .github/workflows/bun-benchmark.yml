@@ -61,4 +61,37 @@ jobs:
 
       - name: Run Benchmark
         run: pnpm benchmark:bun:all 
+
+#       - name: Add benchmark/results to Git
+#         if: ${{ github.ref == 'refs/heads/main' }}
+#         run: |
+#           git add --force benchmark/results/
+          
+#       - name: Commit files
+#         if: ${{ github.ref == 'refs/heads/main' }}
+#         run: |
+#           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#           git config --local user.name "github-actions[bot]"
+#           git commit -m "chore(gh-bot): update benchmark results" -a
+
+      - name: Add benchmark/results to Git
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore(gh-bot): update benchmark results"
+
+          # Optional. Options used by `git-commit`.
+          # See https://git-scm.com/docs/git-commit#_options
+          commit_options: '--all --no-verify --signoff'
+
+          # Optional glob pattern of files which should be added to the commit
+          # Defaults to all (.)
+          # See the `pathspec`-documentation for git
+          # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
+          # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
+          file_pattern: 'benchmark/results/'
+          
+          # Optional. Options used by `git-add`.
+          # See https://git-scm.com/docs/git-add#_options
+          add_options: '--force'
         
