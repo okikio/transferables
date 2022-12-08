@@ -18,7 +18,7 @@ export function capital(str: string) {
 }
 
 export async function writeFile(result: string, name: string, env: string) {
-  if (process.env.CI) {
+  if (Deno.env.get('CI')) {
     const fileDir = path.join(__dirname, `/results`);
     const filePath = path.join(__dirname, `/results/${env}.md`);
     console.log(`Writing/Appending to ${filePath}`)
