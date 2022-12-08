@@ -1,4 +1,5 @@
 import { access, appendFile, writeFile as write, constants, mkdir } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import path from "node:path";
 
 export async function exists(filePath: string) {
@@ -15,20 +16,21 @@ export function capital(str: string) {
 }
 
 export async function writeFile(result: string, name: string, env: string) {
-  if (process.env.CI) {
-    const fileDir = path.join(__dirname, `/results`);
-    const filePath = path.join(__dirname, `/results/${env}.md`);
-    console.log(`Writing/Appending to ${filePath}`)
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
 
-    const append = await exists(filePath);
-    const markdown = `\n## ${name}\n${result}`;
-    if (append) {
-      await appendFile(filePath, markdown, `utf-8`);
-      console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-    } else {
-      await mkdir(fileDir, { recursive: true });
-      await write(filePath, `# ${capital(env)}\n${markdown}`, `utf-8`);
-      console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-    }
+  const fileDir = path.join(__dirname, `/results`);
+  const filePath = path.join(__dirname, `/results/${env}.md`);
+  console.log(`Writing/Appending to ${filePath}`)
+
+  const append = await exists(filePath);
+  const markdown = `\n\n## ${name}\n\n${result}`;
+  if (append) {
+    await appendFile(filePath, markdown, `utf-8`);
+    console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
+  } else {
+    await mkdir(fileDir, { recursive: true });
+    await write(filePath, `# ${capital(env)}${markdown}`, `utf-8`);
+    console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
   }
 }

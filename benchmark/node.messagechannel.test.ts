@@ -58,5 +58,5 @@ it("MessageChannel", async ({ meta }) => {
   }
 
   const result = printTable(postMessageVariants, dmeanstdev, markdownTable);
-  writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
+  await writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
 })

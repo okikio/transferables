@@ -36,7 +36,7 @@ test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   console.log(`structuredClone (${browserName})`)
   console.log(result);
 
-  writeFile(result, title, browserName);
+  await writeFile(result, title, browserName);
 })
 
 test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
@@ -74,7 +74,7 @@ test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
   console.log(`MessageChannel (${browserName})`)
   console.log(result);
 
-  writeFile(result, title, browserName);
+  await writeFile(result, title, browserName);
 })
 
 test('Worker (browser)', async ({ page, browserName }, { title }) => {
@@ -112,5 +112,5 @@ test('Worker (browser)', async ({ page, browserName }, { title }) => {
   console.log(`Worker (${browserName})`)
   console.log(result);
 
-  writeFile(result, title, browserName);
+  await writeFile(result, title, browserName);
 });

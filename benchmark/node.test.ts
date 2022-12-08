@@ -37,5 +37,5 @@ it("structuredClone", async ({ meta }) => {
   }
 
   const result = printTable(keys, dmeanstdev, markdownTable);
-  writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
+  await writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
 })

@@ -2,8 +2,6 @@ import { constants } from 'https://deno.land/std@0.167.0/node/fs.ts';
 import { access, appendFile, writeFile as write, mkdir } from 'https://deno.land/std@0.167.0/node/fs/promises.ts';
 import path from "https://deno.land/std@0.167.0/node/path.ts";
 
-const __dirname = path.dirname(path.fromFileUrl(import.meta.url));
-
 export async function exists(filePath: string) {
   try {
     await access(filePath, constants.F_OK);
@@ -18,20 +16,20 @@ export function capital(str: string) {
 }
 
 export async function writeFile(result: string, name: string, env: string) {
-  if (Deno.env.get('CI')) {
-    const fileDir = path.join(__dirname, `/results`);
-    const filePath = path.join(__dirname, `/results/${env}.md`);
-    console.log(`Writing/Appending to ${filePath}`)
+  const __dirname = path.dirname(path.fromFileUrl(import.meta.url));
 
-    const append = await exists(filePath);
-    const markdown = `\n## ${name}\n${result}`;
-    if (append) {
-      await appendFile(filePath, markdown, `utf-8`);
-      console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-    } else {
-      await mkdir(fileDir, { recursive: true })
-      await write(filePath, `# ${capital(env)}\n${markdown}`, `utf-8`);
-      console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-    }
+  const fileDir = path.join(__dirname, `/results`);
+  const filePath = path.join(__dirname, `/results/${env}.md`);
+  console.log(`Writing/Appending to ${filePath}`)
+
+  const append = await exists(filePath);
+  const markdown = `\n\n## ${name}\n\n${result}`;
+  if (append) {
+    await appendFile(filePath, markdown, `utf-8`);
+    console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
+  } else {
+    await mkdir(fileDir, { recursive: true })
+    await write(filePath, `# ${capital(env)}${markdown}`, `utf-8`);
+    console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
   }
 }
