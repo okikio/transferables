@@ -65,6 +65,7 @@ jobs:
       - name: Add benchmark/results/* to Git
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          git pull --tags origin main
           git add --force benchmark/results/
 
       - name: Commit files
