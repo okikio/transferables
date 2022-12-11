@@ -150,7 +150,7 @@
     "@semantic-release/changelog": "^6.0.2",
     "@semantic-release/git": "^10.0.1",
     "@stdlib/stats-base": "^0.0.7",
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.11.13",
     "@types/offscreencanvas": "^2019.7.0",
     "@types/web": "^0.0.84",
     "comlink": "^4.3.1",
@@ -164,8 +164,8 @@
     "semantic-release": "^19.0.5",
     "typescript": "^4.9.4",
     "ultra-runner": "^3.10.5",
-    "vite": "^3.2.5",
+    "vite": "^4.0.0",
     "vite-plugin-dts": "^1.7.1",
-    "vitest": "^0.25.6"
+    "vitest": "^0.25.7"
   }
 }

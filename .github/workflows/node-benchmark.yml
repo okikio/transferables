@@ -59,6 +59,11 @@ jobs:
       - name: Run Benchmark
         run: pnpm benchmark:node:all 
 
+      - name: Add benchmark/results/* to Git
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          git add --force benchmark/results/
+
       - name: Add benchmark/results to Git
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
