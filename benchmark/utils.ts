@@ -357,6 +357,11 @@ export function createStructuredCloneVariants(
       await Promise.resolve();
     },
 
+    "structuredClone (no transfer)": async function (obj: ReturnType<typeof generateObj>) {
+      structuredClone(obj);
+      await Promise.resolve();
+    },
+
     "structuredClone (manually)": async function (obj: ReturnType<typeof generateObj>) {
       structuredClone(obj, { transfer: obj.transferable });
       await Promise.resolve();
