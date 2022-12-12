@@ -170,13 +170,6 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 
 ## Benchmarks
 
-* [Node](https://github.com/okikio/transferables/blob/main/benchmark/results/node.md)
-* [Deno](https://github.com/okikio/transferables/blob/main/benchmark/results/deno.md)
-* [Bun](https://github.com/okikio/transferables/blob/main/benchmark/results/bun.md)
-* [Chrome](https://github.com/okikio/transferables/blob/main/benchmark/results/chrome.md)
-* [Firefox](https://github.com/okikio/transferables/blob/main/benchmark/results/firefox.md)
-* [Safari](https://github.com/okikio/transferables/blob/main/benchmark/results/safari.md)
-
 **Machine**: [GitHub Action `ubuntu-latest`](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources)
 * 2-core CPU (x86_64)
 * 7 GB of RAM
@@ -190,9 +183,16 @@ getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<Ty
 * `Firefox (latest)`
 * `Safari (latest)`
 
-To determine just how useful the `transferables` library was, I ran a benchmark to compare it to manually grabbing the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the object to be transferred, here are the results.
+To determine just how useful the `transferables` library was, I ran a benchmark, here are the results.
 
-The benchmark ran using the 3 different forms of transfering [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) 
+* [Node - Result][node-benchmark]
+* [Deno - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/deno.md)
+* [Bun - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/bun.md)
+* [Chrome - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/chrome.md)
+* [Firefox - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/firefox.md)
+* [Safari - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/safari.md)
+
+The benchmark ran using the 3 different types of transfering [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) 
 We ran the benchmark with 
 1. `structuredClone` (`All`)
 2. `MessageChannel` (`All`)
@@ -200,15 +200,15 @@ We ran the benchmark with
 
 > **Note**: `Worker`'s aren't supported in all runtimes   
 
-Each form ran for 5 cycles, with a transfer list of ranging from 108 - 168 objects per run (depending on the js environement), with 21 different data sizes ranging from `1 B` to `1,049 MB` in the transfer list.
+Each type ran for 5 cycles, with a transfer list of ranging from 108 - 168 objects per run (depending on the js environement), with 21 different data sizes ranging from `1 B` to `1,049 MB` in the transfer list.
 
-Each cycle had variants, specifically for the `structuredClone` form, we had these variants
+Each cycle had variants, specifically for `structuredClone`, we had these variants
 * hasTransferables
 * structuredClone (manually) 
 * structuredClone (getTransferable*) 
 * structuredClone (getTransferables)
 
-for the `MessageChannel` and `Worker` forms we had these variants
+for the `MessageChannel` and `Worker`, we had these variants
 * hasTransferables
 * postMessage (no transfers) - `postMessage` doesn't actually require listing out objects in the transfer list, only `structuredClone` requires that; TIL
 * postMessage (manually) 
@@ -360,3 +360,5 @@ npm run benhmark:bun:all
 ## Licence
 
 See the [LICENSE](./LICENSE) file for license rights and limitations (MIT).
+
+[node-benchmark]: https://github.com/okikio/transferables/blob/main/benchmark/results/node.md
