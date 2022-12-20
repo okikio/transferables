@@ -6,7 +6,7 @@
 
 A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be moved between Workers and the main thread\*.
 
-> _`*` There are many [asterisks](#asterisks--limitations) involved in transferable objects, the `transferables` library is able sort out a large number of these `asterisks`, but it can't sort all of them, those it can't have been listed in [#limitations](#asterisks--limitations), however, you should do your own research before using._
+> _`*` There are many [asterisks](#asterisks--limitations) involved in transferable objects, the `transferables` library is able sort out a large number of these `asterisks`, but it can't sort all of them. Those it can't, have been listed in [#limitations](#asterisks--limitations), you should do your own research before using._
 
 <!-- > You can also read the [blog post](https://blog.okikio.dev/transferables), created for it's launch. -->
 
@@ -76,10 +76,10 @@ The API of `transferables` is pretty straight forward,
 * `hasTransferables` quickly checks if the input contains at least one [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
 * `getTransferable` returns an iterator that contains the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
 * `getTransferables` generates an array of [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) from the input.
-* `isSupported` tests what transferable objects are actually supported (support isn't always guranteed) and returns an object with keys-value pairs that represent if message channel and streams are supported [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects).
-* `isObject`, `isTypedArray`, `isStream`, `isMessageChannel`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferables`, but you can use them as well to customize `transferables` to match your use case.
+* `isSupported` tests what transferable objects are actually supported (support isn't always guranteed) and returns a Promise which resolves to an object that represent if messagechannel and streams are supported.
+* `isObject`, `isTypedArray`, `isStream`, `isMessageChannel`, `isTransferable`, and `filterOutDuplicates` are utility functions that are used internally by `transferables`, but can be used externally to customize `transferables` to match other use cases the `transferables` library itself doesn't.
 
-You use them like this:
+You use the exported methods from the API like so,
 
 ```ts
 import { hasTransferables, getTransferables, getTransferable } from "transferables";
@@ -163,6 +163,8 @@ getTransferables(data: unknown, streams: boolean, maxCount: number): TypeTransfe
 getTransferable(data: unknown, streams: boolean, maxCount: number): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView>
 ```
 
+Look through the [`benchmark/`](https://github.com/okikio/transferables/blob/main/benchmark) folder for complex examples, and multiple ways to use `transferables` across different js runtimes.
+
 > **Note**: `(Readable/Writeable/Transform)streams` and `MessagePort` aren't transferable in all js runtimes; devs can decide based off the runtime whether to support streams and message channel/port or not
  
 > **Note**: depending on how large your object is you may need go over the `maxCount` (max iteration count), if you need to change the max number of iterations remember that--that might cause the thread to be blocked while it's computing.
@@ -192,45 +194,47 @@ To determine just how useful the `transferables` library was, I ran a benchmark,
 * [Firefox - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/firefox.md)
 * [Safari - Result](https://github.com/okikio/transferables/blob/main/benchmark/results/safari.md)
 
-The benchmark ran using the 3 different types of transfering [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) 
+The benchmark ran using the 3 different types of object transfer.
+
 We ran the benchmark with 
+
 1. `structuredClone` (`All`)
 2. `MessageChannel` (`All`)
 3. `Worker` (`Deno`, `Chrome`, `Firefox`, and `Safari`) 
 
-> **Note**: `Worker`'s aren't supported in all runtimes   
+> **Note**: `WebWorker`'s aren't supported in all runtimes   
 
-Each type ran for 5 cycles, with a transfer list of ranging from 108 - 168 objects per run (depending on the js environement), with 21 different data sizes ranging from `1 B` to `1,049 MB` in the transfer list.
+Each type ran for 5 cycles, with a transfer list ranging from 108 - 168 objects per run (depending on the js environement). With 21 different data sizes ranging from `1 B` to `1,049 MB` in the transfer list, each cycle also has 5 variants. 
 
-Each cycle had variants, specifically for `structuredClone`, we had these variants
+The variants are, 
+
 * hasTransferables
-* structuredClone (manually) 
-* structuredClone (getTransferable*) 
-* structuredClone (getTransferables)
+* structuredClone | postMessage (no transfers) - `postMessage` doesn't actually require listing out objects in the transfer list, only `structuredClone` requires that; TIL
+* structuredClone | postMessage (manually) 
+* structuredClone | postMessage (getTransferable*) 
+* structuredClone | postMessage (getTransferables)
 
-for the `MessageChannel` and `Worker`, we had these variants
-* hasTransferables
-* postMessage (no transfers) - `postMessage` doesn't actually require listing out objects in the transfer list, only `structuredClone` requires that; TIL
-* postMessage (manually) 
-* postMessage (getTransferable*) 
-* postMessage (getTransferables)
+> **Note**: `postMessage` is for the `MessageChannel` and `Worker` types of object transfer.
 
 
 ## Asterisks\* & Limitations
 
-There are lots of asterisks involved with [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects). 
+There are things to be aware of when using `transferables`. 
+
 1. Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) are supported in all browsers.
 2. Not all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) can be transfered between Workers and the main thread.
-3. `structuredClone` when trying to clone an object that is transferable will crashes if the transferable objects aren't listed in the transfer list.
-4. Only use this library when you don't know the shape of the object to be transfered as traversing the input object adds a delay, you can go through the [#benchmark](#benchmarks) above to view the delay in action.
+3. `structuredClone` when trying to clone an object that is transferable will crashes if the [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) aren't listed in the transfer list.
+4. Only use this library when you don't know the shape of the object to be transfered. The reason for this is, traversing the input object adds a noticeable delay, you notice the delay as you go through the [#benchmark](#benchmarks).
 
-Here is a list of issues that I've found so far.
+Also, there are compatability issues js runtimes, here are the ones I've found so far,
 
 * Safari does not support transferable objects with [`TransformStream`](https://developer.mozilla.org/en-US/docs/Web/API/TransformStream#browser_compatibility), [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility), and [`WritableStream`](https://developer.mozilla.org/en-US/docs/Web/API/WritableStream#browser_compatibility)
 * [`AudioData`](https://developer.mozilla.org/en-US/docs/Web/API/AudioData) & [`VideoFrame`](https://developer.mozilla.org/en-US/docs/Web/API/VideoFrame) are not supported on Firefox and Safari
 * `OffscreenCanvas` is not supported on Safari
-* In a reverse uno card action, **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
+* In a reverse uno card, **only** Safari supports [`RTCDataChannel`](https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel) being transferable
 * `Deno` doesn't support transferable `MessagePort`
+
+> **Note**: `isSupported()` should help with some of the compatability issues, but not all transferable objects have been tested for compatability.
 
 ### Transferable objects
 
@@ -251,12 +255,12 @@ The following are [transferable objects](https://developer.mozilla.org/en-US/doc
 
 From the brief research I've done on the topic, I've found that 
 
-- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's really the only type of data buffer that can be transferred. 
+- **`ArrayBuffer`**: Can be transferred between Workers and the main thread. It's really the only type of [transferable object](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be transferred reliably on all major js runtimes. 
 - **`TypedArray`**: A data view of an `ArrayBuffer` (e.g. `Uint8Array`, `Int32Array`, `Float64Array`, etc.). They ***can't*** directly be transferred between Workers and the main thread, but the `ArrayBuffer` they contain can. Due to this fact, it's possible if you have multiple `TypedArray`'s that all share the same `ArrayBuffer`, that only that `ArrayBuffer` is transfered. 
-- **`MessagePort`** (`~`): A port to communicate with other workers. Can be transferred between Workers and the main thread. Support for this isn't guranteed in all js endpoints, and can be finicky in `Deno` 
+- **`MessagePort`** (`~`): A port to communicate with other workers. Can be transferred between Workers and the main thread. Support for this isn't guranteed in all js runtimes, and can be finicky in `Deno` 
 - **`ImageBitmap`** (`^`): An image that can be transferred between Workers and the main thread. It represents a bitmap image which can be drawn to a `<canvas>` without undue latency. It can also be used as textures in WebGL.
-- **`OffscreenCanvas`**: A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
-- **`(Readable/Writable/Transform)Stream`**: A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects. Support across js runtimes is very spotty
+- **`OffscreenCanvas`** (`^`): A canvas that can be transferred between Workers and the main thread. It can also be used as a texture in WebGL.
+- **`(Readable/Writable/Transform)Stream`** (`~`): A stream that can be transferred between Workers and the main thread. They can also be used to create `Response` objects. Support across js runtimes is very spotty
 
 
 > _`^` unverified/untested - Make sure to do your own research for this specific use case._
@@ -272,9 +276,6 @@ Here is a support matrix that might help your decision making process,
 | structuredClone (streams)    | true   | true    | false  | true   | false  | true   | 
 | Worker.postMessage (channel) | false  | false   | false  | -      | true   | -      |   
 | Worker.postMessage (streams) | false  | false   | false  | -      | false  | -      |   
-
-
-So, do your own research before using.
 
 
 ## FAQ & Glossary
@@ -360,5 +361,3 @@ npm run benhmark:bun:all
 ## Licence
 
 See the [LICENSE](./LICENSE) file for license rights and limitations (MIT).
-
-[node-benchmark]: https://github.com/okikio/transferables/blob/main/benchmark/results/node.md
