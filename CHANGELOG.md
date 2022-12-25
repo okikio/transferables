@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/okikio/transferables/compare/v1.0.0...v1.0.1) (2022-12-25)
+
+
+### Performance Improvements
+
+* use consts for testing browser support ([e8f783a](https://github.com/okikio/transferables/commit/e8f783aaf6c1a242c3605f3350c2ad0e4ec7aaae))
+
 # 1.0.0 (2022-12-20)
 
 
