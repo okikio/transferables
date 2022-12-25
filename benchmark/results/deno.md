@@ -2,78 +2,78 @@
 
 ## structuredClone
 
-|            | hasTransferables        | structuredClone (no transfer) | structuredClone (manually)   | structuredClone (getTransferable*) | structuredClone (getTransferables) |
-| ---------- | ----------------------- | ----------------------------- | ---------------------------- | ---------------------------------- | ---------------------------------- |
-| 1 B        | in 0.107 ms ± 0.15 ms   | null                          | in 0.622 ms ± 0.205 ms       | in 0.776 ms ± 0.238 ms             | in 0.684 ms ± 0.228 ms             |
-| 2 B        | in 0.031 ms ± 0.018 ms  | null                          | in 0.52 ms ± 0.031 ms        | in 0.67 ms ± 0.117 ms              | in 0.666 ms ± 0.142 ms             |
-| 4 B        | in 0.03 ms ± 0.015 ms   | null                          | in 0.535 ms ± 0.057 ms       | in 0.709 ms ± 0.11 ms              | in 0.668 ms ± 0.108 ms             |
-| 8 B        | in 0.028 ms ± 0.013 ms  | null                          | in 0.574 ms ± 0.047 ms       | in 0.721 ms ± 0.108 ms             | in 0.684 ms ± 0.13 ms              |
-| 16 B       | in 0.028 ms ± 0.013 ms  | null                          | in 0.586 ms ± 0.057 ms       | in 0.767 ms ± 0.165 ms             | in 0.704 ms ± 0.129 ms             |
-| 32 B       | in 0.026 ms ± 0.012 ms  | null                          | in 0.636 ms ± 0.028 ms       | in 0.865 ms ± 0.169 ms             | in 0.779 ms ± 0.121 ms             |
-| 64 B       | in 0.029 ms ± 0.012 ms  | null                          | in 0.687 ms ± 0.047 ms       | in 0.96 ms ± 0.175 ms              | in 0.895 ms ± 0.165 ms             |
-| 128 B      | in 0.028 ms ± 0.013 ms  | null                          | in 0.803 ms ± 0.06 ms        | in 1.229 ms ± 0.249 ms             | in 1.148 ms ± 0.272 ms             |
-| 256 B      | in 0.03 ms ± 0.016 ms   | null                          | in 1.071 ms ± 0.081 ms       | in 1.766 ms ± 0.396 ms             | in 1.545 ms ± 0.322 ms             |
-| 512 B      | in 0.036 ms ± 0.02 ms   | null                          | in 1.594 ms ± 0.09 ms        | in 2.595 ms ± 0.099 ms             | in 2.459 ms ± 0.5 ms               |
-| 1.024 kB   | in 0.06 ms ± 0.061 ms   | null                          | in 2.658 ms ± 0.053 ms       | in 4.843 ms ± 0.838 ms             | in 3.965 ms ± 0.19 ms              |
-| 2.048 kB   | in 0.063 ms ± 0.049 ms  | null                          | in 4.794 ms ± 0.099 ms       | in 8.404 ms ± 0.028 ms             | in 7.288 ms ± 0.038 ms             |
-| 4.096 kB   | in 0.087 ms ± 0.074 ms  | null                          | in 9.004 ms ± 0.074 ms       | in 16.349 ms ± 0.568 ms            | in 13.965 ms ± 0.033 ms            |
-| 8.192 kB   | in 0.163 ms ± 0.153 ms  | null                          | in 17.621 ms ± 0.226 ms      | in 31.984 ms ± 0.372 ms            | in 27.678 ms ± 0.043 ms            |
-| 16.384 kB  | in 0.148 ms ± now       | null                          | in 35.857 ms ± 0.742 ms      | in 64.534 ms ± 0.292 ms            | in 55.335 ms ± 0.568 ms            |
-| 32.768 kB  | in 0.338 ms ± 0.009 ms  | null                          | in 71.844 ms ± 0.81 ms       | in 128.941 ms ± 1.883 ms           | in 111.79 ms ± 1.919 ms            |
-| 65.536 kB  | in 0.819 ms ± 0.009 ms  | null                          | in 143.311 ms ± 1.526 ms     | in 260.172 ms ± 1.385 ms           | in 223.378 ms ± 1.384 ms           |
-| 131.072 kB | in 1.838 ms ± 0.008 ms  | null                          | in 333.739 ms ± 26.924 ms    | in 520.604 ms ± 3.119 ms           | in 464.998 ms ± 36.654 ms          |
-| 262.144 kB | in 4.03 ms ± 0.254 ms   | null                          | in 670.049 ms ± 70.799 ms    | in 1,124.826 ms ± 63.45 ms         | in 979.939 ms ± 69.402 ms          |
-| 524.288 kB | in 6.673 ms ± 0.06 ms   | null                          | in 1,344.658 ms ± 126.388 ms | in 2,271.417 ms ± 122.616 ms       | in 1,997.891 ms ± 120.994 ms       |
-| 1.049 MB   | in 15.244 ms ± 1.225 ms | null                          | in 2,914.093 ms ± 9.844 ms   | in 4,686.165 ms ± 250.471 ms       | in 4,082.133 ms ± 208.201 ms       |
+|            | hasTransferables         | structuredClone (no transfer) | structuredClone (manually)   | structuredClone (getTransferable*) | structuredClone (getTransferables) |
+| ---------- | ------------------------ | ----------------------------- | ---------------------------- | ---------------------------------- | ---------------------------------- |
+| 1 B        | in 0.094 ms ± 0.135 ms   | null                          | in 0.624 ms ± 0.217 ms       | in 0.736 ms ± 0.234 ms             | in 0.675 ms ± 0.218 ms             |
+| 2 B        | in 0.027 ms ± 0.016 ms   | null                          | in 0.506 ms ± 0.045 ms       | in 0.633 ms ± 0.099 ms             | in 0.635 ms ± 0.129 ms             |
+| 4 B        | in 0.025 ms ± 0.013 ms   | null                          | in 0.565 ms ± 0.056 ms       | in 0.723 ms ± 0.097 ms             | in 0.681 ms ± 0.13 ms              |
+| 8 B        | in 0.026 ms ± 0.012 ms   | null                          | in 0.611 ms ± 0.043 ms       | in 0.728 ms ± 0.085 ms             | in 0.693 ms ± 0.117 ms             |
+| 16 B       | in 0.032 ms ± 0.016 ms   | null                          | in 0.595 ms ± 0.05 ms        | in 0.742 ms ± 0.145 ms             | in 0.695 ms ± 0.116 ms             |
+| 32 B       | in 0.024 ms ± 0.012 ms   | null                          | in 0.619 ms ± 0.046 ms       | in 0.788 ms ± 0.189 ms             | in 0.742 ms ± 0.12 ms              |
+| 64 B       | in 0.024 ms ± 0.012 ms   | null                          | in 0.669 ms ± 0.06 ms        | in 0.881 ms ± 0.168 ms             | in 0.818 ms ± 0.167 ms             |
+| 128 B      | in 0.026 ms ± 0.013 ms   | null                          | in 0.801 ms ± 0.063 ms       | in 1.082 ms ± 0.252 ms             | in 0.98 ms ± 0.263 ms              |
+| 256 B      | in 0.028 ms ± 0.017 ms   | null                          | in 1.111 ms ± 0.19 ms        | in 1.386 ms ± 0.109 ms             | in 1.335 ms ± 0.383 ms             |
+| 512 B      | in 0.033 ms ± 0.023 ms   | null                          | in 1.569 ms ± 0.074 ms       | in 2.102 ms ± 0.104 ms             | in 2.18 ms ± 0.785 ms              |
+| 1.024 kB   | in 0.057 ms ± 0.061 ms   | null                          | in 2.646 ms ± 0.051 ms       | in 3.93 ms ± 0.727 ms              | in 3.092 ms ± 0.137 ms             |
+| 2.048 kB   | in 0.057 ms ± 0.05 ms    | null                          | in 4.78 ms ± 0.081 ms        | in 6.754 ms ± 0.063 ms             | in 5.636 ms ± 0.057 ms             |
+| 4.096 kB   | in 0.082 ms ± 0.074 ms   | null                          | in 9.074 ms ± 0.068 ms       | in 12.944 ms ± 0.359 ms            | in 10.681 ms ± 0.09 ms             |
+| 8.192 kB   | in 0.153 ms ± 0.161 ms   | null                          | in 17.652 ms ± 0.251 ms      | in 25.212 ms ± 0.103 ms            | in 21.13 ms ± 0.174 ms             |
+| 16.384 kB  | in 0.126 ms ± now        | null                          | in 36.525 ms ± 0.673 ms      | in 51.322 ms ± 0.083 ms            | in 42.025 ms ± 0.569 ms            |
+| 32.768 kB  | in 0.294 ms ± 0.009 ms   | null                          | in 72.157 ms ± 1.178 ms      | in 101.846 ms ± 2.019 ms           | in 85.006 ms ± 1.666 ms            |
+| 65.536 kB  | in 0.739 ms ± 0.009 ms   | null                          | in 143.577 ms ± 1.408 ms     | in 205.118 ms ± 0.962 ms           | in 170.114 ms ± 1.752 ms           |
+| 131.072 kB | in 1.693 ms ± 0.014 ms   | null                          | in 319.087 ms ± 30.004 ms    | in 412.969 ms ± 5.804 ms           | in 353.991 ms ± 27.071 ms          |
+| 262.144 kB | in 3.905 ms ± 0.081 ms   | null                          | in 664.107 ms ± 64.779 ms    | in 900.712 ms ± 63.888 ms          | in 766.256 ms ± 68.778 ms          |
+| 524.288 kB | in 6.154 ms ± 0.042 ms   | null                          | in 1,344.46 ms ± 127.912 ms  | in 1,851.893 ms ± 121.857 ms       | in 1,576.058 ms ± 118.504 ms       |
+| 1.049 MB   | in 19.378 ms ± 11.504 ms | null                          | in 2,781.449 ms ± 229.535 ms | in 3,799.547 ms ± 247.705 ms       | in 3,214.007 ms ± 206.581 ms       |
 
 ## MessageChannel
 
 |            | hasTransferables            | postMessage (no transfers) | postMessage (manually)      | postMessage (getTransferable*) | postMessage (getTransferables) |
 | ---------- | --------------------------- | -------------------------- | --------------------------- | ------------------------------ | ------------------------------ |
-| 1 B        | in 4.763 ms ± 7.227 ms      | null                       | in 1.797 ms ± 0.07 ms       | in 1.997 ms ± 0.232 ms         | in 1.967 ms ± 0.177 ms         |
-| 2 B        | in 0.929 ms ± 0.084 ms      | null                       | in 2.104 ms ± 0.854 ms      | in 1.775 ms ± 0.082 ms         | in 1.657 ms ± 0.043 ms         |
-| 4 B        | in 0.892 ms ± 0.067 ms      | null                       | in 1.69 ms ± 0.135 ms       | in 1.743 ms ± 0.085 ms         | in 1.661 ms ± 0.038 ms         |
-| 8 B        | in 0.913 ms ± 0.124 ms      | null                       | in 2.282 ms ± 0.61 ms       | in 1.788 ms ± 0.052 ms         | in 1.664 ms ± 0.031 ms         |
-| 16 B       | in 0.944 ms ± 0.161 ms      | null                       | in 1.78 ms ± 0.122 ms       | in 1.778 ms ± 0.085 ms         | in 1.798 ms ± 0.188 ms         |
-| 32 B       | in 1.045 ms ± 0.187 ms      | null                       | in 1.767 ms ± 0.068 ms      | in 1.928 ms ± 0.17 ms          | in 1.911 ms ± 0.102 ms         |
-| 64 B       | in 1.02 ms ± 0.109 ms       | null                       | in 1.851 ms ± 0.085 ms      | in 2.108 ms ± 0.196 ms         | in 2.278 ms ± 0.072 ms         |
-| 128 B      | in 1.13 ms ± 0.054 ms       | null                       | in 2.107 ms ± 0.044 ms      | in 2.565 ms ± 0.323 ms         | in 2.605 ms ± 0.133 ms         |
-| 256 B      | in 1.409 ms ± 0.054 ms      | null                       | in 2.678 ms ± 0.091 ms      | in 3.474 ms ± 0.629 ms         | in 3.236 ms ± 0.205 ms         |
-| 512 B      | in 2.007 ms ± 0.136 ms      | null                       | in 3.745 ms ± 0.021 ms      | in 4.797 ms ± 0.267 ms         | in 4.498 ms ± 0.08 ms          |
-| 1.024 kB   | in 3.051 ms ± 0.141 ms      | null                       | in 5.92 ms ± 0.06 ms        | in 7.822 ms ± 0.318 ms         | in 7.259 ms ± 0.116 ms         |
-| 2.048 kB   | in 5.238 ms ± 0.194 ms      | null                       | in 10.181 ms ± 0.027 ms     | in 13.744 ms ± 0.054 ms        | in 12.759 ms ± 0.117 ms        |
-| 4.096 kB   | in 9.546 ms ± 0.338 ms      | null                       | in 18.708 ms ± 0.056 ms     | in 25.782 ms ± 0.116 ms        | in 23.671 ms ± 0.098 ms        |
-| 8.192 kB   | in 18.156 ms ± 0.658 ms     | null                       | in 38.164 ms ± 1.12 ms      | in 50.636 ms ± 0.635 ms        | in 47.716 ms ± 0.277 ms        |
-| 16.384 kB  | in 35.719 ms ± 0.916 ms     | null                       | in 73.037 ms ± 0.368 ms     | in 99.054 ms ± 0.329 ms        | in 93.062 ms ± 0.299 ms        |
-| 32.768 kB  | in 72.57 ms ± 1.006 ms      | null                       | in 144.634 ms ± 0.657 ms    | in 200.515 ms ± 0.764 ms       | in 182.761 ms ± 0.231 ms       |
-| 65.536 kB  | in 144.311 ms ± 1.704 ms    | null                       | in 287.075 ms ± 0.99 ms     | in 400.81 ms ± 0.696 ms        | in 379.718 ms ± 15.55 ms       |
-| 131.072 kB | in 290.244 ms ± 2.836 ms    | null                       | in 594.637 ms ± 9.588 ms    | in 816.992 ms ± 13.585 ms      | in 746.344 ms ± 11.608 ms      |
-| 262.144 kB | in 603.235 ms ± 9.327 ms    | null                       | in 1,277.323 ms ± 37.188 ms | in 1,712.003 ms ± 66.553 ms    | in 1,540.838 ms ± 41.793 ms    |
-| 524.288 kB | in 1,240.942 ms ± 36.358 ms | null                       | in 2,488.17 ms ± 175.298 ms | in 3,346.711 ms ± 120.261 ms   | in 3,197.463 ms ± 17.05 ms     |
-| 1.049 MB   | in 2,416.675 ms ± 33.477 ms | null                       | in 4,719.283 ms ± 63.249 ms | in 6,650.742 ms ± 59.87 ms     | in 6,398.748 ms ± 199.546 ms   |
+| 1 B        | in 1.592 ms ± 0.922 ms      | null                       | in 1.728 ms ± 0.029 ms      | in 2.267 ms ± 0.684 ms         | in 1.857 ms ± 0.157 ms         |
+| 2 B        | in 0.919 ms ± 0.09 ms       | null                       | in 1.999 ms ± 0.584 ms      | in 1.709 ms ± 0.061 ms         | in 1.639 ms ± 0.039 ms         |
+| 4 B        | in 0.89 ms ± 0.06 ms        | null                       | in 1.669 ms ± 0.127 ms      | in 1.699 ms ± 0.068 ms         | in 1.664 ms ± 0.052 ms         |
+| 8 B        | in 0.923 ms ± 0.104 ms      | null                       | in 2.095 ms ± 0.942 ms      | in 1.723 ms ± 0.066 ms         | in 1.709 ms ± 0.049 ms         |
+| 16 B       | in 0.939 ms ± 0.156 ms      | null                       | in 1.711 ms ± 0.178 ms      | in 1.767 ms ± 0.117 ms         | in 1.757 ms ± 0.196 ms         |
+| 32 B       | in 1.024 ms ± 0.179 ms      | null                       | in 2.124 ms ± 0.576 ms      | in 1.899 ms ± 0.201 ms         | in 1.748 ms ± 0.044 ms         |
+| 64 B       | in 1.029 ms ± 0.126 ms      | null                       | in 1.834 ms ± 0.064 ms      | in 2.095 ms ± 0.279 ms         | in 1.916 ms ± 0.068 ms         |
+| 128 B      | in 1.145 ms ± 0.074 ms      | null                       | in 2.134 ms ± 0.136 ms      | in 2.569 ms ± 0.592 ms         | in 2.282 ms ± 0.136 ms         |
+| 256 B      | in 1.437 ms ± 0.084 ms      | null                       | in 2.736 ms ± 0.213 ms      | in 3.527 ms ± 1.19 ms          | in 2.917 ms ± 0.209 ms         |
+| 512 B      | in 1.997 ms ± 0.129 ms      | null                       | in 3.761 ms ± 0.069 ms      | in 4.335 ms ± 0.162 ms         | in 4.065 ms ± 0.156 ms         |
+| 1.024 kB   | in 3.059 ms ± 0.13 ms       | null                       | in 5.959 ms ± 0.123 ms      | in 7.038 ms ± 0.424 ms         | in 6.309 ms ± 0.124 ms         |
+| 2.048 kB   | in 5.24 ms ± 0.174 ms       | null                       | in 10.195 ms ± 0.066 ms     | in 12.063 ms ± 0.06 ms         | in 11.088 ms ± 0.105 ms        |
+| 4.096 kB   | in 9.623 ms ± 0.38 ms       | null                       | in 18.853 ms ± 0.027 ms     | in 22.489 ms ± 0.192 ms        | in 20.474 ms ± 0.182 ms        |
+| 8.192 kB   | in 18.287 ms ± 0.639 ms     | null                       | in 38.17 ms ± 0.368 ms      | in 44.233 ms ± 0.908 ms        | in 41.358 ms ± 0.303 ms        |
+| 16.384 kB  | in 36.006 ms ± 0.799 ms     | null                       | in 73.792 ms ± 0.291 ms     | in 86.202 ms ± 0.217 ms        | in 80.459 ms ± 0.414 ms        |
+| 32.768 kB  | in 72.9 ms ± 0.77 ms        | null                       | in 145.194 ms ± 0.695 ms    | in 173.889 ms ± 0.442 ms       | in 156.859 ms ± 0.701 ms       |
+| 65.536 kB  | in 144.768 ms ± 1.271 ms    | null                       | in 289.762 ms ± 2.114 ms    | in 352.912 ms ± 8.239 ms       | in 334.249 ms ± 11.383 ms      |
+| 131.072 kB | in 292.98 ms ± 1.293 ms     | null                       | in 610.491 ms ± 20.855 ms   | in 704.126 ms ± 9.057 ms       | in 641.329 ms ± 3.563 ms       |
+| 262.144 kB | in 605.083 ms ± 6.644 ms    | null                       | in 1,287.511 ms ± 65.142 ms | in 1,489.28 ms ± 38.73 ms      | in 1,330.218 ms ± 12.488 ms    |
+| 524.288 kB | in 1,244.235 ms ± 46.648 ms | null                       | in 2,474.622 ms ± 96.334 ms | in 2,878.843 ms ± 30.575 ms    | in 2,768.54 ms ± 17.836 ms     |
+| 1.049 MB   | in 2,416.179 ms ± 34.613 ms | null                       | in 4,837.987 ms ± 60.282 ms | in 5,849.795 ms ± 98.829 ms    | in 5,360.284 ms ± 132.289 ms   |
 
 ## Worker
 
-|            | hasTransferables            | postMessage (no transfers)   | postMessage (manually)       | postMessage (getTransferable*) | postMessage (getTransferables) |
-| ---------- | --------------------------- | ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ |
-| 1 B        | in 3.484 ms ± 1.178 ms      | in 3.174 ms ± 0.041 ms       | in 2.255 ms ± 0.11 ms        | in 2.816 ms ± 0.071 ms         | in 37.576 ms ± 29.142 ms       |
-| 2 B        | in 1.374 ms ± 0.279 ms      | in 1.439 ms ± 0.208 ms       | in 1.987 ms ± 0.165 ms       | in 2.423 ms ± 0.398 ms         | in 2.027 ms ± 0.047 ms         |
-| 4 B        | in 1.129 ms ± 0.113 ms      | in 2.025 ms ± 1.306 ms       | in 1.849 ms ± 0.12 ms        | in 2.172 ms ± 0.152 ms         | in 2.179 ms ± 0.353 ms         |
-| 8 B        | in 1.137 ms ± 0.117 ms      | in 1.903 ms ± 0.145 ms       | in 1.839 ms ± 0.15 ms        | in 2.12 ms ± 0.101 ms          | in 2.021 ms ± 0.233 ms         |
-| 16 B       | in 1.299 ms ± 0.142 ms      | in 1.453 ms ± 0.133 ms       | in 1.84 ms ± 0.073 ms        | in 2.206 ms ± 0.049 ms         | in 1.974 ms ± 0.054 ms         |
-| 32 B       | in 1.18 ms ± 0.08 ms        | in 1.495 ms ± 0.126 ms       | in 1.936 ms ± 0.102 ms       | in 4.512 ms ± 3.003 ms         | in 2.128 ms ± 0.096 ms         |
-| 64 B       | in 1.241 ms ± 0.112 ms      | in 1.476 ms ± 0.13 ms        | in 2.068 ms ± 0.118 ms       | in 2.715 ms ± 0.078 ms         | in 4.476 ms ± 3.219 ms         |
-| 128 B      | in 1.33 ms ± 0.087 ms       | in 1.637 ms ± 0.143 ms       | in 2.358 ms ± 0.147 ms       | in 3.454 ms ± 0.07 ms          | in 2.787 ms ± 0.094 ms         |
-| 256 B      | in 1.746 ms ± 0.085 ms      | in 1.914 ms ± 0.15 ms        | in 2.957 ms ± 0.088 ms       | in 4.599 ms ± 0.533 ms         | in 3.596 ms ± 0.128 ms         |
-| 512 B      | in 2.218 ms ± 0.084 ms      | in 2.541 ms ± 0.163 ms       | in 3.998 ms ± 0.071 ms       | in 5.099 ms ± 0.304 ms         | in 4.782 ms ± 0.174 ms         |
-| 1.024 kB   | in 3.513 ms ± 0.096 ms      | in 3.577 ms ± 0.127 ms       | in 6.143 ms ± 0.081 ms       | in 7.877 ms ± 0.126 ms         | in 7.322 ms ± 0.056 ms         |
-| 2.048 kB   | in 5.688 ms ± 0.142 ms      | in 6.918 ms ± 2.102 ms       | in 10.467 ms ± 0.094 ms      | in 14.116 ms ± 0.054 ms        | in 13.039 ms ± 0.115 ms        |
-| 4.096 kB   | in 10.51 ms ± 0.357 ms      | in 10.348 ms ± 0.175 ms      | in 19.088 ms ± 0.181 ms      | in 26.975 ms ± 0.792 ms        | in 23.949 ms ± 0.111 ms        |
-| 8.192 kB   | in 20.528 ms ± 1.502 ms     | in 19.95 ms ± 0.74 ms        | in 37.368 ms ± 0.796 ms      | in 53.736 ms ± 0.328 ms        | in 48.182 ms ± 0.415 ms        |
-| 16.384 kB  | in 49.778 ms ± 6.359 ms     | in 38.452 ms ± 0.698 ms      | in 73.982 ms ± 0.625 ms      | in 114.684 ms ± 12.99 ms       | in 97.118 ms ± 6.52 ms         |
-| 32.768 kB  | in 78.909 ms ± 1.026 ms     | in 80.505 ms ± 1.65 ms       | in 146.755 ms ± 0.586 ms     | in 210.516 ms ± 6.724 ms       | in 184.683 ms ± 0.622 ms       |
-| 65.536 kB  | in 148.675 ms ± 2.076 ms    | in 182.972 ms ± 10.719 ms    | in 289.213 ms ± 1.263 ms     | in 405.835 ms ± 2.161 ms       | in 379.358 ms ± 7.03 ms        |
-| 131.072 kB | in 298.43 ms ± 1.383 ms     | in 310.71 ms ± 7.828 ms      | in 602.612 ms ± 20.792 ms    | in 833.566 ms ± 4.504 ms       | in 796.442 ms ± 28.534 ms      |
-| 262.144 kB | in 617.741 ms ± 32.016 ms   | in 608.234 ms ± 2.813 ms     | in 1,324.798 ms ± 85.948 ms  | in 1,798.057 ms ± 80.791 ms    | in 1,620.33 ms ± 72.231 ms     |
-| 524.288 kB | in 1,335.933 ms ± 52.147 ms | in 1,514.266 ms ± 31.896 ms  | in 2,617.43 ms ± 89.806 ms   | in 3,593.145 ms ± 53.351 ms    | in 3,276.592 ms ± 133.717 ms   |
-| 1.049 MB   | in 2,655.705 ms ± 81.622 ms | in 2,742.456 ms ± 144.777 ms | in 5,091.861 ms ± 175.741 ms | in 6,880.448 ms ± 31.305 ms    | in 6,650.976 ms ± 26.202 ms    |
+|            | hasTransferables            | postMessage (no transfers)  | postMessage (manually)       | postMessage (getTransferable*) | postMessage (getTransferables) |
+| ---------- | --------------------------- | --------------------------- | ---------------------------- | ------------------------------ | ------------------------------ |
+| 1 B        | in 3.629 ms ± 1.493 ms      | in 3.104 ms ± 0.06 ms       | in 2.166 ms ± 0.042 ms       | in 2.648 ms ± 0.074 ms         | in 2.492 ms ± 0.091 ms         |
+| 2 B        | in 1.149 ms ± 0.038 ms      | in 1.244 ms ± 0.02 ms       | in 1.818 ms ± 0.067 ms       | in 2.034 ms ± 0.1 ms           | in 1.824 ms ± 0.077 ms         |
+| 4 B        | in 1.223 ms ± 0.124 ms      | in 1.381 ms ± 0.129 ms      | in 1.99 ms ± 0.516 ms        | in 2.143 ms ± 0.168 ms         | in 1.872 ms ± 0.088 ms         |
+| 8 B        | in 1.128 ms ± 0.119 ms      | in 1.679 ms ± 0.2 ms        | in 1.753 ms ± 0.086 ms       | in 2.235 ms ± 0.291 ms         | in 1.87 ms ± 0.059 ms          |
+| 16 B       | in 1.299 ms ± 0.147 ms      | in 1.399 ms ± 0.148 ms      | in 1.727 ms ± 0.03 ms        | in 2.124 ms ± 0.095 ms         | in 1.884 ms ± 0.071 ms         |
+| 32 B       | in 1.135 ms ± 0.073 ms      | in 1.409 ms ± 0.153 ms      | in 1.879 ms ± 0.194 ms       | in 2.297 ms ± 0.088 ms         | in 1.983 ms ± 0.073 ms         |
+| 64 B       | in 1.174 ms ± 0.057 ms      | in 1.392 ms ± 0.137 ms      | in 1.977 ms ± 0.072 ms       | in 2.556 ms ± 0.057 ms         | in 4.101 ms ± 3.729 ms         |
+| 128 B      | in 1.311 ms ± 0.061 ms      | in 1.539 ms ± 0.157 ms      | in 2.202 ms ± 0.025 ms       | in 3.213 ms ± 0.154 ms         | in 13.189 ms ± 21.255 ms       |
+| 256 B      | in 1.749 ms ± 0.072 ms      | in 1.813 ms ± 0.159 ms      | in 2.841 ms ± 0.069 ms       | in 4.634 ms ± 0.418 ms         | in 3.248 ms ± 0.131 ms         |
+| 512 B      | in 2.228 ms ± 0.094 ms      | in 2.394 ms ± 0.047 ms      | in 3.931 ms ± 0.049 ms       | in 4.791 ms ± 0.217 ms         | in 4.233 ms ± 0.071 ms         |
+| 1.024 kB   | in 3.447 ms ± 0.099 ms      | in 3.53 ms ± 0.057 ms       | in 6.109 ms ± 0.077 ms       | in 7.041 ms ± 0.195 ms         | in 17.922 ms ± 22.931 ms       |
+| 2.048 kB   | in 5.636 ms ± 0.13 ms       | in 5.788 ms ± 0.053 ms      | in 10.477 ms ± 0.087 ms      | in 12.463 ms ± 0.099 ms        | in 21.854 ms ± 20.852 ms       |
+| 4.096 kB   | in 10.188 ms ± 0.115 ms     | in 10.448 ms ± 0.149 ms     | in 19.237 ms ± 0.136 ms      | in 24.232 ms ± 1.604 ms        | in 20.658 ms ± 0.129 ms        |
+| 8.192 kB   | in 20.108 ms ± 0.932 ms     | in 20.446 ms ± 0.619 ms     | in 37.785 ms ± 1.29 ms       | in 46.532 ms ± 0.705 ms        | in 41.49 ms ± 0.492 ms         |
+| 16.384 kB  | in 38.148 ms ± 0.782 ms     | in 38.617 ms ± 0.646 ms     | in 73.687 ms ± 0.443 ms      | in 100.454 ms ± 7.822 ms       | in 88.324 ms ± 10.923 ms       |
+| 32.768 kB  | in 76.521 ms ± 0.957 ms     | in 79.905 ms ± 0.475 ms     | in 146.179 ms ± 0.545 ms     | in 187.206 ms ± 8.406 ms       | in 162.022 ms ± 3.724 ms       |
+| 65.536 kB  | in 146.976 ms ± 2.034 ms    | in 172.941 ms ± 18.715 ms   | in 294.44 ms ± 7.212 ms      | in 357.494 ms ± 4.626 ms       | in 328.112 ms ± 0.83 ms        |
+| 131.072 kB | in 302.149 ms ± 8.193 ms    | in 308.927 ms ± 8.058 ms    | in 601.889 ms ± 20.42 ms     | in 726.269 ms ± 3.339 ms       | in 686.274 ms ± 36.972 ms      |
+| 262.144 kB | in 619.766 ms ± 31.569 ms   | in 615.308 ms ± 2.177 ms    | in 1,345.978 ms ± 79.558 ms  | in 1,581.045 ms ± 71.21 ms     | in 1,382.495 ms ± 17.232 ms    |
+| 524.288 kB | in 1,334.993 ms ± 52.365 ms | in 1,497.901 ms ± 81.47 ms  | in 2,626.019 ms ± 24.924 ms  | in 3,191.622 ms ± 31.034 ms    | in 2,868.187 ms ± 96.293 ms    |
+| 1.049 MB   | in 2,588.924 ms ± 76.708 ms | in 2,642.647 ms ± 79.629 ms | in 5,074.934 ms ± 240.999 ms | in 6,015.473 ms ± 47.16 ms     | in 5,717.116 ms ± 220.935 ms   |
