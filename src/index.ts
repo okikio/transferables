@@ -340,7 +340,7 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
        * Streams are circular objects, to avoid an infinite loop 
        * we need to ensure that the object is not a stream 
       */
-      if (isObject(item) && !isStream(item)) {
+      if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
         const len = values.length;
 
