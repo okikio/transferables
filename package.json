@@ -1,6 +1,6 @@
 {
   "name": "transferables",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "sideEffects": false,
   "description": "Utility library that lists out all transferable objects that can be transfered between Workers and the main thread.",
