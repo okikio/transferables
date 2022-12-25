@@ -4,6 +4,38 @@ export const VideoFrame = globalThis.VideoFrame;
 export const OffscreenCanvas = globalThis.OffscreenCanvas;
 export const RTCDataChannel = globalThis.RTCDataChannel;
 
+const ReadableStreamExists = "ReadableStream" in globalThis;
+const WritableStreamExists = "WritableStream" in globalThis;
+const TransformStreamExists = "TransformStream" in globalThis;
+
+const MessageChannelExists = "MessageChannel" in globalThis;
+const MessagePortExists = "MessagePort" in globalThis;
+
+const ArrayBufferExists = "ArrayBuffer" in globalThis;
+const AudioDataExists = "AudioData" in globalThis;
+const ImageBitmapExists = "ImageBitmap" in globalThis;
+const VideoFrameExists = "VideoFrame" in globalThis;
+
+const OffscreenCanvasExists = "OffscreenCanvas" in globalThis;
+const RTCDataChannelExists = "RTCDataChannel" in globalThis;
+
+/**
+ * Let's you know which transferable objects to actually exist in the js runtime the library is running in
+ */
+export const AVAILABLE_TRANSFERABLE_OBJECTS = {
+  ReadableStreamExists,
+  WritableStreamExists,
+  TransformStreamExists,
+  MessageChannelExists,
+  MessagePortExists,
+  ArrayBufferExists,
+  AudioDataExists,
+  ImageBitmapExists,
+  VideoFrameExists,
+  OffscreenCanvasExists,
+  RTCDataChannelExists,
+} 
+
 export type TypeTypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array;
 export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream /* | typeof AudioData */ | ImageBitmap /* | typeof VideoFrame */ | OffscreenCanvas | RTCDataChannel;
 
@@ -13,6 +45,9 @@ export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | Writ
 export async function isSupported() {
   const channel = await (async () => {
     try {
+      if (!MessageChannelExists)
+        return false;
+
       const msgChanl = new MessageChannel();
       const obj = { port1: msgChanl.port1 }
       const clonedObj = structuredClone(obj, {
@@ -47,11 +82,15 @@ export async function isSupported() {
 
   const streams = await (async () => {
     try {
+      if (!ReadableStreamExists || !WritableStreamExists || !TransformStreamExists) 
+        return false;
+      
       const streams = {
         readonly: new ReadableStream(),
         writeonly: new WritableStream(),
         tranformonly: new TransformStream()
       }
+
       const clonedObj = structuredClone(streams, {
         transfer: [
           streams.readonly as unknown as Transferable,
@@ -76,7 +115,7 @@ export async function isSupported() {
             data.readonly as unknown as Transferable,
             data.writeonly as unknown as Transferable,
             data.tranformonly as unknown as Transferable,
-          ].filter(x => x != undefined));
+          ].filter(x => x !== undefined));
         }
       })
       messageChannel.port1.close();
@@ -114,9 +153,9 @@ export function isTypedArray(obj: unknown): obj is TypeTypedArray | DataView {
  */
 export function isStream(obj: unknown): obj is ReadableStream | WritableStream | TransformStream {
   return (
-    ("ReadableStream" in globalThis && obj instanceof ReadableStream) ||
-    ("WritableStream" in globalThis && obj instanceof WritableStream) ||
-    ("TransformStream" in globalThis && obj instanceof TransformStream)
+    (ReadableStreamExists && obj instanceof ReadableStream) ||
+    (WritableStreamExists && obj instanceof WritableStream) ||
+    (TransformStreamExists && obj instanceof TransformStream)
   );
 }
 
@@ -125,7 +164,7 @@ export function isStream(obj: unknown): obj is ReadableStream | WritableStream |
  */
 export function isMessageChannel(obj: unknown): obj is MessageChannel {
   return (
-    ("MessageChannel" in globalThis && obj instanceof MessageChannel)
+    (MessageChannelExists && obj instanceof MessageChannel)
   );
 }
 
@@ -134,13 +173,13 @@ export function isMessageChannel(obj: unknown): obj is MessageChannel {
  */
 export function isTransferable(obj: unknown): obj is TypeTransferable {
   return (
-    ("ArrayBuffer" in globalThis && obj instanceof ArrayBuffer) ||
-    ("MessagePort" in globalThis && obj instanceof MessagePort) ||
-    ("AudioData" in globalThis && obj instanceof AudioData) ||
-    ("ImageBitmap" in globalThis && obj instanceof ImageBitmap) ||
-    ("VideoFrame" in globalThis && obj instanceof VideoFrame) ||
-    ("OffscreenCanvas" in globalThis && obj instanceof OffscreenCanvas) ||
-    ("RTCDataChannel" in globalThis && obj instanceof RTCDataChannel)
+    (ArrayBufferExists && obj instanceof ArrayBuffer) ||
+    (MessagePortExists && obj instanceof MessagePort) ||
+    (AudioDataExists && obj instanceof AudioData) ||
+    (ImageBitmapExists && obj instanceof ImageBitmap) ||
+    (VideoFrameExists && obj instanceof VideoFrame) ||
+    (OffscreenCanvasExists && obj instanceof OffscreenCanvas) ||
+    (RTCDataChannelExists && obj instanceof RTCDataChannel)
   );
 }
 
@@ -168,10 +207,10 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
 
   while (queue.length > 0 && maxCount > 0) {
     for (let item of queue) {
-      if (isTypedArray(item)) {
-        result.add(item.buffer);
-      } else if (isTransferable(item)) {
+      if (isTransferable(item)) {
         result.add(item);
+      } else if (isTypedArray(item)) {
+        result.add(item.buffer);
       } else if (isMessageChannel(item)) {
         result.add(item.port1);
         result.add(item.port2);
@@ -250,7 +289,7 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
        * we need to ensure that the object is not a stream 
       */
       else if (!isStream(item) && isObject(item)) {
-        const values = (Array.isArray(item) ? item : Object.values(item));
+        const values = Array.isArray(item) ? item : Object.values(item);
         const len = values.length;
 
         for (let j = 0; j < len; j++) {

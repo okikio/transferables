@@ -401,7 +401,7 @@ export function printTable(variants: string[], dmeanstdev: any, markdownTable: a
       const [mean, std] = dmeanstdev(durations.length, 0, new Float64Array(durations), 1, new Float64Array(2), 1);
 
       obj[name] ??= [];
-      obj[name].push(durations.length == 0 ? `null` : `${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
+      obj[name].push(durations.length === 0 ? `null` : `${timeFormat(mean)} ± ${timeFormat(std).replace("in ", "")}`);
 
     });
 
@@ -467,7 +467,7 @@ function getBrowser() {
     (verOffset = nAgt.lastIndexOf('/'))) {
     browserName = nAgt.substring(nameOffset, verOffset);
     fullVersion = nAgt.substring(verOffset + 1);
-    if (browserName.toLowerCase() == browserName.toUpperCase()) {
+    if (browserName.toLowerCase() === browserName.toUpperCase()) {
       browserName = navigator.appName;
     }
   }
