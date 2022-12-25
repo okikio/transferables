@@ -9,6 +9,22 @@ export declare const RTCDataChannel: {
     new (): RTCDataChannel;
     prototype: RTCDataChannel;
 };
+/**
+ * Let's you know which transferable objects to actually exist in the js runtime the library is running in
+ */
+export declare const AVAILABLE_TRANSFERABLE_OBJECTS: {
+    ReadableStreamExists: boolean;
+    WritableStreamExists: boolean;
+    TransformStreamExists: boolean;
+    MessageChannelExists: boolean;
+    MessagePortExists: boolean;
+    ArrayBufferExists: boolean;
+    AudioDataExists: boolean;
+    ImageBitmapExists: boolean;
+    VideoFrameExists: boolean;
+    OffscreenCanvasExists: boolean;
+    RTCDataChannelExists: boolean;
+};
 export declare type TypeTypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array;
 export declare type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream | ImageBitmap | OffscreenCanvas | RTCDataChannel;
 /**
