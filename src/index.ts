@@ -43,7 +43,7 @@ export type TypeTransferable = ArrayBuffer | MessagePort | ReadableStream | Writ
  * Tests if certain transferable objects are actually supported in a specific js environment when using `structuredClone` and `MessageChannel postMessage`
  */
 export async function isSupported() {
-  async function getChanels () {
+  async function getChannels () {
     try {
       if (!MessageChannelExists)
         return false;
@@ -127,8 +127,7 @@ export async function isSupported() {
     return true;
   };
 
-  const [channel, streams] = await Promise.all([getChanels(), getStreams()])
-
+  const [channel, streams] = await Promise.all([getChannels(), getStreams()])
   return { channel, streams };
 }
 
