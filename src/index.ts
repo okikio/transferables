@@ -209,15 +209,19 @@ export function filterOutDuplicates<T>(array: T[]): T[] {
  */
 export function getTransferables(obj: unknown, streams = false, maxCount = 10_000): TypeTransferable[] {
   const result = new Set([]);
+  const queues = [[obj]];
 
-  const queues = [[obj]]
+  for (let i = 0; i < queues.length; i++) {
+    const queue = queues[i];
+    const len = queue.length;
 
-  for (const queue of queues) {
-    for (let item of queue) {
-      if (isTransferable(item)) {
-        result.add(item);
-      } else if (isTypedArray(item)) {
+    for (let j = 0; j < len; j ++) {
+      const item = queue[j];
+
+      if (isTypedArray(item)) {
         result.add(item.buffer);
+      } else if (isTransferable(item)) {
+        result.add(item);
       } else if (isMessageChannel(item)) {
         result.add(item.port1);
         result.add(item.port2);
@@ -231,11 +235,11 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
       */
       else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
-        if (values.length) queues.push(values)
+        if (values.length) queues.push(values);
       }
     }
 
-    if (--maxCount === 0) break;
+    if (--maxCount <= 0) break;
   }
 
   return Array.from(result);
@@ -252,12 +256,14 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
  */
 export function* getTransferable(obj: unknown, streams = false, maxCount = 10_000): Generator<TypeTransferable | TypeTypedArray | MessageChannel | DataView> {
   const seen = new Set([]);
+  const queues = [[obj]];
 
-  let queue = [obj];
-  let nextQueue = [];
+  for (let i = 0; i < queues.length; i++) {
+    const queue = queues[i];
+    const len = queue.length;
 
-  while (queue.length > 0 && maxCount > 0) {
-    for (let item of queue) {
+    for (let j = 0; j < len; j++) {
+      const item = queue[j];
       if (seen.has(item)) continue;
 
       if (isTypedArray(item)) {
@@ -290,23 +296,12 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
       */
       else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
-        const len = values.length;
-
-        for (let j = 0; j < len; j++) {
-          nextQueue.push(values[j])
-        }
+        if (values.length) queues.push(values);
       }
     }
 
-    queue = nextQueue;
-    nextQueue = [];
-
-    maxCount--;
+    if (--maxCount <= 0) break;
   }
-
-  seen.clear();
-  queue = null;
-  nextQueue = null;
 
   return null;
 }
@@ -321,11 +316,15 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
  * @returns Whether input object contains transferable objects
  */
 export function hasTransferables(obj: unknown, streams = false, maxCount = 10_000): boolean {
-  let queue = [obj];
-  let nextQueue = [];
+  const queues = [[obj]];
 
-  while (queue.length > 0 && maxCount > 0) {
-    for (let item of queue) {
+  for (let i = 0; i < queues.length; i++) {
+    const queue = queues[i];
+    const len = queue.length;
+
+    for (let j = 0; j < len; j++) {
+      const item = queue[j];
+
       if (isTypedArray(item)) {
         return true;
       } else if (isTransferable(item)) {
@@ -340,24 +339,14 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
        * Streams are circular objects, to avoid an infinite loop 
        * we need to ensure that the object is not a stream 
       */
-      if (!isStream(item) && isObject(item)) {
+      else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
-        const len = values.length;
-
-        for (let j = 0; j < len; j++) {
-          nextQueue.push(values[j])
-        }
+        if (values.length) queues.push(values)
       }
     }
 
-    queue = nextQueue;
-    nextQueue = [];
-
-    maxCount--;
+    if (--maxCount <= 0) break;
   }
-
-  queue = null;
-  nextQueue = null;
 
   return false;
 }
