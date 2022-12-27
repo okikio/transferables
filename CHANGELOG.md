@@ -1,3 +1,16 @@
+## [1.0.2](https://github.com/okikio/transferables/compare/v1.0.1...v1.0.2) (2022-12-27)
+
+
+### Bug Fixes
+
+* remove `structuredClone` not supported errors in Bun ([7668b8e](https://github.com/okikio/transferables/commit/7668b8e84a7c2ce603bcecd15c6f37e8b99c685c))
+
+
+### Performance Improvements
+
+* faster checks in `hasTransferable` ([51d0d2a](https://github.com/okikio/transferables/commit/51d0d2accaed7723a88e3bfc44c83da8e14014dc))
+* reduce array coping + switch to for loops ([f518510](https://github.com/okikio/transferables/commit/f51851032473b909e215433f54e2282289795478))
+
 ## [1.0.1](https://github.com/okikio/transferables/compare/v1.0.0...v1.0.1) (2022-12-25)
 
 
