@@ -384,9 +384,9 @@ export function createStructuredCloneVariants(
 export const postMessageVariants = [
   `hasTransferables`, 
   `postMessage (no transfers)`, 
-  `postMessage (manually)`, 
-  `postMessage (getTransferable*)`, 
-  `postMessage (getTransferables)`
+  `postMessage (manually)`,
+  `postMessage (getTransferables)`,
+  `postMessage (getTransferable*)`
 ];
 export const maxSize = 1.6;
 
