@@ -32,13 +32,13 @@ export function registerMessageListener(
           port.postMessage(msg, obj.transferable);
           break;
         }
-        case "postMessage (getTransferable*)": {
-          const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+        case "postMessage (getTransferables)": {
+          const transfer = getTransferables(obj, true) as Transferable[];
           port.postMessage(msg, transfer);
           break;
         }
-        case "postMessage (getTransferables)": {
-          const transfer = getTransferables(obj, true) as Transferable[];
+        case "postMessage (getTransferable*)": {
+          const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
           port.postMessage(msg, transfer);
           break;
         }

@@ -367,14 +367,14 @@ export function createStructuredCloneVariants(
       await Promise.resolve();
     },
 
-    "structuredClone (getTransferable*)": async function (obj: ReturnType<typeof generateObj>) {
-      const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+    "structuredClone (getTransferables)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = getTransferables(obj, true) as Transferable[];
       structuredClone(obj, { transfer });
       await Promise.resolve();
     },
 
-    "structuredClone (getTransferables)": async function (obj: ReturnType<typeof generateObj>) {
-      const transfer = getTransferables(obj, true) as Transferable[];
+    "structuredClone (getTransferable*)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
       structuredClone(obj, { transfer });
       await Promise.resolve();
     }

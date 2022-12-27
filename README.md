@@ -211,8 +211,8 @@ The variants are,
 * hasTransferables
 * structuredClone | postMessage (no transfers) - `postMessage` doesn't actually require listing out objects in the transfer list, only `structuredClone` requires that; TIL
 * structuredClone | postMessage (manually) 
-* structuredClone | postMessage (getTransferable*) 
 * structuredClone | postMessage (getTransferables)
+* structuredClone | postMessage (getTransferable*) 
 
 > **Note**: `postMessage` is for the `MessageChannel` and `Worker` types of object transfer.
 
