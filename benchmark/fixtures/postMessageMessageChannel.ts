@@ -4,7 +4,7 @@ import { getTransferable, getTransferables, hasTransferables } from "../../src";
 import { registerMessageListener } from "../workers/messagechannel";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { dmeanstdev } from '../dmeanstdev';
 
 import { markdownTable } from 'markdown-table';
 
@@ -41,8 +41,10 @@ export default async function (e: MouseEvent) {
         const obj = generateObj(num / MB, isClonable);
 
         console.log({ name, index, variant, cycle })
+        
+        const { wait } = createMessageChannelPromise({ size: num / MB, name, index, variant, cycle, obj, channel, queue });
         await add(name, variant, async () => {
-          await createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
+          await wait();
         })
       }
     }

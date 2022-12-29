@@ -3,7 +3,7 @@ import { getTransferable, getTransferables, hasTransferables } from "../src/inde
 import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
-import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
+import { dmeanstdev } from './dmeanstdev.ts';
 
 import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 

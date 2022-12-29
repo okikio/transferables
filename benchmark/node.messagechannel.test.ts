@@ -1,7 +1,7 @@
 import { it } from 'vitest';
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { dmeanstdev } from './dmeanstdev';
 
 import { markdownTable } from 'markdown-table';
 
@@ -46,8 +46,10 @@ it("MessageChannel", async ({ meta }) => {
         const obj = generateObj(num / MB, isClonable);
 
         console.log({ name, index, variant, cycle })
+
+        const { wait } = createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
         await add(name, variant, async () => {
-          await createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
+          await wait();
         })
       }
     }

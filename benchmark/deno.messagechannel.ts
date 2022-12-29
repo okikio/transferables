@@ -4,7 +4,7 @@ import { registerMessageListener } from "./workers/messagechannel.ts";
 import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
-import dmeanstdev from 'https://cdn.skypack.dev/@stdlib/stats-base-dmeanstdev@0.0.9';
+import { dmeanstdev } from './dmeanstdev.ts';
 
 import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
@@ -43,8 +43,10 @@ for (let cycle = 0; cycle < 5; cycle++) {
       const obj = generateObj(num / MB, isClonable);
 
       console.log({ name, index, variant, cycle })
+
+      const { wait } = createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
       await add(name, variant, async () => {
-        await createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
+        await wait();
       })
     }
   }

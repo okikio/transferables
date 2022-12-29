@@ -2,7 +2,7 @@ import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSiz
 import { getTransferable, getTransferables, hasTransferables } from "../../src";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { dmeanstdev } from '../dmeanstdev';
 
 import { markdownTable } from 'markdown-table';
 

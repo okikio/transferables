@@ -320,7 +320,7 @@ export function createPromise() {
   return { promise, resolve, reject };
 }
 
-export async function createMessageChannelPromise({ name, index, cycle = 0, variant, obj, channel, queue }: ICreateMessageChannelIteratorOptions) {
+export function createMessageChannelPromise({ name, index, cycle = 0, variant, obj, channel, queue }: ICreateMessageChannelIteratorOptions) {
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
 
@@ -330,10 +330,12 @@ export async function createMessageChannelPromise({ name, index, cycle = 0, vari
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
 
-  await promise.promise;
+  return {
+    async wait() { await promise.promise; } 
+  }
 }
 
-export async function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
+export function createWorkerPromise({ name, index, cycle = 0, variant, obj, worker, queue }: ICreateWorkerIteratorOptions) {
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
 
@@ -343,7 +345,9 @@ export async function createWorkerPromise({ name, index, cycle = 0, variant, obj
   const queueKey = `${name}-${variant}-${cycle}-${index}`;
   queue.set(queueKey, promise);
 
-  await promise.promise;
+  return {
+    async wait() { await promise.promise; }
+  }
 }
 
 export function createStructuredCloneVariants(

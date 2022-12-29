@@ -1,7 +1,7 @@
 import { it } from 'vitest';
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { dmeanstdev } from './dmeanstdev';
 
 import { markdownTable } from 'markdown-table';
 

@@ -1,7 +1,7 @@
 import { MB, generateObj, add, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize, isClonable } from "../utils";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '@stdlib/stats-base';
+import { dmeanstdev } from '../dmeanstdev';
 
 import { markdownTable } from 'markdown-table';
 
@@ -32,8 +32,10 @@ export default async function (e: MouseEvent) {
         const obj = generateObj(num / MB, isClonable);
 
         console.log({ name, index, variant, cycle })
+
+        const { wait } = createWorkerPromise({ name, index, variant, cycle, obj, worker, queue });
         await add(name, variant, async () => {
-          await createWorkerPromise({ name, index, variant, cycle, obj, worker, queue });
+          await wait();
         })
       }
     }
