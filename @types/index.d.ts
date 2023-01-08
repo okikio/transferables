@@ -1,5 +1,9 @@
 export declare const TypedArray: any;
 export declare const AudioData: any;
+export declare const ImageBitmap: {
+    new (): ImageBitmap;
+    prototype: ImageBitmap;
+};
 export declare const VideoFrame: any;
 export declare const OffscreenCanvas: {
     new (width: number, height: number): OffscreenCanvas;
@@ -9,10 +13,32 @@ export declare const RTCDataChannel: {
     new (): RTCDataChannel;
     prototype: RTCDataChannel;
 };
+export declare const MessageChannel: {
+    new (): MessageChannel;
+    prototype: MessageChannel;
+};
+export declare const ReadableStream: {
+    new (underlyingSource: UnderlyingByteSource, strategy?: {
+        highWaterMark?: number;
+    }): ReadableStream<Uint8Array>;
+    new <R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
+    new <R_1 = any>(underlyingSource?: UnderlyingSource<R_1>, strategy?: QueuingStrategy<R_1>): ReadableStream<R_1>;
+    prototype: ReadableStream<any>;
+};
+export declare const WritableStream: {
+    new <W = any>(underlyingSink?: UnderlyingSink<W>, strategy?: QueuingStrategy<W>): WritableStream<W>;
+    prototype: WritableStream<any>;
+};
+export declare const TransformStream: {
+    new <I = any, O = any>(transformer?: Transformer<I, O>, writableStrategy?: QueuingStrategy<I>, readableStrategy?: QueuingStrategy<O>): TransformStream<I, O>;
+    prototype: TransformStream<any, any>;
+};
 /**
  * Let's you know which transferable objects to actually exist in the js runtime the library is running in
  */
 export declare const AVAILABLE_TRANSFERABLE_OBJECTS: {
+    TransferableExists: boolean;
+    StreamExists: boolean;
     ReadableStreamExists: boolean;
     WritableStreamExists: boolean;
     TransformStreamExists: boolean;
