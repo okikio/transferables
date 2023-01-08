@@ -29,15 +29,31 @@ export function registerMessageListener(
           break;
         }
         case "postMessage (manually)": {
-          port.postMessage(msg, obj.transferable);
+          const transfer = obj.transferable as Transferable[];
+          port.postMessage(simpleMsg);
+          break;
+        }
+        case "postMessage (manually) (transfer)": {
+          const transfer = obj.transferable as Transferable[];
+          port.postMessage(msg, transfer);
           break;
         }
         case "postMessage (getTransferables)": {
+          const transfer = getTransferables(obj, true) as Transferable[];
+          port.postMessage(simpleMsg);
+          break;
+        }
+        case "postMessage (getTransferables) (transfer)": {
           const transfer = getTransferables(obj, true) as Transferable[];
           port.postMessage(msg, transfer);
           break;
         }
         case "postMessage (getTransferable*)": {
+          const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+          port.postMessage(simpleMsg);
+          break;
+        }
+        case "postMessage (getTransferable*) (transfer)": {
           const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
           port.postMessage(msg, transfer);
           break;

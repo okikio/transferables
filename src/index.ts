@@ -1,12 +1,24 @@
 export const TypedArray = Object.getPrototypeOf(Int8Array);
 export const AudioData = globalThis.AudioData;
+export const ImageBitmap = globalThis.ImageBitmap;
 export const VideoFrame = globalThis.VideoFrame;
 export const OffscreenCanvas = globalThis.OffscreenCanvas;
 export const RTCDataChannel = globalThis.RTCDataChannel;
+export const MessageChannel = globalThis.MessageChannel; 
+
+export const ReadableStream = globalThis.ReadableStream; 
+export const WritableStream = globalThis.WritableStream; 
+export const TransformStream = globalThis.TransformStream; 
 
 const ReadableStreamExists = "ReadableStream" in globalThis;
 const WritableStreamExists = "WritableStream" in globalThis;
 const TransformStreamExists = "TransformStream" in globalThis;
+
+const StreamExists = (
+  ReadableStreamExists && 
+  WritableStreamExists && 
+  TransformStreamExists
+);
 
 const MessageChannelExists = "MessageChannel" in globalThis;
 const MessagePortExists = "MessagePort" in globalThis;
@@ -19,17 +31,32 @@ const VideoFrameExists = "VideoFrame" in globalThis;
 const OffscreenCanvasExists = "OffscreenCanvas" in globalThis;
 const RTCDataChannelExists = "RTCDataChannel" in globalThis;
 
+const TransferableExists = (
+  ArrayBufferExists &&
+  MessagePortExists &&
+  AudioDataExists &&
+  ImageBitmapExists &&
+  VideoFrameExists &&
+  OffscreenCanvasExists &&
+  RTCDataChannelExists
+);
+
 const structuredCloneExists = "structuredClone" in globalThis;
 
 /**
  * Let's you know which transferable objects to actually exist in the js runtime the library is running in
  */
 export const AVAILABLE_TRANSFERABLE_OBJECTS = {
+  TransferableExists,
+  StreamExists,
+
   ReadableStreamExists,
   WritableStreamExists,
   TransformStreamExists,
+
   MessageChannelExists,
   MessagePortExists,
+
   ArrayBufferExists,
   AudioDataExists,
   ImageBitmapExists,
@@ -84,7 +111,7 @@ export async function isSupported() {
 
   async function getStreams() {
     try {
-      if (!ReadableStreamExists || !WritableStreamExists || !TransformStreamExists)
+      if (!StreamExists)
         return false;
 
       if (!MessageChannelExists && !structuredCloneExists)
@@ -220,13 +247,11 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
 
       if (isTypedArray(item)) {
         result.add(item.buffer);
-      } else if (isTransferable(item)) {
+      } else if (isTransferable(item) || streams && isStream(item)) {
         result.add(item);
       } else if (isMessageChannel(item)) {
         result.add(item.port1);
         result.add(item.port2);
-      } else if (streams && isStream(item)) {
-        result.add(item);
       }
 
       /**  
@@ -264,20 +289,19 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
 
     for (let j = 0; j < len; j++) {
       const item = queue[j];
-      if (seen.has(item)) continue;
 
       if (isTypedArray(item)) {
-        seen.add(item);
         const { buffer } = item;
         if (seen.has(buffer)) continue;
 
         yield buffer;
         seen.add(buffer);
-      } else if (isTransferable(item)) {
+      } else if (isTransferable(item) || streams && isStream(item)) {
+      if (seen.has(item)) continue;
+
         yield item;
         seen.add(item);
       } else if (isMessageChannel(item)) {
-        seen.add(item);
         if (seen.has(item.port1) || seen.has(item.port2)) continue;
 
         yield item.port1;
@@ -285,9 +309,6 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
 
         seen.add(item.port1);
         seen.add(item.port2);
-      } else if (streams && isStream(item)) {
-        yield item;
-        seen.add(item);
       }
 
       /**  
@@ -327,11 +348,9 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
 
       if (isTypedArray(item)) {
         return true;
-      } else if (isTransferable(item)) {
+      } else if (isTransferable(item) || (streams && isStream(item))) {
         return true;
       } else if (isMessageChannel(item)) {
-        return true;
-      } else if (streams && isStream(item)) {
         return true;
       }
 

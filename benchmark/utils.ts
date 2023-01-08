@@ -324,14 +324,16 @@ export function createMessageChannelPromise({ name, index, cycle = 0, variant, o
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
 
-  channel.port2.postMessage(msg, obj.transferable);
-
-  const promise = createPromise();
-  const queueKey = `${name}-${variant}-${cycle}-${index}`;
-  queue.set(queueKey, promise);
-
   return {
-    async wait() { await promise.promise; } 
+    async wait() {
+      channel.port2.postMessage(msg, obj.transferable);
+
+      const promise = createPromise();
+      const queueKey = `${name}-${variant}-${cycle}-${index}`;
+      queue.set(queueKey, promise);
+
+      await promise.promise; 
+    } 
   }
 }
 
@@ -339,14 +341,16 @@ export function createWorkerPromise({ name, index, cycle = 0, variant, obj, work
   const simpleMsg = { name, variant, cycle, i: index };
   const msg = { ...simpleMsg, obj };
 
-  worker.postMessage(msg, obj.transferable);
-
-  const promise = createPromise();
-  const queueKey = `${name}-${variant}-${cycle}-${index}`;
-  queue.set(queueKey, promise);
-
   return {
-    async wait() { await promise.promise; }
+    async wait() {
+      worker.postMessage(msg, obj.transferable);
+
+      const promise = createPromise();
+      const queueKey = `${name}-${variant}-${cycle}-${index}`;
+      queue.set(queueKey, promise);
+
+      await promise.promise; 
+    }
   }
 }
 
@@ -367,17 +371,32 @@ export function createStructuredCloneVariants(
     },
 
     "structuredClone (manually)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = obj.transferable as Transferable[];
+      await Promise.resolve();
+    },
+
+    "structuredClone (manually) (transfer)": async function (obj: ReturnType<typeof generateObj>) {
       structuredClone(obj, { transfer: obj.transferable });
       await Promise.resolve();
     },
 
     "structuredClone (getTransferables)": async function (obj: ReturnType<typeof generateObj>) {
       const transfer = getTransferables(obj, true) as Transferable[];
+      await Promise.resolve();
+    },
+
+    "structuredClone (getTransferables) (transfer)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = getTransferables(obj, true) as Transferable[];
       structuredClone(obj, { transfer });
       await Promise.resolve();
     },
 
     "structuredClone (getTransferable*)": async function (obj: ReturnType<typeof generateObj>) {
+      const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
+      await Promise.resolve();
+    },
+
+    "structuredClone (getTransferable*) (transfer)": async function (obj: ReturnType<typeof generateObj>) {
       const transfer = Array.from(getTransferable(obj, true)) as Transferable[];
       structuredClone(obj, { transfer });
       await Promise.resolve();
@@ -389,8 +408,11 @@ export const postMessageVariants = [
   `hasTransferables`, 
   `postMessage (no transfers)`, 
   `postMessage (manually)`,
+  `postMessage (manually) (transfer)`,
   `postMessage (getTransferables)`,
-  `postMessage (getTransferable*)`
+  `postMessage (getTransferables) (transfer)`,
+  `postMessage (getTransferable*)`, 
+  `postMessage (getTransferable*) (transfer)`,
 ];
 export const maxSize = 1.6;
 
