@@ -1,3 +1,11 @@
+## [1.0.3](https://github.com/okikio/transferables/compare/v1.0.2...v1.0.3) (2023-02-16)
+
+
+### Performance Improvements
+
+* optimize streams check ([c5c0091](https://github.com/okikio/transferables/commit/c5c00910314eb25ee008a47fe5970df86f6bf1c1))
+* use `ArrayBuffer.isView(..)` for `isTypedArray(...)` ([d9ec09c](https://github.com/okikio/transferables/commit/d9ec09c03542a9959fdff5db7bb4fb3f026b4f3b))
+
 ## [1.0.2](https://github.com/okikio/transferables/compare/v1.0.1...v1.0.2) (2022-12-27)
 
 
