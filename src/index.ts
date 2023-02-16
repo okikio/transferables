@@ -178,7 +178,7 @@ export function isObject(obj: unknown): obj is object | Function {
  * > `DataView` a lower level `TypedArray` which can function while ignoring the platforms inherent endianness. Read more on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView)
  */
 export function isTypedArray(obj: unknown): obj is TypeTypedArray | DataView {
-  return obj instanceof TypedArray || obj instanceof DataView;
+  return ArrayBuffer.isView(obj);
 }
 
 /**
