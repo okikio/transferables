@@ -1,12 +1,12 @@
-import { constants } from 'https://deno.land/std@0.167.0/node/fs.ts';
-import { access, appendFile, writeFile as write, mkdir } from 'https://deno.land/std@0.167.0/node/fs/promises.ts';
-import path from "https://deno.land/std@0.167.0/node/path.ts";
+import { constants } from "https://deno.land/std@0.177.0/node/fs.ts";
+import { access, appendFile, writeFile as write, mkdir } from "https://deno.land/std@0.177.0/node/fs/promises.ts";
+import path from "https://deno.land/std@0.177.0/node/path.ts";
 
 export async function exists(filePath: string) {
   try {
     await access(filePath, constants.F_OK);
     return true;
-  } catch (e) { }
+  } catch (_e) { /* empty */ }
 
   return false;
 }
