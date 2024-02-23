@@ -21,6 +21,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,41 +69,41 @@ jobs:
       - name: Run Benchmark
         run: pnpm benchmark:browser:firefox
 
-      - name: Add benchmark/results/* to Git
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          git pull --tags origin main
-          git add --force benchmark/results/
+      # - name: Add benchmark/results/* to Git
+      #   if: ${{ github.ref == 'refs/heads/main' }}
+      #   run: |
+      #     git pull --tags origin main
+      #     git add --force benchmark/results/
 
-      - name: Commit files
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "chore(gh-bot): update firefox benchmark results" -a
+      # - name: Commit files
+      #   if: ${{ github.ref == 'refs/heads/main' }}
+      #   run: |
+      #     git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git commit -m "chore(gh-bot): update firefox benchmark results" -a
 
-      - name: Push changes
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-
-      # - name: Add benchmark/results to Git
-      #   uses: stefanzweifel/git-auto-commit-action@v4
+      # - name: Push changes
+      #   if: ${{ github.ref == 'refs/heads/main' }}
+      #   uses: ad-m/github-push-action@master
       #   with:
-      #     commit_message: "chore(gh-bot): update firefox benchmark results"
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: ${{ github.ref }}
 
-      #     # Optional. Options used by `git-commit`.
-      #     # See https://git-scm.com/docs/git-commit#_options
-      #     commit_options: '--all --no-verify --signoff'
+      - name: Add benchmark/results to Git
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore(gh-bot): update firefox benchmark results"
 
-      #     # Optional glob pattern of files which should be added to the commit
-      #     # Defaults to all (.)
-      #     # See the `pathspec`-documentation for git
-      #     # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
-      #     # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
-      #     file_pattern: 'benchmark/results/*.md'
+          # Optional. Options used by `git-commit`.
+          # See https://git-scm.com/docs/git-commit#_options
+          commit_options: '--all --no-verify --signoff'
+
+          # Optional glob pattern of files which should be added to the commit
+          # Defaults to all (.)
+          # See the `pathspec`-documentation for git
+          # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
+          # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
+          file_pattern: 'benchmark/results/*.md'
           
       #     # Optional. Options used by `git-add`.
       #     # See https://git-scm.com/docs/git-add#_options
