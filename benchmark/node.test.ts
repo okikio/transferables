@@ -12,7 +12,7 @@ const variants = createStructuredCloneVariants(hasTransferables, getTransferable
 const keys = Object.keys(variants) as (keyof typeof variants)[];
 const len = keys.length;
 
-it("structuredClone", async ({ meta }) => {
+it("structuredClone", async ({ task }) => {
   const num_ = Math.pow(2, Math.log2(maxSize * MB));
   const name_ = bytes(num_, { maximumFractionDigits: 3 });
   const obj_ = generateObj(num_ / MB, isClonable);
@@ -36,5 +36,5 @@ it("structuredClone", async ({ meta }) => {
   }
 
   const result = printTable(keys, dmeanstdev, markdownTable);
-  await writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
+  await writeFile(result, task.name, globalThis.Bun ? 'bun' : 'node');
 })

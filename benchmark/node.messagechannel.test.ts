@@ -9,7 +9,7 @@ import { getTransferable, getTransferables, hasTransferables } from "../src/mod.
 import { registerMessageListener } from "./workers/messagechannel.ts";
 import { writeFile } from "./node.utils.ts";
 
-it("MessageChannel", async ({ meta }) => {
+it("MessageChannel", async ({ task }) => {
   const num_ = Math.pow(2, Math.log2(maxSize * MB));
   const name_ = bytes(num_, { maximumFractionDigits: 3 });
   const obj_ = generateObj(num_ / MB, isClonable);
@@ -59,5 +59,5 @@ it("MessageChannel", async ({ meta }) => {
   }
 
   const result = printTable(postMessageVariants, dmeanstdev, markdownTable);
-  await writeFile(result, meta.name, globalThis.Bun ? 'bun' : 'node');
+  await writeFile(result, task.name, globalThis.Bun ? 'bun' : 'node');
 })
