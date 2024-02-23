@@ -10,8 +10,13 @@ A utility library that lists out all [transferable objects](https://developer.mo
 
 <!-- > You can also read the [blog post](https://blog.okikio.dev/transferables), created for it's launch. -->
 
+<!-- Bundle size badge (unavailable) -->
+[![Bundle Size](https://deno.bundlejs.com/badge?q=transferables&treeshake=[{+hasTransferables,+getTransferables+}]&style=flat)](https://bundlejs.com/?q=transferables&treeshake=[{+hasTransferables,+getTransferables+}])
+
 
 ## Installation
+
+### Node
 
 ```bash
 npm install transferables
@@ -32,6 +37,23 @@ pnpm install transferables
 
 </details>
 
+```ts
+import { hasTransferables, getTransferables } from "transferables";
+```
+
+### Deno
+
+```ts
+import { hasTransferables, getTransferables } from "https://deno.land/x/transferables/mod.ts";
+// or (Deno specific, using `jsr.io` learn more at jsr.io/@okikio/transferables)
+import { hasTransferables, getTransferables } from "jsr:transferables";
+```
+
+### Web
+
+```html
+<script src="https://unpkg.com/transferables"></script>
+```
 
 ## Usage
 
@@ -42,7 +64,7 @@ import { hasTransferables, getTransferables } from "transferables";
 You can also use it directly through a script tag:
 
 ```html
-<script src="https://unpkg.com/transferables" type="module"></script>
+<script src="https://unpkg.com/transferables"></script>
 <script type="module">
   // You can then use it like this
   const { hasTransferables, getTransferables } = window.Transferables;
