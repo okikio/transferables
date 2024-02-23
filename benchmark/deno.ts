@@ -3,9 +3,8 @@ import { getTransferable, getTransferables, hasTransferables } from "../src/inde
 import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
+import { markdownTable } from "https://esm.sh/markdown-table@3.0.3";
 import { dmeanstdev } from './dmeanstdev.ts';
-
-import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
 const variants = createStructuredCloneVariants(hasTransferables, getTransferable, getTransferables);
 const keys = Object.keys(variants) as (keyof typeof variants)[];

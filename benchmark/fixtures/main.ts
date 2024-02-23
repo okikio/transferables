@@ -1,6 +1,6 @@
-import postMessageMessageChannelBenchmark from "./postMessageMessageChannel";
-import postMessageWorkerBenchmark from "./postMessageWorker";
-import structuredCloneBenchmark from "./structuredClone";
+import postMessageMessageChannelBenchmark from "./postMessageMessageChannel.ts";
+import postMessageWorkerBenchmark from "./postMessageWorker.ts";
+import structuredCloneBenchmark from "./structuredClone.ts";
 
 import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
@@ -17,7 +17,7 @@ structuredCloneBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await structuredCloneBenchmark(e);
   structuredCloneResultEl.id = "structuredCloneResult";
   structuredCloneResultEl.dataset.value = result;
-  structuredCloneResultEl.innerHTML = micromark(result, {
+  structuredCloneResultEl.innerHTML = micromark(result, 'utf-8', {
     extensions: [gfm()],
     htmlExtensions: [gfmHtml()]
   });
@@ -28,7 +28,7 @@ postMessageMessageChannelBtn?.addEventListener('click', async function (e: Mouse
   const result = await postMessageMessageChannelBenchmark(e);
   postMessageMessageChannelResultEl.id = "postMessageMessageChannelResult";
   postMessageMessageChannelResultEl.dataset.value = result;
-  postMessageMessageChannelResultEl.innerHTML = micromark(result, {
+  postMessageMessageChannelResultEl.innerHTML = micromark(result, 'utf-8', {
     extensions: [gfm()],
     htmlExtensions: [gfmHtml()]
   });
@@ -39,7 +39,7 @@ postMessageWorkerBtn?.addEventListener('click', async function (e: MouseEvent) {
   const result = await postMessageWorkerBenchmark(e);
   postMessageWorkerResultEl.id = "postMessageWorkerResult";
   postMessageWorkerResultEl.dataset.value = result;
-  postMessageWorkerResultEl.innerHTML = micromark(result, {
+  postMessageWorkerResultEl.innerHTML = micromark(result, 'utf-8', {
     extensions: [gfm()],
     htmlExtensions: [gfmHtml()]
   });

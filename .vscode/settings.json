@@ -1,6 +1,8 @@
 {
   "deno.enablePaths": [
     "./repl.ts",
+    "./src/mod.ts",
+    "./scripts/build.ts",
     "./benchmark/deno.ts",
     "./benchmark/utils.ts",
     "./benchmark/deno.utils.ts",

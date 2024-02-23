@@ -1,5 +1,5 @@
-import type { getTransferable as transferable, getTransferables as transferables, hasTransferables as has } from "../src/index.ts";
-import { isSupported } from "../src/index.ts";
+import type { getTransferable as transferable, getTransferables as transferables, hasTransferables as has } from "../src/mod.ts";
+import { isSupported } from "../src/mod.ts";
 
 // 16MB = 1024 * 1024 * 16
 export const MB = 1024 * 1024;

@@ -10,10 +10,13 @@ on:
       - '*.ts'
       - '*.js'
       - '*.json'
+      - '*.jsonc'
       - '*.yaml'
-      - '.github/../test.yml'
       - 'src/**/*'
       - 'tests/**/*'
+      - 'scripts/**/*' 
+      - '.github/../test.yml'
+  workflow_dispatch: 
 
 jobs:
   build:

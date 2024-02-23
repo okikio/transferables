@@ -1,16 +1,15 @@
-import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize, isClonable } from "../utils";
-import { getTransferable, getTransferables, hasTransferables } from "../../src";
+import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize, isClonable } from "../utils.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../../src/mod.ts";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '../dmeanstdev';
-
 import { markdownTable } from 'markdown-table';
+import { dmeanstdev } from '../dmeanstdev.ts';
 
 const variants = createStructuredCloneVariants(hasTransferables, getTransferable, getTransferables);
 const keys = Object.keys(variants) as (keyof typeof variants)[];
 const len = keys.length;
 
-export default async function (e: MouseEvent) {
+export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
   
   const num_ = Math.pow(2, Math.log2(maxSize * MB));

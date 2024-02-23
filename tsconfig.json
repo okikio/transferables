@@ -1,19 +1,32 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "target": "ES2022",
-    "module": "ES2022",
-    "lib": ["ES2022", "ES2021", "DOM"],
-    "sourceMap": true,
-    "outDir": "lib",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [
+      "@types/dom-webcodecs",
+      "@deno/shim-deno"
+    ],
+    "allowArbitraryExtensions": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "declaration": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "strict": true,
+    "outDir": "lib",
   },
   "include": [
-    "src", 
-    "benchmark/fixtures"  
+    "src",
+    "benchmark/fixtures"
   ],
   "exclude": [
     "node_modules"

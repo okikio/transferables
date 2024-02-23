@@ -1,14 +1,13 @@
 import { it } from 'vitest';
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from './dmeanstdev';
-
 import { markdownTable } from 'markdown-table';
+import { dmeanstdev } from './dmeanstdev.ts';
 
-import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants, isClonable } from "./utils";
-import { getTransferable, getTransferables, hasTransferables } from "../src";
-import { registerMessageListener } from "./workers/messagechannel";
-import { writeFile } from "./node.utils";
+import { MB, generateObj, add, printTable, createMessageChannelPromise, createPromise, IIterationType, maxSize, postMessageVariants, isClonable } from "./utils.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../src/mod.ts";
+import { registerMessageListener } from "./workers/messagechannel.ts";
+import { writeFile } from "./node.utils.ts";
 
 it("MessageChannel", async ({ meta }) => {
   const num_ = Math.pow(2, Math.log2(maxSize * MB));

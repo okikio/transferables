@@ -1,5 +1,5 @@
 import { test, expect, type ConsoleMessage } from '@playwright/test';
-import { writeFile } from './node.utils.js';
+import { writeFile } from './node.utils.ts';
 
 const consoleLog = async (msg: ConsoleMessage) => {
   // if (msg && msg.text) {

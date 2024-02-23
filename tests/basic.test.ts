@@ -1,6 +1,6 @@
-import { hasTransferables, getTransferables } from "../src";
+import { hasTransferables, getTransferables } from "../src/mod.ts";
 import { describe, expect, it } from 'vitest';
-import { encode } from './utils/index';
+import { encode } from './utils/index.ts';
 
 const uint8 = encode("Lorem Ipsium");
 const { buffer: arrbuf } = uint8;

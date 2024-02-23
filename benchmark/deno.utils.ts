@@ -1,6 +1,5 @@
-import { constants } from "https://deno.land/std@0.177.0/node/fs.ts";
-import { access, appendFile, writeFile as write, mkdir } from "https://deno.land/std@0.177.0/node/fs/promises.ts";
-import path from "https://deno.land/std@0.177.0/node/path.ts";
+import { access, appendFile, writeFile as write, constants, mkdir } from "node:fs/promises";
+import path from "https://deno.land/std@0.215.0/path/mod.ts";
 
 export async function exists(filePath: string) {
   try {

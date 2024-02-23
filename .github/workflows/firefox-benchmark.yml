@@ -10,10 +10,12 @@ on:
       - '*.ts'
       - '*.js'
       - '*.json'
+      - '*.jsonc'
       - '*.yaml'
-      - '.github/**/firefox-benchmark.yml'
       - 'src/**/*'
+      - '.github/**/firefox-benchmark.yml'
       - 'benchmark/**/*.ts'
+  workflow_dispatch: 
 
 jobs:
   build:

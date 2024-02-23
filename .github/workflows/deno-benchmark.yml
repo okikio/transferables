@@ -10,10 +10,12 @@ on:
       - '*.ts'
       - '*.js'
       - '*.json'
+      - '*.jsonc'
       - '*.yaml'
-      - '.github/**/deno-benchmark.yml'
       - 'src/**/*'
+      - '.github/**/deno-benchmark.yml'
       - 'benchmark/**/*.ts'
+  workflow_dispatch: 
 
 jobs:
   build:

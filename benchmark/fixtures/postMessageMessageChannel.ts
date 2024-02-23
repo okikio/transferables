@@ -1,14 +1,14 @@
-import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, IIterationType, maxSize, isClonable } from "../utils";
+import type { IIterationType } from "../utils.ts";
+import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, maxSize, isClonable } from "../utils.ts";
 
-import { getTransferable, getTransferables, hasTransferables } from "../../src";
-import { registerMessageListener } from "../workers/messagechannel";
+import { getTransferable, getTransferables, hasTransferables } from "../../src/mod.ts";
+import { registerMessageListener } from "../workers/messagechannel.ts";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '../dmeanstdev';
-
 import { markdownTable } from 'markdown-table';
+import { dmeanstdev } from '../dmeanstdev.ts';
 
-export default async function (e: MouseEvent) {
+export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
 
   const num_ = Math.pow(2, Math.log2(maxSize * MB));
@@ -42,7 +42,8 @@ export default async function (e: MouseEvent) {
 
         console.log({ name, index, variant, cycle })
         
-        const { wait } = createMessageChannelPromise({ size: num / MB, name, index, variant, cycle, obj, channel, queue });
+        // size: num / MB, 
+        const { wait } = createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
         await add(name, variant, async () => {
           await wait();
         })

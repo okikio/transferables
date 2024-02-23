@@ -1,13 +1,12 @@
 import { it } from 'vitest';
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from './dmeanstdev';
-
 import { markdownTable } from 'markdown-table';
+import { dmeanstdev } from './dmeanstdev.ts';
 
-import { MB, generateObj, isClonable, add, printTable, createStructuredCloneVariants, maxSize } from "./utils";
-import { getTransferable, getTransferables, hasTransferables } from "../src";
-import { writeFile } from "./node.utils";
+import { MB, generateObj, isClonable, add, printTable, createStructuredCloneVariants, maxSize } from "./utils.ts";
+import { getTransferable, getTransferables, hasTransferables } from "../src/mod.ts";
+import { writeFile } from "./node.utils.ts";
 
 const variants = createStructuredCloneVariants(hasTransferables, getTransferable, getTransferables);
 const keys = Object.keys(variants) as (keyof typeof variants)[];

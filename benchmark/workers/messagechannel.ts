@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import type { getTransferable, getTransferables, hasTransferables } from "../../src/index";
+import type { getTransferable, getTransferables, hasTransferables } from "../../src/mod.ts";
 
 export interface ITransferableFunctions {
   getTransferable: typeof getTransferable, 

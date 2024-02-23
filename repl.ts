@@ -1,5 +1,5 @@
 import { MB, generateObj, maxSize, isClonable } from "./benchmark/utils.ts";
-import { getTransferable, getTransferables, hasTransferables } from "./src/index.ts";
+import { getTransferable, getTransferables, hasTransferables } from "./src/mod.ts";
 
 const num = Math.pow(2, Math.log2(maxSize * MB));
 const obj = generateObj(num / MB, isClonable);

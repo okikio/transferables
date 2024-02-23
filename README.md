@@ -2,13 +2,14 @@
 
 [![Open Bundle](https://bundlejs.com/badge-light.svg)](https://bundlejs.com/?q=transferables&bundle "Check the total bundle size of transferables")
 
-[NPM](https://www.npmjs.com/package/transferables) <span style="padding-inline: 1rem">|</span> [GitHub](https://github.com/okikio/transferables#readme) <span style="padding-inline: 1rem">|</span> [Licence](./LICENSE)
+[NPM](https://www.npmjs.com/package/transferables) <span style="padding-inline: 1rem">|</span> [GitHub](https://github.com/okikio/transferables#readme) <span style="padding-inline: 1rem">|</span> [JSR](https://jsr.io/@okikio/transferables) <span style="padding-inline: 1rem">|</span> [Licence](./LICENSE)
 
 A utility library that lists out all [transferable objects](https://developer.mozilla.org/en-US/docs/Glossary/Transferable_objects) that can be moved between Workers and the main thread\*.
 
 > _`*` There are many [asterisks](#asterisks--limitations) involved in transferable objects, the `transferables` library is able sort out a large number of these `asterisks`, but it can't sort all of them. Those it can't, have been listed in [#limitations](#asterisks--limitations), you should do your own research before using._
 
 <!-- > You can also read the [blog post](https://blog.okikio.dev/transferables), created for it's launch. -->
+
 
 ## Installation
 
@@ -30,7 +31,7 @@ pnpm install transferables
 ```
 
 </details>
-<br>
+
 
 ## Usage
 
@@ -54,10 +55,14 @@ You can also use it via a CDN, e.g.
 import { hasTransferables, getTransferables } from "https://cdn.skypack.dev/transferables";
 // or
 import { hasTransferables, getTransferables } from "https://cdn.jsdelivr.net/npm/transferables";
+// or
+import { hasTransferables, getTransferables } from "https://esm.sh/transferables";
+// or (Deno specific, but can be used in the browser too)
+import { hasTransferables, getTransferables } from "https://deno.land/x/transferables";
+// or (Deno specific, using `jsr.io` learn more at jsr.io/@okikio/transferables)
+import { hasTransferables, getTransferables } from "jsr:@okikio/transferables";
 // or any number of other CDN's
 ```
-
-<br>
 
 
 ## Showcase
@@ -67,8 +72,6 @@ A couple sites/projects that use `transferables`:
 <!-- - [bundlejs](https://bundlejs.com) -->
 - Your site/project here...
   
-<br>
-
 
 ## API
 

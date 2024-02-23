@@ -2,9 +2,8 @@ import { MB, generateObj, add, printTable, createWorkerPromise, postMessageVaria
 import { writeFile } from "./deno.utils.ts";
 
 import { prettyBytes as bytes } from "https://deno.land/x/pretty_bytes@v2.0.0/mod.ts";
+import { markdownTable } from "https://esm.sh/markdown-table@3.0.3";
 import { dmeanstdev } from './dmeanstdev.ts';
-
-import { markdownTable } from "https://esm.sh/markdown-table@3.0.2";
 
 const num_ = Math.pow(2, Math.log2(maxSize * MB));
 const name_ = bytes(num_, { maximumFractionDigits: 3 });

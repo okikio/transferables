@@ -10,10 +10,12 @@ on:
       - '*.ts'
       - '*.js'
       - '*.json'
+      - '*.jsonc'
       - '*.yaml'
-      - '.github/**/bun-benchmark.yml'
       - 'src/**/*'
+      - '.github/**/bun-benchmark.yml'
       - 'benchmark/**/*.ts'
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -31,8 +33,9 @@ jobs:
           # File containing the version Spec of the version to use.  Examples: .nvmrc, .node-version, .tool-versions.
           node-version-file: '.nvmrc' # optional
         
-      - name: Setup Bun
-        uses: xHyroM/setup-bun@v0.1.8
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2

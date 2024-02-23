@@ -1,11 +1,11 @@
-import { MB, generateObj, add, printTable, postMessageVariants, createPromise, createWorkerPromise, IIterationType, maxSize, isClonable } from "../utils";
+import type { IIterationType } from "../utils.ts";
+import { MB, generateObj, add, printTable, postMessageVariants, createWorkerPromise, createPromise, maxSize, isClonable } from "../utils.ts";
 
 import bytes from "pretty-bytes";
-import { dmeanstdev } from '../dmeanstdev';
-
 import { markdownTable } from 'markdown-table';
+import { dmeanstdev } from '../dmeanstdev.ts';
 
-export default async function (e: MouseEvent) {
+export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
   
   const num_ = Math.pow(2, Math.log2(maxSize * MB));
