@@ -87,7 +87,7 @@ jobs:
       #     branch: ${{ github.ref }}
 
       - name: Add benchmark/results to Git
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(gh-bot): update node benchmark results"
 
@@ -104,5 +104,5 @@ jobs:
           
       #     # Optional. Options used by `git-add`.
       #     # See https://git-scm.com/docs/git-add#_options
-      #     add_options: '-u --force'
+          add_options: '-u --force'
         
