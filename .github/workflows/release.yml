@@ -18,21 +18,6 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: ~1.x
-
-      - name: Restore deno cache
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-deno-${{ hashFiles('**/deps.lock.json') }}
-          restore-keys: ${{ runner.os }}-deno-
-          path: |
-            ~/.cache/deno/deps
-            ~/Library/Caches/deno
-            ~/AppData/Local/deno/deps
           
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -63,7 +48,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
           
       - name: Build
-        run: deno task build
+        run: pnpm build
 
       - name: Release
         run: pnpm semantic-release

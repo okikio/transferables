@@ -9,6 +9,7 @@
     ],
     "types": [
       "@types/dom-webcodecs",
+      "@types/offscreencanvas",
       "@deno/shim-deno"
     ],
     "allowArbitraryExtensions": true,

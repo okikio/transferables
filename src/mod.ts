@@ -382,9 +382,9 @@ export function getTransferables(obj: unknown, streams = false, maxCount = 10_00
         const values = Array.isArray(item) ? item : Object.values(item);
         if (values.length) queues.push(values);
       }
-    }
 
-    if (--maxCount <= 0) break;
+      if (--maxCount <= 0) break;
+    }
   }
 
   return Array.from(result);
@@ -439,9 +439,9 @@ export function* getTransferable(obj: unknown, streams = false, maxCount = 10_00
         const values = Array.isArray(item) ? item : Object.values(item);
         if (values.length) queues.push(values);
       }
-    }
 
-    if (--maxCount <= 0) break;
+      if (--maxCount <= 0) break;
+    }
   }
 
   return null;
@@ -482,9 +482,9 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
         const values = Array.isArray(item) ? item : Object.values(item);
         if (values.length) queues.push(values)
       }
-    }
 
-    if (--maxCount <= 0) break;
+      if (--maxCount <= 0) break;
+    }
   }
 
   return false;

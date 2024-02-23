@@ -9,7 +9,6 @@
     "./index": "./src/index.ts"
   },
   "tasks": {
-    "build": "deno run --allow-env=DENO_DIR,XDG_DATA_HOME,XDG_CACHE_HOME,HOME,DENO_AUTH_TOKENS --allow-read --allow-write --allow-net=deno.land --allow-run=pnpm scripts/build.ts",
     "bench": "deno bench tests/",
     "test": "deno test tests/"
   },
@@ -23,6 +22,10 @@
       "deno.ns",
       "deno.unstable"
     ],
-    "types": ["@types/dom-webcodecs", "./src/types.d.ts"]
+    "types": [
+      "@types/dom-webcodecs",
+      "@types/offscreencanvas",
+      "./src/types.d.ts"
+    ]
   }
 }
