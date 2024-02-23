@@ -2,11 +2,6 @@
 /// webcodecs APIs
 /////////////////////////////
 
-/// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-/// <reference lib="webworker" />
-// <reference types="@types/dom-webcodecs" />
-
 // @filename: ./types.d.ts
 // Versioning:
 // Until the WebCodecs spec is finalized, the major version number is 0. I have chosen to use minor
