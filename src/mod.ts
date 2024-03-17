@@ -222,7 +222,6 @@ export async function isSupported(): Promise<{
       })
       messageChannel.port1.close();
     } catch (e) {
-      console.warn(e);
       return false;
     }
 
@@ -274,7 +273,6 @@ export async function isSupported(): Promise<{
         messageChannel.port1.close();
       }
     } catch (e) {
-      console.warn(e);
       return false;
     }
 
