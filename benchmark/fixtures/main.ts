@@ -5,9 +5,9 @@ import structuredCloneBenchmark from "./structuredClone.ts";
 import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
 
-export const structuredCloneBtn: HTMLButtonElement = document.querySelector("#structuredClone");
-export const postMessageMessageChannelBtn: HTMLButtonElement = document.querySelector("#postMessageMessageChannel");
-export const postMessageWorkerBtn: HTMLButtonElement = document.querySelector("#postMessageWorker");
+export const structuredCloneBtn: HTMLButtonElement | null = document.querySelector("#structuredClone");
+export const postMessageMessageChannelBtn: HTMLButtonElement | null = document.querySelector("#postMessageMessageChannel");
+export const postMessageWorkerBtn: HTMLButtonElement | null = document.querySelector("#postMessageWorker");
 
 export const structuredCloneResultEl: HTMLDivElement = document.createElement("div");
 export const postMessageMessageChannelResultEl: HTMLDivElement = document.createElement("div");

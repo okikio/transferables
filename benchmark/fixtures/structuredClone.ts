@@ -1,38 +1,84 @@
-import { MB, generateObj, add, createStructuredCloneVariants, printTable, maxSize, isClonable } from "../utils.ts";
+import { bench, group, run } from "@poolifier/tatami-ng";
+import { format as bytes } from "@std/fmt/bytes";
+
 import { getTransferable, getTransferables, hasTransferables } from "../../src/mod.ts";
 
-import bytes from "pretty-bytes";
-import { markdownTable } from 'markdown-table';
-import { dmeanstdev } from '../dmeanstdev.ts';
-
-const variants = createStructuredCloneVariants(hasTransferables, getTransferable, getTransferables);
-const keys = Object.keys(variants) as (keyof typeof variants)[];
-const len = keys.length;
+import { CreateStructuredCloneVariants } from "../utils/_structuredclone.ts";
+import { PrintMarkdownTable, GenerateStub, IsClonable } from "../utils/_utils.ts";
+import { BITS_IN_BYTE, MAX_SIZE } from "../utils/_constants.ts";
 
 export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
-  
-  const num_ = Math.pow(2, Math.log2(maxSize * MB));
-  const name_ = bytes(num_, { maximumFractionDigits: 3 });
-  const obj_ = generateObj(num_ / MB, isClonable);
-  console.log({ type: "structuredClone (browser)", name: name_, transferable: obj_.transferable.length })
 
-  for (let cycle = 0; cycle < 5; cycle++) {
-    for (let index = 0; index < Math.log2(maxSize * MB); index++) {
-      const num = Math.pow(2, index);
-      const name = bytes(num, { maximumFractionDigits: 3 });
+  const variantsFn = CreateStructuredCloneVariants({
+    hasTransferables, getTransferable, getTransferables
+  });
+  const variants = Object.keys(variantsFn) as (keyof typeof variantsFn)[];
 
-      for (let j = 0; j < len; j++) {
-        const variant = keys[j];
-        const fn = variants[variant];
-        const obj = generateObj(num / MB, isClonable);
+  // Setting up benchmark testing.
+  const name_ = bytes(MAX_SIZE, { maximumFractionDigits: 3 });
+  const data_ = GenerateStub(MAX_SIZE, IsClonable);
+  const env_ = (() => {
+    if ('Bun' in globalThis) return 'bun';
+    else if ('Deno' in globalThis) return 'deno';
+    else if ('process' in globalThis) return 'node';
+    else return 'browser';
+  })();
 
-        console.log({ name, index, variant, cycle })
-        await add(name, variant, fn, obj)
+  console.log({
+    type: `structuredClone (${env_})`,
+    MAX_SIZE,
+    name: name_,
+    transferable: data_.transferable.length,
+  })
+
+  const counter = new Map<string, number>();
+  for (let index = 0; index <= Math.log2(MAX_SIZE / BITS_IN_BYTE); index++) {
+    const num = Math.pow(2, index);
+    const name = bytes(num * BITS_IN_BYTE, { maximumFractionDigits: 3 });
+
+    group(name, () => {
+      for (const variant of variants) {
+        let data: ReturnType<typeof GenerateStub> | null = null;
+
+        const instanceKey = `#${index} ${name} -> ${variant}`;
+        counter.set(instanceKey, counter.get(instanceKey) ?? 0);
+        console.log(`${counter.get(instanceKey) ?? 0} - ${instanceKey}`);
+        
+        bench(
+          variant,
+          async () => {
+            const prevCount = counter.get(instanceKey) ?? 0;
+
+            data = GenerateStub(num, IsClonable);
+            const fn = variantsFn[variant];
+            await fn?.(data!);
+            counter.set(instanceKey, prevCount + 1); 
+          },
+          {
+            warmup: true,
+            before() { },
+            after() { data = null; },
+          }
+        );
       }
-    }
-    console.log("\n")
+    });
   }
 
-  return printTable(keys, dmeanstdev, markdownTable);
+  const { benchmarks } = await run({
+    units: true, // print units cheatsheet (default: false)
+    silent: false, // enable/disable stdout output (default: false)
+    json: false, // enable/disable json output (default: false)
+    colors: true, // enable/disable colors (default: true)
+    samples: 128, // minimum number of benchmark samples (default: 128)
+    time: 1_000_000_000, // minimum benchmark time in nanoseconds (default: 1_000_000_000)
+    avg: true, // enable/disable time (avg) column (default: true)
+    iter: true, // enable/disable iter/s column (default: true)
+    rmoe: true, // enable/disable error margin column (default: true)
+    min_max: true, // enable/disable (min...max) column (default: true)
+    percentiles: true, // enable/disable percentile columns (default: true)
+  });
+
+  const result = PrintMarkdownTable(variants, benchmarks);
+  return result;
 }

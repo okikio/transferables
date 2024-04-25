@@ -1,59 +1,92 @@
-import type { IIterationType } from "../utils.ts";
-import { MB, generateObj, add, printTable, postMessageVariants, createMessageChannelPromise, createPromise, maxSize, isClonable } from "../utils.ts";
+import { bench, group, run } from "@poolifier/tatami-ng";
+import { format as bytes } from "@std/fmt/bytes";
 
 import { getTransferable, getTransferables, hasTransferables } from "../../src/mod.ts";
-import { registerMessageListener } from "../workers/messagechannel.ts";
+import { AsyncPostMessagePromise, CreatePostMessageVariants, ListenPostMessageRecieverSetup, ListenPostMessageSenderSetup } from "../utils/_postmessage.ts";
 
-import bytes from "pretty-bytes";
-import { markdownTable } from 'markdown-table';
-import { dmeanstdev } from '../dmeanstdev.ts';
+import { PrintMarkdownTable, GenerateStub, IsClonable, } from "../utils/_utils.ts";
+import { MAX_SIZE } from "../utils/_constants.ts";
 
 export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
 
-  const num_ = Math.pow(2, Math.log2(maxSize * MB));
-  const name_ = bytes(num_, { maximumFractionDigits: 3 });
-  const obj_ = generateObj(num_ / MB, isClonable);
-  console.log({ type: "MessageChannel (browser)", name: name_, transferable: obj_.transferable.length })
+  const variantsFn = CreatePostMessageVariants({
+    hasTransferables, getTransferable, getTransferables
+  });
+  const variants = Object.keys(variantsFn) as (keyof typeof variantsFn)[];
 
-  for (let cycle = 0; cycle < 5; cycle++) {
-    const queue = new Map<string, ReturnType<typeof createPromise>>();
-    const channel = new MessageChannel();
+  // Setting up benchmark testing.
+  const name_ = bytes(MAX_SIZE, { maximumFractionDigits: 3 });
+  const data_ = GenerateStub(MAX_SIZE, IsClonable);
+  const env_ = (() => {
+    if ('Bun' in globalThis) return 'bun';
+    else if ('Deno' in globalThis) return 'deno';
+    else if ('process' in globalThis) return 'node';
+    else return 'browser';
+  })();
 
-    registerMessageListener(channel.port1, {
-      getTransferable,
-      getTransferables,
-      hasTransferables
-    })
+  console.log({
+    type: `MessageChannel (${env_})`,
+    name: name_,
+    transferable: data_.transferable.length,
+  })  
 
-    channel.port2.onmessage = ({ data }: MessageEvent<IIterationType>) => {
-      const { name, variant, cycle, i: index } = data;
+  const counter = new Map<string, number>();
+  for (let index = 0; index <= Math.log2(MAX_SIZE); index++) {
+    const num = Math.pow(2, index);
+    const name = bytes(num, { maximumFractionDigits: 3 });
 
-      const queueKey = `${name}-${variant}-${cycle}-${index}`;
-      const { resolve } = queue.get(queueKey) ?? {};
-      resolve?.(data);
-    }
+    group(name, () => {
+      for (const variant of variants) {
+        let data: ReturnType<typeof GenerateStub> | null = null;
+        let channel = new MessageChannel();
 
-    for (let variant of postMessageVariants) {
-      for (let index = 0; index <= Math.log2(maxSize * MB); index++) {
-        const num = Math.pow(2, index);
-        const name = bytes(num, { maximumFractionDigits: 3 });
-        const obj = generateObj(num / MB, isClonable);
+        const instanceKey = `#${index} ${name} -> ${variant}`;
+        counter.set(instanceKey, counter.get(instanceKey) ?? 0);
+        console.log(`${counter.get(instanceKey) ?? 0} - ${instanceKey}`);
 
-        console.log({ name, index, variant, cycle })
-        
-        // size: num / MB, 
-        const { wait } = createMessageChannelPromise({ name, index, variant, cycle, obj, channel, queue });
-        await add(name, variant, async () => {
-          await wait();
-        })
+        bench(
+          variant,
+          async () => {
+            const prevCount = counter.get(instanceKey) ?? 0;
+
+            data = GenerateStub(num, IsClonable);
+            await AsyncPostMessagePromise?.(channel.port1, {
+              name, index: prevCount, variant, data: data!
+            });
+            counter.set(instanceKey, prevCount + 1);
+          },
+          {
+            warmup: true,
+            before() {
+              channel = new MessageChannel();
+              ListenPostMessageSenderSetup(channel.port1);
+              ListenPostMessageRecieverSetup(channel.port2, variantsFn);
+            },
+            after() {
+              channel.port1.close();
+              data = null;
+            },
+          }
+        );
       }
-    }
-    console.log("\n")
-
-    channel?.port1?.close?.();
-    queue.clear();
+    });
   }
 
-  return printTable(postMessageVariants, dmeanstdev, markdownTable);
+  const { benchmarks } = await run({
+    units: true, // print units cheatsheet (default: false)
+    silent: false, // enable/disable stdout output (default: false)
+    json: false, // enable/disable json output (default: false)
+    colors: true, // enable/disable colors (default: true)
+    samples: 128, // minimum number of benchmark samples (default: 128)
+    time: 1_000_000_000, // minimum benchmark time in nanoseconds (default: 1_000_000_000)
+    avg: true, // enable/disable time (avg) column (default: true)
+    iter: true, // enable/disable iter/s column (default: true)
+    rmoe: true, // enable/disable error margin column (default: true)
+    min_max: true, // enable/disable (min...max) column (default: true)
+    percentiles: true, // enable/disable percentile columns (default: true)
+  });
+
+  const result = PrintMarkdownTable(variants, benchmarks);
+  return result;
 }

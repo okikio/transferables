@@ -1,18 +1,8 @@
-import { test, expect, type ConsoleMessage } from '@playwright/test';
-import { writeFile } from './node.utils.ts';
+import type { ConsoleMessage } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { WriteFile } from './_fs.ts';
 
 const consoleLog = async (msg: ConsoleMessage) => {
-  // if (msg && msg.text) {
-  //   if (typeof msg.text === 'function') {
-  //     console.log('PAGE LOG:', msg.text());
-  //   } else {
-  //     console.log('PAGE LOG:', msg.text);
-  //   }
-  // } else if ('jsonValue' in msg && typeof msg.jsonValue == 'function') {
-  //   console.log('PAGE LOG:', msg.jsonValue())
-  // } else {
-  //   console.log('PAGE LOG:', msg);
-  // }
   const values: any[] = [];
   for (const arg of msg.args())
     values.push(await arg.jsonValue());
@@ -44,7 +34,7 @@ test('structuredClone (browser)', async ({ page, browserName }, { title }) => {
   console.log(`structuredClone (${browserName})`)
   console.log(result);
 
-  await writeFile(result, title, browserName);
+  await WriteFile(result, title, browserName);
 })
 
 test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
@@ -72,7 +62,7 @@ test('MessageChannel (browser)', async ({ page, browserName }, { title }) => {
   console.log(`MessageChannel (${browserName})`)
   console.log(result);
 
-  await writeFile(result, title, browserName);
+  await WriteFile(result, title, browserName);
 })
 
 test('Worker (browser)', async ({ page, browserName }, { title }) => {
@@ -100,5 +90,5 @@ test('Worker (browser)', async ({ page, browserName }, { title }) => {
   console.log(`Worker (${browserName})`)
   console.log(result);
 
-  await writeFile(result, title, browserName);
+  await WriteFile(result, title, browserName);
 });
