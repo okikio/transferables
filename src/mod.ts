@@ -1,4 +1,5 @@
-/// <reference path="./types.d.ts" />
+/// <reference lib="dom" />
+/// <reference types="@types/web" />
 
 /**
  * Represents the prototype from which all typed arrays are derived. This can be used to check if an object is a typed array.
@@ -9,7 +10,7 @@
  * console.log(isTypedArray(new Uint8Array(10))); // true
  * ```
  */
-export const TypedArray: any = Object.getPrototypeOf(Int8Array);
+export const TypedArray: unknown = Object.getPrototypeOf(Int8Array);
 
 /**
  * Represents the AudioData interface from the Web Audio API, allowing manipulation of audio data directly.
@@ -221,7 +222,7 @@ export async function isSupported(): Promise<{
         }
       })
       messageChannel.port1.close();
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
 
@@ -272,7 +273,7 @@ export async function isSupported(): Promise<{
         })
         messageChannel.port1.close();
       }
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
 
@@ -464,11 +465,12 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
     for (let j = 0; j < len; j++) {
       const item = queue[j];
 
-      if (isTypedArray(item)) {
-        return true;
-      } else if (isTransferable(item) || (streams && isStream(item))) {
-        return true;
-      } else if (isMessageChannel(item)) {
+      if (
+        isTypedArray(item) ||
+        isTransferable(item) || 
+        (streams && isStream(item)) || 
+        isMessageChannel(item)
+      ) {
         return true;
       }
 
@@ -478,7 +480,7 @@ export function hasTransferables(obj: unknown, streams = false, maxCount = 10_00
       */
       else if (!isStream(item) && isObject(item)) {
         const values = Array.isArray(item) ? item : Object.values(item);
-        if (values.length) queues.push(values)
+        if (values.length > 0) queues.push(values);
       }
 
       if (--maxCount <= 0) break;

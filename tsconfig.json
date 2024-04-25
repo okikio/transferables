@@ -3,13 +3,9 @@
     "moduleResolution": "bundler",
     "target": "esnext",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["dom"],
     "types": [
-      "@types/dom-webcodecs",
-      "@types/offscreencanvas",
+      "@types/web",
       "@deno/shim-deno"
     ],
     "allowArbitraryExtensions": true,
