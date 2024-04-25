@@ -1,6 +1,6 @@
 import type { ConsoleMessage } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { WriteFile } from './_fs.ts';
+import { WriteFile } from './utils/_fs.ts';
 
 const consoleLog = async (msg: ConsoleMessage) => {
   const values: any[] = [];

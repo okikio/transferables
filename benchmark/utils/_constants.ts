@@ -30,4 +30,4 @@ export const BITS_IN_MEGABYTE: number = BITS_IN_BYTE * BYTES_IN_MEGABYTE; // 8 b
  * @constant
  * @type {number}
  */
-export const MAX_SIZE: number = 2 * BITS_IN_MEGABYTE; // 2 MB in bytes
+export const MAX_SIZE: number = 0.0005 * BITS_IN_MEGABYTE; // 2 MB in bytes

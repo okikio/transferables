@@ -39,38 +39,30 @@
   "scripts": {
     "start": "pnpm browser:fixture",
     "dev": "pnpm browser:fixture",
-
     "test": "vitest",
     "test:run": "vitest run tests",
-
     "build": "tsup",
     "playwright:init": "playwright install --with-deps",
     "browser:fixture": "vite build ./benchmark/fixtures --target \"es2022\" && vite preview ./benchmark/fixtures --port 3000",
     "browser:fixture:dev": "vite dev ./benchmark/fixtures --port 3000",
-
     "benchmark:browser": "playwright test ./benchmark/browsers.spec.ts",
     "benchmark:browser:chrome": "rm -rf ./benchmark/results/chromium.md && playwright test --browser=chromium ./benchmark/browsers.spec.ts",
     "benchmark:browser:firefox": "rm -rf ./benchmark/results/firefox.md && playwright test --browser=firefox ./benchmark/browsers.spec.ts",
     "benchmark:browser:safari": "rm -rf ./benchmark/results/safari.md && playwright test --browser=webkit ./benchmark/browsers.spec.ts",
-
     "benchmark:node": "tsx ./benchmark/structuredclone.bench.ts",
     "benchmark:node:worker": "tsx ./benchmark/worker.bench.ts",
     "benchmark:node:messagechannel": "tsx ./benchmark/messagechannel.bench.ts",
     "benchmark:node:all": "rm -rf ./benchmark/results/node.md && pnpm benchmark:node && pnpm benchmark:node:worker && pnpm benchmark:node:messagechannel",
-
     "benchmark:deno": "deno run --allow-run --allow-env --allow-read --allow-write --allow-hrtime --allow-sys ./benchmark/structuredclone.bench.ts",
     "benchmark:deno:worker": "deno run --allow-run --allow-env --allow-read --allow-write --allow-hrtime --allow-sys ./benchmark/worker.bench.ts",
     "benchmark:deno:messagechannel": "deno run --allow-run --allow-env --allow-read --allow-write --allow-hrtime --allow-sys ./benchmark/messagechannel.bench.ts",
     "benchmark:deno:all": "rm -rf ./benchmark/results/deno.md && pnpm benchmark:deno && pnpm benchmark:deno:worker && pnpm benchmark:deno:messagechannel",
-
     "benchmark:bun": "bun run ./benchmark/structuredclone.bench.ts",
     "benchmark:bun:worker": "bun run ./benchmark/worker.bench.ts",
     "benchmark:bun:messagechannel": "bun run ./benchmark/messagechannel.bench.ts",
     "benchmark:bun:all": "rm -rf ./benchmark/results/bun.md && pnpm benchmark:bun && pnpm benchmark:bun:worker && pnpm benchmark:bun:messagechannel",
-
     "benchmark": "pnpm benchmark:node:all && pnpm benchmark:deno:all && pnpm benchmark:bun:all",
     "benchmark:all": "pnpm benchmark && pnpm benchmark:browser",
-
     "commitlint": "commitlint --edit",
     "pre-release": "pnpm test:run && pnpm build",
     "semantic-release": "semantic-release",
@@ -159,6 +151,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@std/fmt": "npm:@jsr/std__fmt@^0.224.0",
+    "@swc/core": "^1.5.0",
     "@types/node": "^20.12.7",
     "@types/web": "^0.0.143",
     "bun": "^1.1.4",

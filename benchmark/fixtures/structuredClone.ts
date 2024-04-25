@@ -5,7 +5,7 @@ import { getTransferable, getTransferables, hasTransferables } from "../../src/m
 
 import { CreateStructuredCloneVariants } from "../utils/_structuredclone.ts";
 import { PrintMarkdownTable, GenerateStub, IsClonable } from "../utils/_utils.ts";
-import { BITS_IN_BYTE, MAX_SIZE } from "../utils/_constants.ts";
+import { MAX_SIZE } from "../utils/_constants.ts";
 
 export default async function (e: MouseEvent): Promise<string> {
   e.preventDefault();
@@ -33,9 +33,9 @@ export default async function (e: MouseEvent): Promise<string> {
   })
 
   const counter = new Map<string, number>();
-  for (let index = 0; index <= Math.log2(MAX_SIZE / BITS_IN_BYTE); index++) {
+  for (let index = 0; index <= Math.log2(MAX_SIZE); index++) {
     const num = Math.pow(2, index);
-    const name = bytes(num * BITS_IN_BYTE, { maximumFractionDigits: 3 });
+    const name = bytes(num, { maximumFractionDigits: 3 });
 
     group(name, () => {
       for (const variant of variants) {

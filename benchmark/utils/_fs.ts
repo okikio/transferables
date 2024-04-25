@@ -19,8 +19,8 @@ export async function WriteFile(result: string, name: string, env: string) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
 
-  const fileDir = path.join(__dirname, `/results`);
-  const filePath = path.join(__dirname, `/results/${name.toLowerCase()}.${env}.md`);
+  const fileDir = path.join(__dirname, "..", `/results`);
+  const filePath = path.join(__dirname, "..", `/results/${name.toLowerCase()}.${env}.md`);
   console.log(`Writing/Appending to ${filePath}`)
 
   const append = await exists(filePath);

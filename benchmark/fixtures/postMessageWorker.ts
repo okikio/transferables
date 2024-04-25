@@ -34,7 +34,7 @@ export default async function (e: MouseEvent): Promise<string> {
     transferable: data_.transferable.length,
   })
 
-  const counter = new Map<string, number>();
+  let counter = 0;
   for (let index = 0; index <= Math.log2(MAX_SIZE) / 5; index += 3) {
     const num = Math.pow(2, index);
     const name = bytes(num, { maximumFractionDigits: 3 });
@@ -45,19 +45,15 @@ export default async function (e: MouseEvent): Promise<string> {
         let worker: Worker | null = null;
 
         const instanceKey = `#${index} ${name} -> ${variant}`;
-        counter.set(instanceKey, counter.get(instanceKey) ?? 0);
-        console.log(`${counter.get(instanceKey) ?? 0} - ${instanceKey}`);
+        console.log(`${counter++} - ${instanceKey}`);
         
         bench(
           variant,
           async () => {
-            const prevCount = counter.get(instanceKey) ?? 0;
-
             data = GenerateStub(num, IsClonable);
             await AsyncPostMessagePromise?.(worker!, {
-              name, index: prevCount, variant, data: data!
+              name, index: counter, variant, data: data!
             });
-            counter.set(instanceKey, prevCount + 1);
           },
           {
             warmup: true,
