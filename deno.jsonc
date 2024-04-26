@@ -2,7 +2,7 @@
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "name": "@okikio/transferables",
   "version": "1.0.2",
-  "lock": false,
+  "lock": true,
   "exports": {
     ".": "./src/mod.ts",
     "./mod": "./src/mod.ts",
