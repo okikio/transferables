@@ -35,34 +35,41 @@ export default async function (e: MouseEvent): Promise<string> {
   })
 
   let counter = 0;
-  for (let index = 0; index <= Math.log2(MAX_SIZE) / 5; index += 3) {
+  for (let index = 0; index <= Math.log2(MAX_SIZE); index ++) {
     const num = Math.pow(2, index);
     const name = bytes(num, { maximumFractionDigits: 3 });
 
-    group(name, () => {
+    let worker: Worker | null = null;
+
+    group({
+      name,
+      before() {
+        worker = new Worker(new URL("../workers/worker.ts", import.meta.url).href, { type: "module" });
+        ListenPostMessageSenderSetup(worker);
+      },
+      after() {
+        worker?.terminate();
+      },
+    }, () => {
       for (const variant of variants) {
         let data: ReturnType<typeof GenerateStub> | null = null;
-        let worker: Worker | null = null;
 
         const instanceKey = `#${index} ${name} -> ${variant}`;
         console.log(`${counter++} - ${instanceKey}`);
-        
+
         bench(
           variant,
           async () => {
-            data = GenerateStub(num, IsClonable);
+            data = GenerateStub(num, IsClonable); 
             await AsyncPostMessagePromise?.(worker!, {
               name, index: counter, variant, data: data!
             });
+            data = null;
           },
           {
             warmup: true,
-            before() {
-              worker = new Worker(new URL("../workers/worker.ts", import.meta.url).href, { type: "module" });
-              ListenPostMessageSenderSetup(worker);
-            },
+            before() { },
             after() {
-              worker?.terminate();
               data = null;
             },
           }

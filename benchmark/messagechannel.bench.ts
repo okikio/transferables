@@ -34,32 +34,39 @@ for (let index = 0; index <= Math.log2(MAX_SIZE); index ++) {
   const num = Math.pow(2, index);
   const name = bytes(num, { maximumFractionDigits: 3 });
 
-  group(name, () => {
+  let channel: MessageChannel | null = null;
+
+  group({
+    name,
+    before() { 
+      channel = new MessageChannel();
+      ListenPostMessageSenderSetup(channel.port1);
+      ListenPostMessageRecieverSetup(channel.port2, variantsFn);
+    },
+    after() {
+      channel?.port1.close();
+    },
+  }, () => {
     for (const variant of variants) {
       let data: ReturnType<typeof GenerateStub> | null = null;
-      let channel = new MessageChannel();
 
       const instanceKey = `#${index} ${name} -> ${variant}`;
       console.log(`${counter++} - ${instanceKey}`);
 
       bench(
-        variant, 
+        variant,
         async () => {
-          data = GenerateStub(num, IsClonable); 
-          await AsyncPostMessagePromise?.(channel.port1, {
+          data = GenerateStub(num, IsClonable);
+          await AsyncPostMessagePromise?.(channel?.port1, {
             name, index: counter, variant, data: data!
-          }); 
-        }, 
+          });
+          data = null;
+        },
         {
           warmup: true,
-          before() {
-            channel = new MessageChannel();
-            ListenPostMessageSenderSetup(channel.port1);
-            ListenPostMessageRecieverSetup(channel.port2, variantsFn);
-          },
-          after() { 
-            channel.port1.close();
-            data = null; 
+          before() { },
+          after() {
+            data = null;
           },
         }
       );

@@ -48,6 +48,7 @@ for (let index = 0; index <= Math.log2(MAX_SIZE); index++) {
           data = GenerateStub(num, IsClonable);
           const fn = variantsFn[variant];
           await fn?.(data!);
+          data = null;
         }, 
         {
           warmup: true,

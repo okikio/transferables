@@ -20,7 +20,7 @@ export function CreatePostMessageVariants(
 
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(simpleMessage);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (no transfer)": async function (
@@ -33,7 +33,7 @@ export function CreatePostMessageVariants(
 
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(fullMessage);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (manually) (transfer)": async function (
@@ -47,7 +47,7 @@ export function CreatePostMessageVariants(
       const transfer = data.transferable as Transferable[] | TransferListItem[];
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(fullMessage, transfer as any);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (getTransferables)": async function (
@@ -56,15 +56,14 @@ export function CreatePostMessageVariants(
     ) {
       const { name, variant, index, data } = _data;
       const simpleMessage = { name, variant, index };
-      const fullMessage = { ...simpleMessage, data };
 
       // We don't want to make it too easy to find all the transferables
       const { transferable, ..._complexData } = data;
-      const transfer = getTransferables(_complexData, true) as Transferable[] | TransferListItem[];
+      getTransferables(_complexData, true) as Transferable[] | TransferListItem[];
       
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(simpleMessage);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (getTransferables) (transfer)": async function (
@@ -81,7 +80,7 @@ export function CreatePostMessageVariants(
 
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(fullMessage, transfer as any);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (getTransferable*)": async function (
@@ -90,15 +89,14 @@ export function CreatePostMessageVariants(
     ) {
       const { name, variant, index, data } = _data;
       const simpleMessage = { name, variant, index };
-      const fullMessage = { ...simpleMessage, data };
 
       // We don't want to make it too easy to find all the transferables
       const { transferable, ..._complexData } = data;
-      const transfer = Array.from(getTransferable(_complexData, true)) as Transferable[] | TransferListItem[];
+      Array.from(getTransferable(_complexData, true)) as Transferable[] | TransferListItem[];
 
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(simpleMessage);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     },
 
     "postMessage (getTransferable*) (transfer)": async function (
@@ -115,7 +113,7 @@ export function CreatePostMessageVariants(
 
       const _port = (port as MessagePort | NodeMessagePort);
       _port.postMessage(fullMessage, transfer as any);
-      return await Promise.resolve(data);
+      await Promise.resolve();
     }
   };
 }

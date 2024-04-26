@@ -32,7 +32,7 @@ export default async function (e: MouseEvent): Promise<string> {
     transferable: data_.transferable.length,
   })
 
-  const counter = new Map<string, number>();
+  let counter = 0;
   for (let index = 0; index <= Math.log2(MAX_SIZE); index++) {
     const num = Math.pow(2, index);
     const name = bytes(num, { maximumFractionDigits: 3 });
@@ -42,18 +42,15 @@ export default async function (e: MouseEvent): Promise<string> {
         let data: ReturnType<typeof GenerateStub> | null = null;
 
         const instanceKey = `#${index} ${name} -> ${variant}`;
-        counter.set(instanceKey, counter.get(instanceKey) ?? 0);
-        console.log(`${counter.get(instanceKey) ?? 0} - ${instanceKey}`);
+        console.log(`${counter++} - ${instanceKey}`);
         
         bench(
           variant,
           async () => {
-            const prevCount = counter.get(instanceKey) ?? 0;
-
             data = GenerateStub(num, IsClonable);
             const fn = variantsFn[variant];
             await fn?.(data!);
-            counter.set(instanceKey, prevCount + 1); 
+            data = null;
           },
           {
             warmup: true,
