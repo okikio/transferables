@@ -4,7 +4,8 @@ import { WriteFile } from './utils/_fs.ts';
 
 const consoleLog = async (msg: ConsoleMessage) => {
   const values: any[] = [];
-  for (const arg of msg.args())
+  const args = msg.args();
+  for (const arg of args)
     values.push(await arg.jsonValue());
   console.log(...values);
 }

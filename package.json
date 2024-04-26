@@ -43,7 +43,7 @@
     "test:run": "vitest run tests",
     "build": "tsup",
     "playwright:init": "playwright install --with-deps",
-    "browser:fixture": "vite build ./benchmark/fixtures --target \"es2022\" && vite preview ./benchmark/fixtures --port 3000",
+    "browser:fixture": "vite build ./benchmark/fixtures --target \"esnext\" && vite preview ./benchmark/fixtures --port 3000",
     "browser:fixture:dev": "vite dev ./benchmark/fixtures --port 3000",
     "benchmark:browser": "playwright test ./benchmark/browsers.spec.ts",
     "benchmark:browser:chrome": "rm -rf ./benchmark/results/chromium.md && playwright test --browser=chromium ./benchmark/browsers.spec.ts",

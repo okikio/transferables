@@ -23,14 +23,14 @@ export async function WriteFile(result: string, name: string, env: string) {
   const filePath = path.join(__dirname, "..", `/results/${name.toLowerCase()}.${env}.md`);
   console.log(`Writing/Appending to ${filePath}`)
 
-  const append = await exists(filePath);
+  // const append = await exists(filePath);
+  // if (append) {
+  //   await appendFile(filePath, markdown, `utf-8`);
+  //   console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
+  // } else { }
+
   const markdown = `\n\n## ${name}\n\n${result}`;
-  if (append) {
-    await appendFile(filePath, markdown, `utf-8`);
-    console.log(`Append ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-  } else {
-    await mkdir(fileDir, { recursive: true });
-    await write(filePath, `# ${capital(env)}${markdown}`, `utf-8`);
-    console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
-  }
+  await mkdir(fileDir, { recursive: true });
+  await write(filePath, `# ${capital(env)}${markdown}`, `utf-8`);
+  console.log(`Write ${capital(env)} of "${name}" benchmark results to ${filePath}`);
 }
