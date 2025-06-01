@@ -74,18 +74,18 @@ for (let index = 0; index <= Math.log2(MAX_SIZE); index ++) {
   });
 }
 
-const { benchmarks } = await run({
+const [{ benchmarks }] = await run({
   units: true, // print units cheatsheet (default: false)
   silent: false, // enable/disable stdout output (default: false)
   json: false, // enable/disable json output (default: false)
   colors: true, // enable/disable colors (default: true)
   samples: 128, // minimum number of benchmark samples (default: 128)
   time: 1_000_000_000, // minimum benchmark time in nanoseconds (default: 1_000_000_000)
-  avg: true, // enable/disable time (avg) column (default: true)
-  iter: true, // enable/disable iter/s column (default: true)
-  rmoe: true, // enable/disable error margin column (default: true)
-  min_max: true, // enable/disable (min...max) column (default: true)
-  percentiles: true, // enable/disable percentile columns (default: true)
+  // avg: true, // enable/disable time (avg) column (default: true)
+  // iter: true, // enable/disable iter/s column (default: true)
+  // rmoe: true, // enable/disable error margin column (default: true)
+  // min_max: true, // enable/disable (min...max) column (default: true)
+  // percentiles: true, // enable/disable percentile columns (default: true)
 });
 
 const result = PrintMarkdownTable(variants, benchmarks);
