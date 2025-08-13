@@ -1,0 +1,5 @@
+[tools]
+bun = "latest"
+deno = "latest"
+node = "latest"
+pnpm = "latest"

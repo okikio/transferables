@@ -1,4 +1,4 @@
-import type { Report } from "@poolifier/tatami-ng";
+import type { BenchmarkReport, Report } from "@poolifier/tatami-ng";
 import { MAX_SIZE, BITS_IN_BYTE } from "./_constants.ts";
 
 import { markdownTable } from "markdown-table";
@@ -281,13 +281,13 @@ export function GenerateStub(size = MAX_SIZE, enable: { streams?: boolean, chann
 }
 
 export const NumberFormatter = new Intl.NumberFormat();
-export function PrintMarkdownTable(variants: string[], benchmarks: Report['benchmarks']) {
+export function PrintMarkdownTable(variants: string[], benchmarks: BenchmarkReport['benchmarks'][]) {
   const head = ["", ...variants];
-  const groupedBenchmarks = Object.entries<Report['benchmarks']>(
+  const groupedBenchmarks = Object.entries<BenchmarkReport['benchmarks'][]>(
     // @ts-ignore `Object.groupBy(...)`
     Object.groupBy(
       benchmarks, 
-      (bench: Report['benchmarks'][number]) => bench.group
+      (bench: BenchmarkReport['benchmarks']) => bench.group
     )
   );
 
@@ -296,8 +296,8 @@ export function PrintMarkdownTable(variants: string[], benchmarks: Report['bench
       if (!bench) return 'null';
       if (bench.error) return 'null';
 
-      const opsPerSec = bench.stats?.iter ?? 0;
-      const margin = bench.stats?.rmoe ?? 0;
+      const opsPerSec = bench.stats?.samples ?? 0;
+      const margin = bench.stats?.throughput?.rmoe ?? 0;
 
       const opsPerSecStr = NumberFormatter.format(Math.round(opsPerSec * 100) / 100);
       const marginStr = NumberFormatter.format(Math.round(margin * 100) / 100);
