@@ -15,6 +15,7 @@
   "imports": {
     "markdown-table": "npm:markdown-table",
     "@poolifier/tatami-ng": "jsr:@poolifier/tatami-ng@^0.4.4",
-    "@std/fmt": "jsr:@std/fmt@^0.223.0"
+    "@std/fmt": "jsr:@std/fmt@^0.223.0",
+    "@types/web": "npm:@types/web"
   }
 }

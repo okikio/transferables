@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-types
 /// <reference lib="dom" />
 /// <reference types="@types/web" />
 
